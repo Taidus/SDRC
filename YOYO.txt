@@ -1,0 +1,171 @@
+/*********************** STATES *************************/
+//TODO:spanning tree?
+ASLEEP
+  Spontaneously
+     PROC_INIT
+     
+  
+  Receiving('Setup',id)
+      PROC_INIT
+      PROC_SETUP_EDGE
+
+AWAKE
+  Receiving('Setup',id)
+      PROC_SETUP_EDGE
+  
+  Receveing any other message  //dovrebbe essere l'unico punto che permette di togliere l'assunzione FIFO
+    store the message for later processing
+    
+INTERNAL_NODE
+  //receivedIDs deve essere una multimap (chiave-multivalore) perchè posso ricevere lo stesso id da più rami
+    Receiving('Yo',id)
+      receivedIDs.put(id,sender.edge);
+      if(receivedIDs.size = ingoingEdges.size)
+	send(min(receivedIDs.keys))to outgoingEdges
+	
+    Receiving('Yes',prune)
+      yes_neighbours.add(sender)
+      PROC_CHECK_YES_NO
+      
+    Receiving('No',prune)
+      outgoingEdges.remove(sender.edge)//flip edges
+      ingoingEdges.add(sender.edge)
+      no_neighbours.add(sender)
+      PROC_CHECK_YES_NO
+    
+	
+SINK
+  Receiving('Yo',id)
+    receivedIDs.put(id,sender.edge);
+    if(receivedIDs.size = ingoingEdges.size)  
+      min_id = min(receivedIDs.keys)
+      foreach id in receivedIDs.keys
+	if(id = min_id)
+	  message='Yes'
+	else 
+	  message='No'
+	  ingoingEdges.remove(receivedIDs.get(id)); //flip edges
+	  outgoingEdges.put(receivedIDs.get(id))
+	
+	PROC_TO_PRUNE_FOR_BEING_REDUDANT
+	prune='false'
+	if(receivedIDs.size-to_prune_edges = 1)
+	  prune='true'
+	  pruned_ingoing=true;
+	  ingoingEdges={}
+	
+	foreach edge in receivedIDs.get(id)
+	  if(prune=false && edge in to_prune_edges)
+	    prune =true;
+	    pruned_ingoing=true;
+	    ingoingEdges.remove(edge)
+	  send(message,prune) to edge
+      
+      PROC_CHOOSE_STATE
+    
+    
+SOURCE
+
+    Receiving('Yes',prune)
+      yes_neighbours.add(sender)
+      PROC_CHECK_YES_NO
+      
+    Receiving('No',prune)
+      no_neighbours.add(sender)
+      outgoingEdges.remove(sender.edge)//flip edges
+      ingoingEdges.add(sender.edge)
+      PROC_CHECK_YES_NO
+      
+
+
+
+
+/********************** PROC & FUN **********************/
+
+PROC_INIT
+outgoingEdges = {}
+ingoingEdges = {}
+yes_neighbours ={}
+no_neighbours ={}
+receivedIDs={}
+num_of_responses_needed=0;
+pruned_ingoing=false; //per discriminare i sink che hanno prunato tutto e le sorgenti che diventano leader
+send('Setup',id(x)) to N(x)
+become AWAKE
+
+PROC_SETUP_EDGE
+  if(id(x)> id)
+    outgoingEdges.add(sender.edge)
+  else
+    ingoingEdges.add(sender.edge)
+  if(outgoingEdges.size + ingoingEdges.size = |N(x)|)
+    PROC_CHOOSE_STATE
+
+PROC_CHOOSE_STATE
+  if(ingoingEdges.size +outgoingEdges=0)
+    if(!pruned_ingoing)
+      become LEADER
+    else
+      become FOLLOWER
+  else if(ingoingEdges.size = 0)
+    become SOURCE
+    send('Yo',id(x)) to outgoingEdges
+  else if(outgoingEdges.size = 0)
+    become SINK
+  else 
+    become INTERNAL_NODE
+      
+  yes_neighbours ={}
+  no_neighbours ={}
+  receivedIDs={}
+  num_of_responses_needed=outgoingEdges.size
+  
+    
+PROC_CHECK_YES_NO
+
+  if(prune=true)
+      outgoingEdges.remove(sender)
+      
+  if (yes_neighbours.size + no_neighbours.size = num_of_responses_needed)
+    if(yes_neighbours.size = num_of_responses_needed)
+      min_id = min(receivedIDs.keys)
+      send_yes_edges = receivedIDs.get(min_id)
+      send_no_edges =  ingoingEdges-receivedIDs.get(min_id)
+      outgoingEdges.put(ingoingEdges-receivedIDs.get(min_id))//flippa gli archi
+      ingoingEdges.remove(ingoingEdges-receivedIDs.get(min_id))
+    else
+      send_yes_edges = {}
+      send_no_edges =  ingoingEdges
+      //flippa gli archi
+      outgoingEdges.put(ingoingEdges)
+      ingoingEdges={}
+      
+    prune =false
+    PROC_TO_PRUNE_FOR_BEING_REDUDANT
+    if(outgoingEdges.size=0 && ingoingEdges-to_prune_edges.size=1)
+      prune=true
+      pruned_ingoing=true
+      ingoingEdges={}
+      
+    for each edge in send_yes_edges
+      if edge in to_prune_edges
+	prune=true
+	pruned_ingoing=true
+	ingoingEdges.remove(edge)
+      send('Yes',prune)
+     
+    for each edge in send_no_edges
+       if edge in to_prune_edges
+	ingoingEdges.remove(edge)
+	prune=true
+      send('No',prune)
+   
+      PROC_CHOOSE_STATE
+
+PROC_TO_PRUNE_FOR_BEING_REDUDANT
+to_prune_edges = edges in receivedIDs.values which share the same id except one (randomly chosen)
+
+  
+    
+
+
