@@ -1,14 +1,12 @@
 package megaMerger;
 
-import general.Message;
-import general.State;
 import netViewer.Link;
 
 
-public class NotifyDoneMessage implements Message {
+public class NotifyDoneMessage implements MegaMergerMessage {
 
 	@Override
-	public void accept(State s, Link sender) {
+	public void accept(MegaMergerState s, Link sender) {
 		s.handle(this, sender);
 	}
 	

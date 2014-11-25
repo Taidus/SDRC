@@ -1,6 +1,5 @@
 package general;
 
-import netViewer.Link;
 
 public class StringMessage implements Message {
 
@@ -13,11 +12,6 @@ public class StringMessage implements Message {
 	@Override
 	public String printString() {
 		return msg;
-	}
-
-	@Override
-	public void accept(State currentState, Link sender) {
-		 currentState.handle(this, sender);
 	}
 
 }

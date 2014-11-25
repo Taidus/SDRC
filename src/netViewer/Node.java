@@ -20,7 +20,6 @@ public abstract class Node extends Thread {
 
 	// Instance variables
 	protected int nodeId, state, wakeUpPosition;
-	protected general.State nodeState;
 	protected long wakeUpDelay; // The amount of time the node sleeps before
 								// waking up
 	protected Point coords; // drawing coordinates
@@ -222,11 +221,6 @@ public abstract class Node extends Thread {
 
 	protected void become(int state) {
 		this.state = state;
-	}
-
-	public void become(general.State s) {
-		this.nodeState = s;
-		become(s.intValue());
 	}
 
 

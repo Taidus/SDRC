@@ -1,11 +1,9 @@
 package megaMerger;
 
-import general.Message;
-import general.State;
 import netViewer.Link;
 
 
-public class FoundMessage implements Message {
+public class FoundMessage implements MegaMergerMessage {
 
 	private int childMin;
 	
@@ -14,7 +12,7 @@ public class FoundMessage implements Message {
 	}
 
 	@Override
-	public void accept(State s, Link sender) {
+	public void accept(MegaMergerState s, Link sender) {
 		s.handle(this, sender);
 	}
 

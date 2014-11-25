@@ -1,10 +1,9 @@
 package megaMerger;
 
-import general.State;
 import netViewer.ArbitraryNodeMegaMerger;
 import netViewer.Link;
 
-public abstract class MegaMergerAbstractState implements State{
+public abstract class MegaMergerAbstractState implements MegaMergerState{
 
 	protected ArbitraryNodeMegaMerger node;
 
@@ -13,7 +12,7 @@ public abstract class MegaMergerAbstractState implements State{
 	}
 
 	@Override
-	public void changeState(State nextState) {
+	public void changeState(MegaMergerState nextState) {
 		node.become(nextState);
 	}
 

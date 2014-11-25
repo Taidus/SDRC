@@ -5,7 +5,7 @@ import netViewer.ArbitraryNodeMegaMerger;
 import netViewer.Link;
 
 
-public class Asleep extends MegaMergerAbstractState implements State {
+public class Asleep extends MegaMergerAbstractState {
 	
 	public Asleep(ArbitraryNodeMegaMerger node) {
 		super(node);

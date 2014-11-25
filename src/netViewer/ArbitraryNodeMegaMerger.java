@@ -14,6 +14,8 @@ import megaMerger.FindingMergeEdge;
 import megaMerger.InsideMessage;
 import megaMerger.LetUsMergeMessage;
 import megaMerger.MakeMergeRequestMessage;
+import megaMerger.MegaMergerMessage;
+import megaMerger.MegaMergerState;
 import megaMerger.OutsideMessage;
 import megaMerger.UpdateAndFindMessage;
 import megaMerger.UpdateMessage;
@@ -22,6 +24,7 @@ import megaMerger.WhereMessage;
 
 public class ArbitraryNodeMegaMerger extends Node {
 
+	private MegaMergerState nodeState;
 	private String nodeName;
 	private int level;
 	private Set<Link> childrenEdges;
@@ -42,6 +45,10 @@ public class ArbitraryNodeMegaMerger extends Node {
 		this.internalEdges = new HashSet<>();
 		this.suspendedRequests = new HashMap<>();
 		this.suspendedQuestions = new HashMap<>();
+	}
+	
+	public void become(MegaMergerState nextState){
+		this.nodeState = nextState;
 	}
 
 	@Override
@@ -65,7 +72,8 @@ public class ArbitraryNodeMegaMerger extends Node {
 
 	@Override
 	protected synchronized void receive(Message msg, Link link) {
-		msg.accept(nodeState, link);
+		//XXX bruttura: cast. Ma se non si ristruttura la classe Node è difficile far di meglio
+		((MegaMergerMessage) msg).accept(nodeState, link); 
 	}
 
 	public boolean isDowntown() {
@@ -234,11 +242,11 @@ public class ArbitraryNodeMegaMerger extends Node {
 			if (suspendedRequests.get(l).getLevel() < level) {
 				addChild(l);
 			}
-			else{
+			else {
 				stillSuspendedRequests.put(l, suspendedRequests.get(l));
 			}
 		}
-		
+
 		suspendedRequests = stillSuspendedRequests;
 	}
 

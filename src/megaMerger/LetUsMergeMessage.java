@@ -1,11 +1,9 @@
 package megaMerger;
 
-import general.Message;
-import general.State;
 import netViewer.Link;
 
 
-public class LetUsMergeMessage implements Message {
+public class LetUsMergeMessage implements MegaMergerMessage {
 
 	private int level, id;
 	private String name;
@@ -17,7 +15,7 @@ public class LetUsMergeMessage implements Message {
 	}
 
 	@Override
-	public void accept(State s, Link sender) {
+	public void accept(MegaMergerState s, Link sender) {
 		s.handle(this, sender);
 	}
 	

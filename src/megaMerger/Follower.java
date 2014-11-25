@@ -1,7 +1,7 @@
 package megaMerger;
 
-import netViewer.ArbitraryNodeMegaMerger;
 import general.State;
+import netViewer.ArbitraryNodeMegaMerger;
 
 
 public class Follower extends MegaMergerAbstractState {
