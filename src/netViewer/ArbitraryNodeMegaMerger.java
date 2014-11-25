@@ -119,7 +119,7 @@ public class ArbitraryNodeMegaMerger extends Node {
 		return suspendedQuestions.remove(questionSender);
 	}
 
-	public boolean previousRequestOnMergeEdgeFound() {
+	public boolean previousFriendlyMergeRequestOnMergeEdgeFound() {
 		for (Link entry : suspendedRequests.keySet()) {
 			if (suspendedRequests.get(entry).getLevel() == level && entry.equals(mergePathNextEdge)) {
 				return true;

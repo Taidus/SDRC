@@ -664,7 +664,7 @@ class NetworkManager implements ActionListener {
 	private void resetLinks() {
 		Enumeration allLinks = linksVector.elements();
 		while (allLinks.hasMoreElements()) {
-			((Link)allLinks.nextElement()).setColor(Link.LinkDefaultColor);
+			((Link)allLinks.nextElement()).setColor(Link.DEFAULT_LINK_COLOR);
 		}
 	}
 

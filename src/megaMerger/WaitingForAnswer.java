@@ -11,7 +11,7 @@ public class WaitingForAnswer extends MegaMergerAbstractState {
 	}
 
 	public void checkForPreviousRequests() {
-		if (node.previousRequestOnMergeEdgeFound()) {
+		if (node.previousFriendlyMergeRequestOnMergeEdgeFound()) {
 			acceptFriendlyMerge(node.processSuspendedRequest(node.getMergePathNextEdge()).getId());
 		}
 	}

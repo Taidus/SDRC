@@ -62,4 +62,54 @@ public abstract class MegaMergerAbstractState implements MegaMergerState{
 	public String toString() {
 		return "State: " + getClass().getName().toLowerCase();
 	}
+	
+	@Override
+	public void handle(FoundMessage m, Link sender) {
+		 defaultHandle();
+	}
+	
+	@Override
+	public void handle(InsideMessage m, Link sender) {
+		 defaultHandle();
+	}
+	
+	
+	@Override
+	public void handle(LetUsMergeMessage m, Link sender) {
+		 defaultHandle();
+	}
+	
+	@Override
+	public void handle(MakeMergeRequestMessage m, Link sender) {
+		 defaultHandle();
+	}
+	
+	@Override
+	public void handle(NotifyDoneMessage m, Link sender) {
+		 defaultHandle();
+	}
+	
+	@Override
+	public void handle(OutsideMessage m, Link sender) {
+		 defaultHandle();
+	}
+	
+	@Override
+	public void handle(UpdateAndFindMessage m, Link sender) {
+		 defaultHandle();
+	}
+	
+	@Override
+	public void handle(UpdateMessage m, Link sender) {
+		 defaultHandle();
+	}
+	
+	@Override
+	public void handle(WhereMessage m, Link sender) {
+		 defaultHandle();
+	}
+	
+	private final void defaultHandle(){
+		assert false : this.getClass();
+	}
 }

@@ -42,13 +42,18 @@ public class Link {
 	private NetViewerMessage[] syncMessage;
 
 	//public static Color LINK_COLOUR = Color.black; // for drawing
-	public static Color LinkDefaultColor = Color.black;
+	public static Color DEFAULT_LINK_COLOR = Color.black;
+	public static Color SURVIVED_LINK_COLOR = Color.blue;
+
 	private Color link_color;
 	public void setColor (Color color){
 		link_color = color;
 	}
 	public Color getColor (){
 		return link_color;
+	}
+	public void markAsSurvived(){
+		setColor(SURVIVED_LINK_COLOR);
 	}
 	
 	public Link(Node n1, Node n2) {
@@ -64,7 +69,7 @@ public class Link {
 		control = new Object();
 		syncMessage = new NetViewerMessage[2];
 		
-		setColor(LinkDefaultColor);
+		setColor(DEFAULT_LINK_COLOR);
 		cost=-1;
 	}
 

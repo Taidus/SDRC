@@ -44,6 +44,7 @@ public class Awake extends MegaMergerAbstractState {
 	public void handle(NotifyDoneMessage m, Link sender) {
 		node.sendToChildren(m);
 		changeState(new Follower(node));
+		sender.markAsSurvived();
 	}
 	
 
