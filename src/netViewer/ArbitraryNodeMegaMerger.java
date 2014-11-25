@@ -49,6 +49,7 @@ public class ArbitraryNodeMegaMerger extends Node {
 	
 	public void become(MegaMergerState nextState){
 		this.nodeState = nextState;
+		become(nextState.intValue());
 	}
 
 	@Override
