@@ -1,0 +1,228 @@
+PROTOCOL MegaMerger
+
+States: 
+	S = {ASLEEP, AWAKE, WAITING_FOR_ANSWER, FINDING_MERGE_EDGE, FOLLOWER, LEADER};
+	S_init = {ASLEEP};
+	S_term = {FOLLOWER, LEADER}.
+
+Restrictions: IR.
+
+
+ASLEEP
+  Spontaneously
+    PROC_INIT
+    PROC_SEND_MERGE_REQUEST
+    
+  Receiving('let_us_merge', msg_name, msg_level, msg_id)
+    PROC_INIT
+    PROC_SEND_MERGE_REQUEST
+    if msg_level == level && sender.edge == mergeEdge
+	START_FRIENDLY_MERGE(mergeEdge, msg_id)
+    else
+      suspendedRequests.add(sender.edge, message)
+
+  Receiving('outside?', msg_name, msg_level)
+    PROC_INIT
+    suspendedQuestions.add(sender.edge, message)
+    PROC_SEND_MERGE_REQUEST
+
+
+AWAKE
+
+  Receiving('outside?', msg_name, msg_level)
+    if name == msg_name
+      send('internal') to sender
+    else if level >= msg_level
+      send('external') to sender
+    else
+      suspendedQuestions.add(sender.edge, message)
+    
+
+      
+  Receiving('make_merge_request')
+    PROC_SEND_MERGE_REQUEST
+    
+    
+    
+  Receiving('let_us_merge', msg_name, msg_level, msg_id)
+    if msg_level < level
+      send('absorbed', name, level, false) to sender
+      childrenEdges.add(sender.edge)
+    else if msg_level == level
+      suspendedRequests.add(sender.edge, message)
+    else
+      suspendedRequests.add(sender.edge, message)
+  
+  Receiving('broadcast_update', msg_name, msg_level, updateAndFind)
+    downtown = false
+    UPDATE(msg_name, msg_level, sender.edge, updateAndFind)
+    
+    
+    
+    
+  Receiving('notify_done')
+    send('notify_done') along all childrenEdges
+    become FOLLOWER
+
+
+WAITING_FOR_ANSWER
+  Receiving('let_us_merge', msg_name, msg_level, msg_id)
+    if msg_level < level
+      send('absorbed', name, level, false) to sender
+      childrenEdges.add(sender.edge)
+    else if msg_level == level
+      if sender.edge == mergeEdge //friendly merge
+	START_FRIENDLY_MERGE(mergeEdge, msg_id)
+      else
+	suspendedRequests.add(sender.edge, message)
+    else
+      suspendedRequests.add(sender.edge, message)
+      
+  Receiving('absorbed', msg_name, msg_level, updateAndFind)
+    downtown = false
+    become(AWAKE)
+    UPDATE(msg_name, msg_level, sender.edge, updateAndFind)
+    
+  Receiving('outside?', msg_name, msg_level)
+    if name == msg_name
+      send('internal') to sender
+    else if level >= msg_level
+      send('external') to sender
+    else
+      suspendedQuestions.add(sender.edge, message)
+      
+      
+      
+      
+FINDING_MERGE_EDGE
+  
+  Receiving('internal')
+    internal_edges.add(sender.edge)
+    PROC_FIND_MIN_EXTERNAL_EDGE
+  
+  Receiving('external')
+    mergeEdge = sender.edge
+    min_external_edge_found = true
+    PROC_CHECK_FOUND
+    
+  Receiving('found', child_min)
+    if child_min < children_min
+      children_min = child_min
+      childEdge_to_mergeEdge = sender.edge
+    count_children_response++
+    PROC_CHECK_FOUND
+    
+  Receiving('outside?', msg_name, msg_level)
+    if name == msg_name
+      if sender.edge == outsideRequest_edge
+	internal_edges.add(sender.edge)
+	PROC_FIND_MIN_EXTERNAL_EDGE
+      else
+	send('internal') to sender
+    else if level >= msg_level
+      send('external') to sender
+    else
+      suspendedQuestions.add(sender.edge, message)
+
+  Receiving('let_us_merge', msg_name, msg_level, msg_id)
+    if msg_level < level
+      send('absorbed', name, level, true) to sender
+      childrenEdges.add(sender.edge)
+    else if msg_level == level
+      suspendedRequests.add(sender.edge, message)
+    else
+      suspendedRequests.add(sender.edge, message)
+      
+    
+    
+PROC_INIT
+  name = 'City ' + id
+  level = 1
+  downtown = TRUE
+  parentEdge = NULL
+  childrenEdges = {}
+  childEdge_to_mergeEdge = NULL
+  count_children_response = 0
+  children_min = infinity
+  mergeEdge = min(edges)
+  internal_edges = {}
+  outsideRequest_edge = NULL
+  suspendedRequests = new Map[senderEdge -> message]
+  suspendedQuestions = new Map[senderEdge -> message]
+  candidate_node_in_subtree = true
+
+PROC_SEND_MERGE_REQUEST
+  if candidate_node_in_subtree
+    send('let_us_merge', name, level, id) along mergeEdge
+    request_entry = NULL
+    foreach entry in suspendedRequests
+      if entry.message.level == level && entry.senderEdge == mergeEdge
+	request_entry = entry
+	break //#YOLO
+    if request_entry != NULL
+      START_FRIENDLY_MERGE(mergeEdge, request_entry.message.id)
+    else
+      become(WAITING_FOR_ANSWER)
+  else
+    send('make_merge_request') along childEdge_to_mergeEdge
+
+PROC_FIND_NEXT_MERGE_EDGE
+  childEdge_to_mergeEdge = NULL
+  count_children_response = 0
+  children_min = infinity
+  min_external_edge_found = false
+  mergeEdge = infinity
+  candidate_node_in_subtree = false
+  internal_edges = internal_edges U childrenEdges U parentEdge
+  outsideRequest_edge = NULL
+  become(FINDING_MERGE_EDGE)
+  PROC_FIND_MIN_EXTERNAL_EDGE
+  
+PROC_FIND_MIN_EXTERNAL_EDGE
+  if !isempty(edges\internal_edges)
+    outsideRequest_edge = min(edges\internal_edges)
+    send('outside?', name, level) along outsideRequest_edge
+  else
+    min_external_edge_found = true
+    PROC_CHECK_FOUND
+
+PROC_CHECK_FOUND
+  if count_children_response == childrenEdges.size && min_external_edge_found
+    if downtown && childEdge_to_mergeEdge == mergeEdge == infinity
+      send('notify_done') along all childrenEdges
+      become LEADER
+    else
+      if childEdge_to_mergeEdge > mergeEdge
+	candidate_node_in_subtree = true  
+      become(AWAKE)
+      if !downtown
+	send('found', min(childEdge_to_mergeEdge, mergeEdge)) along parentEdge
+      else
+	PROC_SEND_MERGE_REQUEST
+      
+
+    
+UPDATE(new_name, new_level, sender_edge, updateAndFind)
+  name = new_name
+  level = new_level
+  childrenEdges.add(parentEdge)
+  childrenEdges.remove(sender_edge)
+  parentEdge = sender_edge
+  send('broadcast_update', name, level, updateAndFind) along all childrenEdges
+  foreach entry in suspendedRequests
+    if entry.message.level < level
+      send('absorbed', name, level, updateAndFind) along entry.senderEdge
+  foreach entry in suspendedQuestions
+    if entry.message.name == name
+      send('internal') along entry.senderEdge
+    else if entry.message.level <= level
+      send('external') along entry.senderEdge
+  if updateAndFind == TRUE
+    PROC_FIND_NEXT_MERGE_EDGE
+   
+START_FRIENDLY_MERGE(mergeEdge, otherCityNode_id)
+  if id < otherCityNode_id
+    downtown = true
+    childrenEdges.add(mergeEdge)
+    UPDATE(mergeEdge.name, level+1, NULL, true)
+    
