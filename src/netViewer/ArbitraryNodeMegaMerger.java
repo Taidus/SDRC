@@ -2,7 +2,6 @@ package netViewer;
 
 import general.Message;
 
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -46,8 +45,8 @@ public class ArbitraryNodeMegaMerger extends Node {
 		this.suspendedRequests = new HashMap<>();
 		this.suspendedQuestions = new HashMap<>();
 	}
-	
-	public void become(MegaMergerState nextState){
+
+	public void become(MegaMergerState nextState) {
 		this.nodeState = nextState;
 		become(nextState.intValue());
 	}
@@ -68,13 +67,13 @@ public class ArbitraryNodeMegaMerger extends Node {
 
 		this.nodeName = "City " + nodeId;
 		this.level = 1;
-		this.mergePathNextEdge = getMinCostLink(links);
+		this.mergePathNextEdge = FindingMergeEdge.getMinCostLink(links);
 	}
 
 	@Override
 	protected synchronized void receive(Message msg, Link link) {
-		//XXX bruttura: cast. Ma se non si ristruttura la classe Node è difficile far di meglio
-		((MegaMergerMessage) msg).accept(nodeState, link); 
+		// XXX bruttura: cast. Ma se non si ristruttura la classe Node è difficile far di meglio
+		((MegaMergerMessage) msg).accept(nodeState, link);
 	}
 
 	public boolean isDowntown() {
@@ -101,12 +100,12 @@ public class ArbitraryNodeMegaMerger extends Node {
 		this.mergePathNextEdge = mergePathNextEdge;
 	}
 
-	public void suspendRequest(LetUsMergeMessage message, Link sender) {
-		suspendedRequests.put(sender, message);
+	public void suspendRequest(LetUsMergeMessage request, Link sender) {
+		suspendedRequests.put(sender, request);
 	}
 
-	public void suspendQuestion(WhereMessage message, Link sender) {
-		suspendedQuestions.put(sender, message);
+	public void suspendQuestion(WhereMessage question, Link sender) {
+		suspendedQuestions.put(sender, question);
 	}
 
 	public LetUsMergeMessage processSuspendedRequest(Link requestSender) {
@@ -131,6 +130,13 @@ public class ArbitraryNodeMegaMerger extends Node {
 	public void addChild(Link child) {
 		assert null != child;
 		childrenEdges.add(child);
+		NetViewer.out.println("Node " + nodeId + " add " + child);
+	}
+
+	private void removeChild(Link child) {
+		childrenEdges.remove(child);
+		assert !childrenEdges.contains(child);
+		NetViewer.out.println("Node " + nodeId + " removed " + child);
 	}
 
 	public int getChildrenNumber() {
@@ -196,6 +202,19 @@ public class ArbitraryNodeMegaMerger extends Node {
 	public void broadcastUpdateAndFind(String new_name, int new_level, Link sender_edge) {
 		update(new_name, new_level, sender_edge);
 
+		if (!childrenEdges.isEmpty()) {
+			String s = "Node " + nodeId + " received on " + sender_edge + " and sent to nodes ";
+			for (Link l : childrenEdges) {
+				Node n = l.getNode(0);
+				if (this == n) {
+					n = l.getNode(1);
+				}
+				assert this != n;
+				s += n.getNodeId() + " ";
+			}
+			NetViewer.out.println(s);
+		}
+
 		sendToChildren(new UpdateAndFindMessage(nodeName, level));
 
 		FindingMergeEdge newState = new FindingMergeEdge(this);
@@ -210,8 +229,7 @@ public class ArbitraryNodeMegaMerger extends Node {
 		if (!isDowntown()) {
 			addChild(parentEdge);
 		}
-		childrenEdges.remove(sender_edge);
-		assert !childrenEdges.contains(sender_edge);
+		removeChild(sender_edge);
 		parentEdge = sender_edge;
 		answerQuestions();
 		addWeakerRequestersAsChildren();
@@ -240,7 +258,7 @@ public class ArbitraryNodeMegaMerger extends Node {
 		Map<Link, LetUsMergeMessage> stillSuspendedRequests = new HashMap<>();
 
 		for (Link l : suspendedRequests.keySet()) {
-			if (suspendedRequests.get(l).getLevel() < level) {
+			if (weakerCityRequest(suspendedRequests.get(l))) {
 				addChild(l);
 			}
 			else {
@@ -251,19 +269,13 @@ public class ArbitraryNodeMegaMerger extends Node {
 		suspendedRequests = stillSuspendedRequests;
 	}
 
-	public static Link getMinCostLink(Collection<Link> linkSet) {
-		assert !linkSet.isEmpty();
-		Link result = null;
-
-		int currentCost = Integer.MAX_VALUE;
-		for (Link l : linkSet) {
-			if (l.getCost() <= currentCost) {
-				result = (Link) l;
-				currentCost = l.getCost();
-			}
-		}
-
-		assert result != null;
-		return result;
+	private boolean weakerCityRequest(LetUsMergeMessage request) {
+		return request.getLevel() < level;
+	}
+	
+	public boolean isRequestLate(Link sender) {
+		// il controllo può servire in caso di rete non-FIFO: in un Friendly merge posso ricevere il messaggio di aggiornamento della nuova
+		// downtown PRIMA di aver ricevuto il Let-us-merge
+		return parentEdge == sender || childrenEdges.contains(sender);
 	}
 }

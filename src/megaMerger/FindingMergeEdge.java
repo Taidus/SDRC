@@ -2,6 +2,7 @@ package megaMerger;
 
 import general.State;
 
+import java.util.Collection;
 import java.util.Set;
 
 import netViewer.ArbitraryNodeMegaMerger;
@@ -62,9 +63,9 @@ public class FindingMergeEdge extends MegaMergerAbstractState {
 	}
 
 	@Override
-	protected void absorb(Link sender) {
-		node.sendMessage(new UpdateAndFindMessage(node.getNodeName(), node.getLevel()), sender);
-		node.addChild(sender);
+	protected void absorb(Link linkToWeakerCity) {
+		node.sendMessage(new UpdateAndFindMessage(node.getNodeName(), node.getLevel()), linkToWeakerCity);
+		node.addChild(linkToWeakerCity);
 	}
 
 	@Override
@@ -103,7 +104,7 @@ public class FindingMergeEdge extends MegaMergerAbstractState {
 	public void findMinExternalEdge() {
 		Set<Link> nonInternalLinks = node.getNonInternalLinks();
 		if (!nonInternalLinks.isEmpty()) {
-			node.sendMessage(new WhereMessage(node.getNodeName(), node.getLevel()), ArbitraryNodeMegaMerger.getMinCostLink(nonInternalLinks));
+			node.sendMessage(new WhereMessage(node.getNodeName(), node.getLevel()), FindingMergeEdge.getMinCostLink(nonInternalLinks));
 		}
 		else {
 			edgeScanningDone = true;
@@ -148,5 +149,19 @@ public class FindingMergeEdge extends MegaMergerAbstractState {
 
 	private boolean internalSubtree() {
 		return NullLink.isNull(bestChildren) && NullLink.isNull(myMinEdge);
+	}
+
+	public static Link getMinCostLink(Collection<Link> linkSet) {
+		assert !linkSet.isEmpty();
+		Link result = new NullLink();
+	
+		for (Link link : linkSet) {
+			if (link.getCost() <= result.getCost()) {
+				result = link;
+			}
+		}
+	
+		assert !NullLink.isNull(result);
+		return result;
 	}
 }
