@@ -16,6 +16,11 @@ public abstract class YoyoAbstractState implements YoyoState{
 	public void handle(SetupMessage m, Link sender){		
 		defaultHandle(sender);
 }
+	
+	@Override
+	public void handle(YoMessage m, Link sender) {
+		defaultHandle(sender);	
+}
 
 
 	@Override
