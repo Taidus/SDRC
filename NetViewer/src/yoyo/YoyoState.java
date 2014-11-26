@@ -17,6 +17,4 @@ public interface YoyoState extends State {
 	
 	public void changeState(YoyoState nextState);
 
-	
-
 }
