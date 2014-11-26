@@ -1,10 +1,9 @@
 package yoyo;
 
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Set;
 
-import general.Message;
+import general.State;
 import netViewer.ArbitraryNodeYoYo;
 import netViewer.Link;
 
@@ -17,9 +16,9 @@ public class Sink extends YoyoAbstractState {
 	@Override
 	public void handle(YoMessage m, Link sender) {
 		
-		addElementToMap(m.getId(),sender); //TODO: manca anche questo
+		node.addElementToMap(m.getId(),sender);
 		if (m.getId() < node.getMinReceivedValue())
-			setMinReceivedValue(); // TODO: setMinReceivedValue()
+			node.setMinReceivedValue(m.getId());
 		if (node.idReceivedFromAllLinks()) {
 			for (int id : get_linksThatSentThatId_keys()) {
 				if (id == node.getMinReceivedValue()) { // ID Minima
@@ -59,19 +58,11 @@ public class Sink extends YoyoAbstractState {
 
 	@Override
 	public int intValue() {
-		// TODO Auto-generated method stub
-		return 0;
-	}
-
-	// TODO: Da qui in poi sono metodi che mi mancano
-	private void setMinReceivedValue() {
+		return State.SINK;
 	}
 
 	private Set<Integer> get_linksThatSentThatId_keys() {
 		return null;
 	}
 	
-	private void addElementToMap(int id, Link link){
-		
-	}
 }

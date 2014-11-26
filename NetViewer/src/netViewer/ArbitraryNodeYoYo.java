@@ -6,8 +6,13 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import megaMerger.Follower;
+import megaMerger.Leader;
 import yoyo.Asleep;
+import yoyo.Internal;
 import yoyo.SetupMessage;
+import yoyo.Sink;
+import yoyo.Source;
 import yoyo.YoMessage;
 import yoyo.YoyoMessage;
 import yoyo.YoyoState;
@@ -81,7 +86,7 @@ public class ArbitraryNodeYoYo extends Node {
 		} else if(outgoingEdges.isEmpty()) {
 			become(new Sink(this));
 		} else {
-			become(new InternalNode(this));
+			become(new Internal(this));
 		}
 	}
 	
@@ -143,6 +148,10 @@ public class ArbitraryNodeYoYo extends Node {
 		return minReceivedValue;
 	}
 	
+	public void setMinReceivedValue(int minValue) {
+		minReceivedValue = minValue;
+	}
+	
 	public Set<Link> getLinksById(int id){
 		return new HashSet<Link>(linksPerSentId.get(id));
 	}
@@ -183,6 +192,17 @@ public class ArbitraryNodeYoYo extends Node {
 	public void sendMessageToAllIdLinks(Message toSend, int id) {
 		for(Link toSendTo : linksPerSentId.get(id)) {
 			send(toSend, toSendTo);
+		}
+	}
+	
+	public void addElementToMap(int id, Link link){
+		if (linksPerSentId.containsKey(id)){
+			linksPerSentId.get(id).add(link);
+		}
+		else{
+			Set<Link> singleLink = new HashSet<>();
+			singleLink.add(link);
+			linksPerSentId.put(id, singleLink);
 		}
 	}
 }
