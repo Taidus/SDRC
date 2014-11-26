@@ -16,7 +16,8 @@ public class Sink extends YoyoAbstractState {
 
 	@Override
 	public void handle(YoMessage m, Link sender) {
-
+		
+		addElementToMap(m.getId(),sender); //TODO: manca anche questo
 		if (m.getId() < node.getMinReceivedValue())
 			setMinReceivedValue(); // TODO: setMinReceivedValue()
 		if (node.idReceivedFromAllLinks()) {
@@ -69,5 +70,8 @@ public class Sink extends YoyoAbstractState {
 	private Set<Integer> get_linksThatSentThatId_keys() {
 		return null;
 	}
-
+	
+	private void addElementToMap(int id, Link link){
+		
+	}
 }
