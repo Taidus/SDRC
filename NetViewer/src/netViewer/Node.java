@@ -325,4 +325,35 @@ public abstract class Node extends Thread {
 		return ids;
 	}
 
+	//TODO CHECK FOR EQUALS PARAMETERS: i am not sure what must they be
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((links == null) ? 0 : links.hashCode());
+		result = prime * result + nodeId;
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Node other = (Node) obj;
+		if (links == null) {
+			if (other.links != null)
+				return false;
+		} else if (!links.equals(other.links))
+			return false;
+		if (nodeId != other.nodeId)
+			return false;
+		return true;
+	}
+	
+	
+
 }

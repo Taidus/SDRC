@@ -9,6 +9,7 @@ import general.Message;
 import general.State;
 import general.StringMessage;
 
+import java.util.Arrays;
 import java.util.Vector;
 import java.util.Enumeration;
 import java.awt.Point;
@@ -428,5 +429,32 @@ public class Link {
   public Vector<NetViewerMessage> getQueue() {
     return queue;
   }
+  
+//TODO CHECK FOR EQUALS PARAMETERS: i am not sure what must they be
+@Override
+public int hashCode() {
+	final int prime = 31;
+	int result = 1;
+	result = prime * result + cost;
+	result = prime * result + Arrays.hashCode(nodesArray);
+	return result;
+}
+@Override
+public boolean equals(Object obj) {
+	if (this == obj)
+		return true;
+	if (obj == null)
+		return false;
+	if (getClass() != obj.getClass())
+		return false;
+	Link other = (Link) obj;
+	if (cost != other.cost)
+		return false;
+	if (!Arrays.equals(nodesArray, other.nodesArray))
+		return false;
+	return true;
+}
+  
+  
 
 }
