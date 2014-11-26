@@ -224,9 +224,11 @@ public class ArbitraryNodeYoYo extends Node {
 		for (Integer id : linksPerSentId.keySet()) {
 
 			Set<Link> links = linksPerSentId.get(id);
-			redudantLinks.addAll(links);
-			Iterator<Link> it = links.iterator();
-			redudantLinks.remove(it.next());
+			if (!links.isEmpty()) {
+				redudantLinks.addAll(links);
+				Iterator<Link> it = links.iterator();
+				redudantLinks.remove(it.next());
+			}
 
 		}
 
