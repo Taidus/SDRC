@@ -47,17 +47,12 @@ SINK
 	  ingoingEdges.remove(receivedIDs.get(id)); //flip edges
 	  outgoingEdges.put(receivedIDs.get(id))
 	
-	PROC_TO_PRUNE_FOR_BEING_REDUDANT
-	prune='false'
-	if(receivedIDs.size-to_prune_edges = 1)
-	  prune='true'
-	  pruned_ingoing=true;
-	  ingoingEdges={}
-	
+	PROC_SELECT_TO_PRUNE_EDGES
+
 	foreach edge in receivedIDs.get(id)
-	  if(prune=false && edge in to_prune_edges)
+	  prune=false
+	  if(edge in to_prune_edges)
 	    prune =true;
-	    pruned_ingoing=true;
 	    ingoingEdges.remove(edge)
 	  send(message,prune) to edge
       
@@ -89,7 +84,7 @@ yes_neighbours ={}
 no_neighbours ={}
 receivedIDs={}
 num_of_responses_needed=0;
-pruned_ingoing=false; //per discriminare i sink che hanno prunato tutto e le sorgenti che diventano leader
+pruned_ingoing=false; //per discriminare i sink che hanno prunato tutto e diventano FOLLWER e l'ultima sorgente che diventana LEDADER
 send('Setup',id(x)) to N(x)
 become AWAKE
 
@@ -140,21 +135,19 @@ PROC_CHECK_YES_NO
       outgoingEdges.put(ingoingEdges)
       ingoingEdges={}
       
-    prune =false
-    PROC_TO_PRUNE_FOR_BEING_REDUDANT
-    if(outgoingEdges.size=0 && ingoingEdges-to_prune_edges.size=1)
-      prune=true
-      pruned_ingoing=true
-      ingoingEdges={}
-      
+
+    PROC_SELECT_TO_PRUNE_EDGES 
+
+    
     for each edge in send_yes_edges
+      prune=false
       if edge in to_prune_edges
 	prune=true
-	pruned_ingoing=true
 	ingoingEdges.remove(edge)
       send('Yes',prune)
      
     for each edge in send_no_edges
+      prune=false
        if edge in to_prune_edges
 	ingoingEdges.remove(edge)
 	prune=true
@@ -162,8 +155,12 @@ PROC_CHECK_YES_NO
    
       PROC_CHOOSE_STATE
 
-PROC_TO_PRUNE_FOR_BEING_REDUDANT
+PROC_SELECT_TO_PRUNE_EDGES
 to_prune_edges = edges in receivedIDs.values which share the same id except one (randomly chosen)
+if(outgoingEdges.size=0 && ingoingEdges-to_prune_edges.size=1)
+  to_prune_edges=ingoingEdges
+if(to_prune_edges.size >0)
+  pruned_ingoing=true
 
   
     
