@@ -1,14 +1,13 @@
 package yoyo;
 
+import netViewer.ArbitraryNodeYoYo;
 import netViewer.Link;
 
 public class YesMessage implements YoyoMessage {
-
-	private boolean toPrune;
 	
 	@Override
 	public String printString() {
-		return "Yes: toPrune = "+toPrune;
+		return "Yes";
 	}
 
 	@Override
@@ -17,9 +16,7 @@ public class YesMessage implements YoyoMessage {
 		
 	}
 
-	public boolean isToPrune() {
-		return toPrune;
+	public void prune(ArbitraryNodeYoYo node, Link sender){
+		
 	}
-
-	
 }

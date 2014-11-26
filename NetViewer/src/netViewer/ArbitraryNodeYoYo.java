@@ -23,10 +23,10 @@ public class ArbitraryNodeYoYo extends Node {
 	private Set<Link> noNeighbours;
 	private Set<Link> receivedIDs;
 
-	private Map<Integer, Set<Link>> linksThatSentThatId;
+	private Map<Integer, Set<Link>> linksPerSentId;
 	private int minReceivedValue;
 	
-	int num_of_responses_needed;
+	int numOfResponsesNeeded;
 
 	public ArbitraryNodeYoYo(Integer ID) {
 		super(ID);
@@ -40,7 +40,7 @@ public class ArbitraryNodeYoYo extends Node {
 		noNeighbours = new HashSet<>();
 		receivedIDs = new HashSet<>();
 
-		num_of_responses_needed = 0;
+		numOfResponsesNeeded = 0;
 	}
 
 	public void become(YoyoState nextState) {
@@ -85,13 +85,6 @@ public class ArbitraryNodeYoYo extends Node {
 		}
 	}
 	
-	public void addOutgoingEdge(Link toAdd) {
-		outgoingEdges.add(toAdd);
-	}
-	
-	public void addIncomingEdge(Link toAdd) {
-		incomingEdges.add(toAdd);
-	}	
 	
 	public void addYesNeighbours(Link toAdd) {
 		yesNeighbours.add(toAdd);
@@ -101,21 +94,38 @@ public class ArbitraryNodeYoYo extends Node {
 		noNeighbours.add(toAdd);
 	}
 	
-	public void removeOutgoingEdge(Link toRemove) {
-		outgoingEdges.remove(toRemove);
+	public void flipIncomingLinks(Set<Link> links){
+		assert incomingEdges.containsAll(links);
+		incomingEdges.removeAll(links);
+		outgoingEdges.addAll(links);
 	}
 	
-	public void removeIncomingEdge(Link toRemove) {
-		incomingEdges.remove(toRemove);
-	}
-
-	public void removeSetOfIncomingEdges(Set<Link> toRemove) {
-		incomingEdges.removeAll(toRemove);
+	public void flipOutgoingLinks(Set<Link> links){
+		assert outgoingEdges.containsAll(links);
+		outgoingEdges.removeAll(links);
+		incomingEdges.addAll(links);
 	}
 	
-	public void removeSetOfOutgoingEdges(Set<Link> toRemove) {
-		outgoingEdges.removeAll(toRemove);
+	public void pruneIncomingLinks(Set<Link> links){
+		assert incomingEdges.containsAll(links);
+		incomingEdges.removeAll(links);
 	}
+	
+	public void pruneOutgoingLinks(Set<Link> links){
+		assert outgoingEdges.containsAll(links);
+		outgoingEdges.removeAll(links);
+	}
+	
+	public void pruneIncomingLink(Link link){
+		assert incomingEdges.contains(link);
+		incomingEdges.remove(link);
+	}
+	
+	public void pruneOutgoingLink(Link link){
+		assert outgoingEdges.contains(link);
+		outgoingEdges.remove(link);
+	}
+	
 	
 	public int getYesNeighboursSize(){
 		return yesNeighbours.size();
@@ -125,19 +135,40 @@ public class ArbitraryNodeYoYo extends Node {
 		return noNeighbours.size();
 	}
 	
+	public int getNumOfResponsesNeeded(){
+		return numOfResponsesNeeded;
+	}
+	
+	public int getMinReceivedValue() {
+		return minReceivedValue;
+	}
+	
+	public Set<Link> getLinksById(int id){
+		return new HashSet<Link>(linksPerSentId.get(id));
+	}
+	
+	public Set<Link> linksThatSentDifferentId(int id){
+		Set<Link> links = new HashSet<>();
+		for(Integer currentId : linksPerSentId.keySet()){
+			if(currentId != id){
+				links.addAll(linksPerSentId.get(currentId));
+			}
+		}
+		return links;
+	}
 	
 	public void receivedIdOn(Link link, int id) {
-		linksThatSentThatId.get(id).add(link);
+		linksPerSentId.get(id).add(link);
 	}
 	
 	public void clearIdMap() {
-		linksThatSentThatId.clear();
+		linksPerSentId.clear();
 	}
 	
 	//FIXME: cambiare nome
 	public boolean idReceivedFromAllLinks() {
 		int size = 0;
-		for(Set<Link> toCompute : linksThatSentThatId.values()) {
+		for(Set<Link> toCompute : linksPerSentId.values()) {
 			size += toCompute.size();
 		}
 		return incomingEdges.size() == size;
@@ -150,7 +181,7 @@ public class ArbitraryNodeYoYo extends Node {
 	}
 	
 	public void sendMessageToAllIdLinks(Message toSend, int id) {
-		for(Link toSendTo : linksThatSentThatId.get(id)) {
+		for(Link toSendTo : linksPerSentId.get(id)) {
 			send(toSend, toSendTo);
 		}
 	}
