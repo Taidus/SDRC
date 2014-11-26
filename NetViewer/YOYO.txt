@@ -157,7 +157,7 @@ PROC_CHECK_YES_NO
 
 PROC_SELECT_TO_PRUNE_EDGES
 to_prune_edges = edges in receivedIDs.values which share the same id except one (randomly chosen)
-if(outgoingEdges.size=0 && ingoingEdges-to_prune_edges.size=1)
+if(outgoingEdges.size=0 && ingoingEdges-to_prune_edges.size=1)  //se rimanesse un solo outgoing edge, sarei un sink foglia e quindi pruno anche questo ultimo arco
   to_prune_edges=ingoingEdges
 if(to_prune_edges.size >0)
   pruned_ingoing=true
