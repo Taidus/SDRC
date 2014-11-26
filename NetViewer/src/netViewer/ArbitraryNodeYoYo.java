@@ -17,10 +17,10 @@ public class ArbitraryNodeYoYo extends Node {
 	private YoyoState nodeState;
 	private boolean pruned_ingoing;
 	private Set<Link> outgoingEdges;
-	private Set<Link> ingoingEdges;
+	private Set<Link> incomingEdges;
 
-	private Set<Link> yes_neighbours;
-	private Set<Link> no_neighbours;
+	private Set<Link> yesNeighbours;
+	private Set<Link> noNeighbours;
 	private Set<Link> receivedIDs;
 
 	private Map<Integer, Set<Link>> linksThatSentThatId;
@@ -34,10 +34,10 @@ public class ArbitraryNodeYoYo extends Node {
 		nodeState = new Asleep(this);
 		pruned_ingoing = false;
 		outgoingEdges = new HashSet<>();
-		ingoingEdges = new HashSet<>();
+		incomingEdges = new HashSet<>();
 
-		yes_neighbours = new HashSet<>();
-		no_neighbours = new HashSet<>();
+		yesNeighbours = new HashSet<>();
+		noNeighbours = new HashSet<>();
 		receivedIDs = new HashSet<>();
 
 		num_of_responses_needed = 0;
@@ -63,19 +63,19 @@ public class ArbitraryNodeYoYo extends Node {
 		if (m.getId() > getNodeId())
 			outgoingEdges.add(sender);
 		else
-			ingoingEdges.add(sender);
-		if (outgoingEdges.size() + ingoingEdges.size() == getLinks().size())
+			incomingEdges.add(sender);
+		if (outgoingEdges.size() + incomingEdges.size() == getLinks().size())
 			chooseState();
 	}
 
 	public void chooseState() {
-		if(ingoingEdges.size() + outgoingEdges.size() == 0) {
+		if(incomingEdges.size() + outgoingEdges.size() == 0) {
 			if(!pruned_ingoing) {
 				become(new Leader(this));
 			} else {
 				become(new Follower(this));
 			}
-		} else if(ingoingEdges.isEmpty()) {
+		} else if(incomingEdges.isEmpty()) {
 			become(new Source(this));
 			sendMessageToOutgoingEdges(new YoMessage(getNodeId()));
 		} else if(outgoingEdges.isEmpty()) {
@@ -85,8 +85,63 @@ public class ArbitraryNodeYoYo extends Node {
 		}
 	}
 	
+	public void addOutgoingEdge(Link toAdd) {
+		outgoingEdges.add(toAdd);
+	}
+	
+	public void addIncomingEdge(Link toAdd) {
+		incomingEdges.add(toAdd);
+	}	
+	
+	public void addYesNeighbours(Link toAdd) {
+		yesNeighbours.add(toAdd);
+	}
+	
+	public void addNoNeighbours(Link toAdd) {
+		noNeighbours.add(toAdd);
+	}
+	
+	public void removeOutgoingEdge(Link toRemove) {
+		outgoingEdges.remove(toRemove);
+	}
+	
+	public void removeIncomingEdge(Link toRemove) {
+		incomingEdges.remove(toRemove);
+	}
+
+	public void removeSetOfIncomingEdges(Set<Link> toRemove) {
+		incomingEdges.removeAll(toRemove);
+	}
+	
+	public void removeSetOfOutgoingEdges(Set<Link> toRemove) {
+		outgoingEdges.removeAll(toRemove);
+	}
+	
+	public void receivedIdOn(Link link, int id) {
+		linksThatSentThatId.get(id).add(link);
+	}
+	
+	public void clearIdMap() {
+		linksThatSentThatId.clear();
+	}
+	
+	//FIXME: cambiare nome
+	public boolean idReceivedFromAllLinks() {
+		int size = 0;
+		for(Set<Link> toCompute : linksThatSentThatId.values()) {
+			size += toCompute.size();
+		}
+		return incomingEdges.size() == size;
+	}
+	
 	private void sendMessageToOutgoingEdges(Message toSend) {
 		for(Link toSendTo:outgoingEdges) {
+			send(toSend, toSendTo);
+		}
+	}
+	
+	public void sendMessageToAllIdLinks(Message toSend, int id) {
+		for(Link toSendTo : linksThatSentThatId.get(id)) {
 			send(toSend, toSendTo);
 		}
 	}
