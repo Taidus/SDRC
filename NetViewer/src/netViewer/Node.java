@@ -171,7 +171,7 @@ public abstract class Node extends Thread {
 		links.get(dir).receive(msg, dir);
 	}
 
-	protected void send(Message msg, int dir) {
+	public void send(Message msg, int dir) {
 		links.get(dir).receive(msg, dir);
 	}
 
@@ -179,7 +179,7 @@ public abstract class Node extends Thread {
 	 * Send a message; put it on the given link. Used in networks other than the
 	 * ring.
 	 */
-	protected void send(String msg, Link link) {
+	public void send(String msg, Link link) {
 		link.receive(msg, this);
 	}
 
@@ -190,7 +190,7 @@ public abstract class Node extends Thread {
 	 * node type.
 	 */
 
-	protected void send(Message msg, Link link) {
+	public void send(Message msg, Link link) {
 		link.receive(msg, this);
 	}
 
