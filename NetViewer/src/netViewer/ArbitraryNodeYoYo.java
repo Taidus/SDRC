@@ -23,7 +23,7 @@ import yoyo.YoyoState;
 public class ArbitraryNodeYoYo extends Node {
 
 	private YoyoState nodeState;
-	private boolean pruned_ingoing;
+	private boolean pruned_incoming;
 	private Set<Link> outgoingEdges;
 	private Set<Link> incomingEdges;
 
@@ -40,7 +40,7 @@ public class ArbitraryNodeYoYo extends Node {
 		super(ID);
 
 		nodeState = new Asleep(this);
-		pruned_ingoing = false;
+		pruned_incoming = false;
 		outgoingEdges = new HashSet<>();
 		incomingEdges = new HashSet<>();
 
@@ -78,7 +78,7 @@ public class ArbitraryNodeYoYo extends Node {
 
 	public void chooseState() {
 		if (incomingEdges.size() + outgoingEdges.size() == 0) {
-			if (!pruned_ingoing) {
+			if (!pruned_incoming) {
 				become(new Leader(this));
 			} else {
 				become(new Follower(this));
@@ -126,6 +126,7 @@ public class ArbitraryNodeYoYo extends Node {
 	public void pruneIncomingLink(Link link) {
 		assert incomingEdges.contains(link);
 		incomingEdges.remove(link);
+		pruned_incoming=true;
 	}
 
 	public void pruneOutgoingLink(Link link) {
