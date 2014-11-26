@@ -2,9 +2,10 @@ package yoyo;
 
 import netViewer.Link;
 
-public class NoMessage implements YoyoMessage{
+public class YesMessage implements YoyoMessage {
 
 	private boolean toPrune;
+	
 	@Override
 	public String printString() {
 		return "Yes: toPrune = "+toPrune;
@@ -15,9 +16,10 @@ public class NoMessage implements YoyoMessage{
 		state.handle(this, sender);
 		
 	}
-	
+
 	public boolean isToPrune() {
 		return toPrune;
 	}
 
+	
 }
