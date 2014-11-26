@@ -11,6 +11,8 @@ public interface YoyoState extends State {
 	
 	public void handle(YoMessage m, Link sender);
 	
+	public void handle(NoMessage m, Link sender);
+	
 	public void changeState(YoyoState nextState);
 
 	
