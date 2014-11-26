@@ -31,23 +31,26 @@ public class Internal extends YoyoAbstractState{
 	@Override
 	public void handle(NoMessage m, Link sender) {
 		node.addNoNeighbours(sender);
+		processYesNo(sender, false);
 	}
 	
 	@Override
 	public void handle(NoAndPruneMessage m, Link sender) {
 		node.addNoNeighbours(sender);
-		node.pruneIncomingLink(sender);
+		processYesNo(sender, true);
+		
 	}
 	
 	@Override
 	public void handle(YesMessage m, Link sender) {
 		node.addYesNeighbours(sender);
+		processYesNo(sender, false);
 	}
 	
 	@Override
 	public void handle(YesAndPruneMessage m, Link sender) {
 		node.addYesNeighbours(sender);
-		node.pruneIncomingLink(sender);
+		processYesNo(sender, true);
 	}
 	
 	

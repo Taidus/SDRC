@@ -166,6 +166,10 @@ public class ArbitraryNodeYoYo extends Node {
 		return links;
 	}
 	
+	public Set<Integer> getKeysOfLinksPerSentId(){
+		return linksPerSentId.keySet();
+	}
+	
 	public void receivedIdOn(Link link, int id) {
 		linksPerSentId.get(id).add(link);
 	}
@@ -206,5 +210,11 @@ public class ArbitraryNodeYoYo extends Node {
 			singleLink.add(link);
 			linksPerSentId.put(id, singleLink);
 		}
+	}
+	
+	//FIXME: ho fatto così visto che ad Alessio Sarullo non gli piace ritornare l'intero Set
+	public Set<Link> copyIncomingEdges(){
+		Set<Link> Edge = incomingEdges; 
+		return Edge;
 	}
 }

@@ -56,8 +56,10 @@ public abstract class YoyoAbstractState implements YoyoState{
 	}
 	
 	
-public void processYesNo(Link sender){
-		//TODO da finire/correggere
+public void processYesNo(Link sender, boolean prune){
+		if (prune){
+			node.pruneOutgoingLink(sender);
+		}
 		
 		if (node.getYesNeighboursSize() + node.getNoNeighboursSize() == node.getNumOfResponsesNeeded()){			
 			Set<Link> sendYesLinks;
@@ -71,7 +73,7 @@ public void processYesNo(Link sender){
 			
 			else{		
 				sendYesLinks=new HashSet<Link>();
-				sendNoLinks = ingoingEdges; //TODO bisogna copiare
+				sendNoLinks = node.copyIncomingEdges();
 			}
 			
 			node.flipIncomingLinks(sendNoLinks);
@@ -106,7 +108,18 @@ public void processYesNo(Link sender){
 	
 	
 	public Set<Link> processSelectedPruneLinks(){
-		//TODO
+		Set<Link> linksToPrune = new HashSet<>();
+		Set<Integer> id = node.getKeysOfLinksPerSentId();
+	
+		for(Integer currentId : id){
+			Set<Link> currentLinks = node.getLinksById(currentId);
+			if (currentLinks.size()>1){
+				//TODO : rimuovere un elemento random
+			}
+			linksToPrune.add(currentLinks);
+		}
+		
+		//TODO : continuare (devo andare a cenare che ho fameeeeeeeeeeeeeeeeeeeeeeeeeeee)
 		return null;
 	}
 }
