@@ -117,6 +117,15 @@ public class ArbitraryNodeYoYo extends Node {
 		outgoingEdges.removeAll(toRemove);
 	}
 	
+	public int getYesNeighboursSize(){
+		return yesNeighbours.size();
+	}
+	
+	public int getNoNeighboursSize(){
+		return noNeighbours.size();
+	}
+	
+	
 	public void receivedIdOn(Link link, int id) {
 		linksThatSentThatId.get(id).add(link);
 	}
