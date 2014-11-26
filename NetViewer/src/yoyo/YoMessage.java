@@ -6,6 +6,10 @@ public class YoMessage implements YoyoMessage{
 
 	private int id;
 	
+	public YoMessage(int id) {
+		this.id = id;
+	}
+	
 	public String printString() {
 		return "Yo:"+id;
 	}
@@ -17,6 +21,5 @@ public class YoMessage implements YoyoMessage{
 	@Override
 	public void accept(YoyoState state, Link sender) {
 		state.handle(this, sender);
-		
 	}
 }
