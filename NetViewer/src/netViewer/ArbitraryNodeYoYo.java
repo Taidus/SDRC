@@ -19,8 +19,8 @@ public class ArbitraryNodeYoYo extends Node {
 	private Set<Link> outgoingEdges;
 	private Set<Link> incomingEdges;
 
-	private Set<Link> yes_neighbours;
-	private Set<Link> no_neighbours;
+	private Set<Link> yesNeighbours;
+	private Set<Link> noNeighbours;
 	private Set<Link> receivedIDs;
 
 	private Map<Integer, Set<Link>> linksThatSentThatId;
@@ -36,8 +36,8 @@ public class ArbitraryNodeYoYo extends Node {
 		outgoingEdges = new HashSet<>();
 		incomingEdges = new HashSet<>();
 
-		yes_neighbours = new HashSet<>();
-		no_neighbours = new HashSet<>();
+		yesNeighbours = new HashSet<>();
+		noNeighbours = new HashSet<>();
 		receivedIDs = new HashSet<>();
 
 		num_of_responses_needed = 0;
@@ -91,6 +91,14 @@ public class ArbitraryNodeYoYo extends Node {
 	
 	public void addIncomingEdge(Link toAdd) {
 		incomingEdges.add(toAdd);
+	}	
+	
+	public void addYesNeighbours(Link toAdd) {
+		yesNeighbours.add(toAdd);
+	}
+	
+	public void addNoNeighbours(Link toAdd) {
+		noNeighbours.add(toAdd);
 	}
 	
 	public void removeOutgoingEdge(Link toRemove) {
