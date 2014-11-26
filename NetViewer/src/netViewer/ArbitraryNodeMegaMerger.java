@@ -1,4 +1,3 @@
-<<<<<<< HEAD:src/netViewer/ArbitraryNodeMegaMerger.java
 package netViewer;
 
 import general.Message;
@@ -547,4 +546,3 @@ public class ArbitraryNodeMegaMerger extends Node {
 		return parentEdge == sender || childrenEdges.contains(sender);
 	}
 }
->>>>>>> 121935428d017cc983803727732f8972a4fcc465:NetViewer/src/netViewer/ArbitraryNodeMegaMerger.java

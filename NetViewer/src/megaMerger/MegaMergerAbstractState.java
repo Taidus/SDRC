@@ -1,4 +1,3 @@
-<<<<<<< HEAD:src/megaMerger/MegaMergerAbstractState.java
 package megaMerger;
 
 import netViewer.ArbitraryNodeMegaMerger;
@@ -233,4 +232,3 @@ public abstract class MegaMergerAbstractState implements MegaMergerState {
 		assert false : this.getClass() + " " + this.node.getNodeId() + " " + sender;
 	}
 }
->>>>>>> 121935428d017cc983803727732f8972a4fcc465:NetViewer/src/megaMerger/MegaMergerAbstractState.java
