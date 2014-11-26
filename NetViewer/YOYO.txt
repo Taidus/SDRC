@@ -122,21 +122,21 @@ PROC_CHECK_YES_NO
       outgoingEdges.remove(sender)
       
   if (yes_neighbours.size + no_neighbours.size = num_of_responses_needed)
+    
+    PROC_SELECT_TO_PRUNE_EDGES 
+    
     if(yes_neighbours.size = num_of_responses_needed)
       min_id = min(receivedIDs.keys)
       send_yes_edges = receivedIDs.get(min_id)
       send_no_edges =  ingoingEdges-receivedIDs.get(min_id)
-      outgoingEdges.put(ingoingEdges-receivedIDs.get(min_id))//flippa gli archi
-      ingoingEdges.remove(ingoingEdges-receivedIDs.get(min_id))
+      outgoingEdges.put(send_no_edges)//flippa gli archi
+      ingoingEdges.remove(send_no_edges))
     else
       send_yes_edges = {}
       send_no_edges =  ingoingEdges
       //flippa gli archi
       outgoingEdges.put(ingoingEdges)
       ingoingEdges={}
-      
-
-    PROC_SELECT_TO_PRUNE_EDGES 
 
     
     for each edge in send_yes_edges
