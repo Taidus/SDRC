@@ -16,8 +16,7 @@ public class SetupMessage implements YoyoMessage{
 
 	@Override
 	public void accept(YoyoState state, Link sender) {
-		// TODO Auto-generated method stub
-		
+		state.handle(this, sender);
 	}
 	
 	
