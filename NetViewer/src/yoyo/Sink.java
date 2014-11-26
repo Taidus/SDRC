@@ -53,6 +53,7 @@ public class Sink extends YoyoAbstractState {
 				}
 			}
 		}
+		node.chooseState();
 	}
 
 	@Override
