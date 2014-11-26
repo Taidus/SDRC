@@ -78,7 +78,7 @@ public void processYesNo(Link sender, boolean prune){
 			
 			node.flipIncomingLinks(sendNoLinks);
 		
-			Set<Link> linksToPrune = processSelectedPruneLinks();
+			Set<Link> linksToPrune = node.getLinksToPrune();
 						
 			for(Link l: sendYesLinks){
 				if (linksToPrune.contains(l)){
@@ -107,19 +107,19 @@ public void processYesNo(Link sender, boolean prune){
 	}
 	
 	
-	public Set<Link> processSelectedPruneLinks(){
-		Set<Link> linksToPrune = new HashSet<>();
-		Set<Integer> id = node.getKeysOfLinksPerSentId();
-	
-		for(Integer currentId : id){
-			Set<Link> currentLinks = node.getLinksById(currentId);
-			if (currentLinks.size()>1){
-				//TODO : rimuovere un elemento random
-			}
-			linksToPrune.add(currentLinks);
-		}
-		
-		//TODO : continuare (devo andare a cenare che ho fameeeeeeeeeeeeeeeeeeeeeeeeeeee)
-		return null;
-	}
+//	public Set<Link> processSelectedPruneLinks(){
+//		Set<Link> linksToPrune = new HashSet<>();
+//		Set<Integer> id = node.getKeysOfLinksPerSentId();
+//	
+//		for(Integer currentId : id){
+//			Set<Link> currentLinks = node.getLinksById(currentId);
+//			if (currentLinks.size()>1){
+//				//TODO : rimuovere un elemento random
+//			}
+//			linksToPrune.add(currentLinks);
+//		}
+//		
+//		//TODO : continuare (devo andare a cenare che ho fameeeeeeeeeeeeeeeeeeeeeeeeeeee)
+//		return null;
+//	}
 }
