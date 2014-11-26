@@ -1,6 +1,8 @@
 package yoyo;
 
+import general.State;
 import netViewer.ArbitraryNodeYoYo;
+import netViewer.Link;
 
 
 
@@ -8,18 +10,26 @@ public class Internal extends YoyoAbstractState{
 	
 	public Internal(ArbitraryNodeYoYo node) {
 		super(node);
-		// TODO Auto-generated constructor stub
 	}
 	
 	@Override
 	public int intValue() {
-		// TODO Auto-generated method stub
-		return 0;
+		return State.INTERNAL;
 	}
 	
 	@Override
-	public void spontaneously() {
-		// TODO Auto-generated method stub
-
+	public void handle(YoMessage m, Link sender) {
+			
 	}
+	
+	@Override
+	public void handle(NoMessage m, Link sender) {
+		
+	}
+	
+	@Override
+	public void handle(YesMessage m, Link sender) {
+		
+	}
+	
 }

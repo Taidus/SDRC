@@ -12,6 +12,10 @@ public interface State {
 	public static final int FOLLOWER = 5;
 	public static final int WAITING_FOR_ANSWER = 6;
 	public static final int FINDING_MERGE_EDGE = 7;
+	public static final int INTERNAL = 8;
+	public static final int SINK = 9;
+	public static final int SOURCE = 10;
+	
 
 	public int intValue();
 
