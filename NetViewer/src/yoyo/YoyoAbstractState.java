@@ -31,8 +31,18 @@ public abstract class YoyoAbstractState implements YoyoState{
 	}
 	
 	@Override
+	public void handle(NoAndPruneMessage m, Link sender) {
+		defaultHandle(sender);	
+	}
+	
+	@Override
 	public void handle(YesMessage m,Link sender){
 		defaultHandle(sender);
+	}
+	
+	@Override
+	public void handle(YesAndPruneMessage m, Link sender) {
+		defaultHandle(sender);	
 	}
 
 

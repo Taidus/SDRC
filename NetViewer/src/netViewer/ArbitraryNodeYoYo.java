@@ -183,9 +183,10 @@ public class ArbitraryNodeYoYo extends Node {
 		return incomingEdges.size() == size;
 	}
 	
-	private void sendMessageToOutgoingEdges(Message toSend) {
+	public void sendMessageToOutgoingEdges(Message toSend) {
 		for(Link toSendTo:outgoingEdges) {
 			send(toSend, toSendTo);
+			numOfResponsesNeeded++;
 		}
 	}
 	
@@ -195,6 +196,7 @@ public class ArbitraryNodeYoYo extends Node {
 		}
 	}
 	
+	//FIXME: non so se è possibile farlo in modo più rapido
 	public void addElementToMap(int id, Link link){
 		if (linksPerSentId.containsKey(id)){
 			linksPerSentId.get(id).add(link);
