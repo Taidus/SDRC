@@ -2,7 +2,6 @@ package megaMerger;
 
 import netViewer.ArbitraryNodeMegaMerger;
 import netViewer.Link;
-import netViewer.NetViewer;
 
 public abstract class MegaMergerAbstractState implements MegaMergerState {
 

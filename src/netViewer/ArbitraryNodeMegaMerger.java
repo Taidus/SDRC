@@ -130,13 +130,11 @@ public class ArbitraryNodeMegaMerger extends Node {
 	public void addChild(Link child) {
 		assert null != child;
 		childrenEdges.add(child);
-		NetViewer.out.println("Node " + nodeId + " add " + child);
 	}
 
 	private void removeChild(Link child) {
 		childrenEdges.remove(child);
 		assert !childrenEdges.contains(child);
-		NetViewer.out.println("Node " + nodeId + " removed " + child);
 	}
 
 	public int getChildrenNumber() {
@@ -201,19 +199,6 @@ public class ArbitraryNodeMegaMerger extends Node {
 
 	public void broadcastUpdateAndFind(String new_name, int new_level, Link sender_edge) {
 		update(new_name, new_level, sender_edge);
-
-		if (!childrenEdges.isEmpty()) {
-			String s = "Node " + nodeId + " received on " + sender_edge + " and sent to nodes ";
-			for (Link l : childrenEdges) {
-				Node n = l.getNode(0);
-				if (this == n) {
-					n = l.getNode(1);
-				}
-				assert this != n;
-				s += n.getNodeId() + " ";
-			}
-			NetViewer.out.println(s);
-		}
 
 		sendToChildren(new UpdateAndFindMessage(nodeName, level));
 
