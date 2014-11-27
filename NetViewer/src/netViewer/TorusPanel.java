@@ -4,10 +4,13 @@ package netViewer;
  * Class: TorusPanel
  */
 
-import java.util.Vector;    import java.util.Enumeration;
-import java.awt.Dimension;  import java.awt.event.ComponentEvent;
-import java.awt.Graphics;   import java.awt.event.ComponentListener;
-import java.awt.Graphics2D; import java.awt.Color;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.event.ComponentEvent;
+import java.awt.event.ComponentListener;
+import java.util.Enumeration;
 
 class TorusPanel extends DrawingPanel implements ComponentListener {
 

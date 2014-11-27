@@ -1,30 +1,29 @@
 package netViewer;
+
 /*
  * NetViewer
  * Class: CompleteGraphPanel
  */
 
-import java.util.Vector;    import java.util.Enumeration;
-import java.awt.Dimension;  import java.awt.event.ComponentEvent;
-import java.awt.Graphics;   import java.awt.event.ComponentListener;
-import java.awt.Point;      import java.awt.Color;
+import java.awt.event.ComponentEvent;
+import java.awt.Graphics;
+import java.awt.event.ComponentListener;
 
 class CompleteGraphPanel extends DrawingPanel implements ComponentListener {
 
-  CompleteGraphPanel(NetworkPanel parent) {
+	CompleteGraphPanel(NetworkPanel parent) {
 		super(parent);
-    this.addComponentListener(this);
-  }
+		this.addComponentListener(this);
+	}
 
-  public void paintComponent(Graphics g)
-  {
+	public void paintComponent(Graphics g) {
 		super.paintComponent(g);
-  }
+	}
 
-	/* Resize component. Recalculate coordinates of nodes and links.
+	/*
+	 * Resize component. Recalculate coordinates of nodes and links.
 	 */
-	public void componentResized(ComponentEvent e)
-	{
+	public void componentResized(ComponentEvent e) {
 		resizeBackgroundImage();
 		if (drawingAreaIsBlank) {
 			repaint(); // background
@@ -35,9 +34,13 @@ class CompleteGraphPanel extends DrawingPanel implements ComponentListener {
 		repaint();
 	} // resize
 
-  public void componentMoved(ComponentEvent e) {}
-  public void componentShown(ComponentEvent e) {}
-  public void componentHidden(ComponentEvent e) {}
+	public void componentMoved(ComponentEvent e) {
+	}
+
+	public void componentShown(ComponentEvent e) {
+	}
+
+	public void componentHidden(ComponentEvent e) {
+	}
 
 }
-

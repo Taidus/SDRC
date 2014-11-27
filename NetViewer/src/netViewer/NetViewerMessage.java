@@ -115,7 +115,7 @@ class NetViewerMessage extends Thread {
   }
 
   public void setSpeed(long newSpeed) {
-    this.speed = speed;
+    this.speed = newSpeed;
   }
 
   /* Return true if this message a dummy.

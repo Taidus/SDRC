@@ -14,24 +14,18 @@ package netViewer;
 import general.State;
 import general.StringMessage;
 
-import java.awt.Point;         import java.awt.Dimension;
-import java.lang.Class;        import java.util.Collections;
+import java.awt.Dimension;
+import java.awt.Point;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.Collections;
+import java.util.Enumeration;
 import java.util.Random;
 import java.util.StringTokenizer;
-import java.util.Vector;       
+import java.util.Vector;
 
 import javax.swing.JOptionPane;
-import javax.swing.JComboBox;  
-
-import java.util.Enumeration;
-
-import javax.swing.JPanel;     
-
-import java.awt.event.ActionListener;
-
-import javax.swing.Timer;      
-
-import java.awt.event.ActionEvent;
+import javax.swing.Timer;
 
 class NetworkManager implements ActionListener {
 

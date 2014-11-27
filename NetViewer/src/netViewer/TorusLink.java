@@ -7,7 +7,6 @@ package netViewer;
  * Two sets of coordinates must be saved, as opposed to one set in Link
  */
 
-import java.util.Vector;
 import java.awt.Point;
 
 class TorusLink extends Link {

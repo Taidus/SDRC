@@ -4,21 +4,21 @@ package netViewer;
  * Class: NetworkPanel
  */
 
-import java.util.Vector;
-import java.awt.event.ActionListener;
-import java.util.Enumeration;
-import java.awt.event.ActionEvent;
 import java.awt.BorderLayout;
+import java.awt.Rectangle;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
-import java.awt.Point;
 import java.awt.event.MouseListener;
-import javax.swing.JPanel;
-import javax.swing.SwingUtilities;
+import java.util.Enumeration;
+import java.util.Vector;
+
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
-import java.awt.Rectangle;
+import javax.swing.SwingUtilities;
 
 class NetworkPanel extends JPanel implements MouseListener {
 
