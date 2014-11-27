@@ -8,12 +8,18 @@ import java.util.Set;
 import netViewer.ArbitraryNodeYoYo;
 import netViewer.Link;
 
-public abstract class Receiver extends YoyoAbstractState {
+public class IdReceiverHelper {
+
+	private ArbitraryNodeYoYo node;
+	private IdReceiver owner;
+
 	private Map<Integer, Set<Link>> linksPerReceivedId;
 	private int minReceivedId;
 
-	public Receiver(ArbitraryNodeYoYo node) {
-		super(node);
+	public IdReceiverHelper(ArbitraryNodeYoYo node, IdReceiver owner) {
+		this.node = node;
+		this.owner = owner;
+
 		linksPerReceivedId = new HashMap<>();
 		minReceivedId = Integer.MAX_VALUE;
 	}
@@ -22,37 +28,26 @@ public abstract class Receiver extends YoyoAbstractState {
 		return minReceivedId;
 	}
 
-	public void setMinReceivedId(int minReceivedId) {
-		this.minReceivedId = minReceivedId;
-	}
-
-	protected abstract void whenReceivedIdOnAllLinks();
-
-	@Override
-	protected void whenAllResponsesReceived() {
-		respondToAll();
-	}
-
-	protected void handleYoMessage(YoMessage m, Link sender) {
+	public void handleYoMessage(YoMessage m, Link sender) {
 		addIdReceivedOnLink(m.getId(), sender);
-		if (m.getId() < getMinReceivedId()) {
-			setMinReceivedId(m.getId());
+		if (m.getId() < minReceivedId) {
+			this.minReceivedId = m.getId();
 		}
 		if (idReceivedFromAllLinks()) {
-			System.out.println("Receved from all Links id: "+node.getNodeId());
-			whenReceivedIdOnAllLinks();
+			System.out.println("Receved from all Links id: " + node.getNodeId());
+			owner.whenReceivedIdOnAllLinks();
 		}
 	}
 
-	protected void respondToAll() {
+	public void respondToAll() {
 		Set<Link> sendNoLinks = node.getIncomingLinks();
 
 		Set<Link> linksToPrune = getLinksToPrune();
 
-		if (receivedOnlyYes()) {
-			sendNoLinks = getLinksThatSentDifferentId(getMinReceivedId());
+		if (owner.hasYesToBeSent()) {
+			sendNoLinks = getLinksThatSentDifferentId(minReceivedId);
 
-			Set<Link> sendYesLinks = getLinksById(getMinReceivedId());
+			Set<Link> sendYesLinks = linksPerReceivedId.get(minReceivedId);
 			selectiveSend(new YesMessage(), sendYesLinks, linksToPrune);
 			sendYesLinks.retainAll(linksToPrune);
 			node.sendToAll(new YesAndPruneMessage(), sendYesLinks);
@@ -69,17 +64,13 @@ public abstract class Receiver extends YoyoAbstractState {
 		node.chooseState();
 	}
 
-	protected boolean idReceivedFromAllLinks() {
+	private boolean idReceivedFromAllLinks() {
 		int size = 0;
 		for (Set<Link> toCompute : linksPerReceivedId.values()) {
 			size += toCompute.size();
 		}
 		assert node.getIncomingLinks().size() >= size;
 		return node.getIncomingLinks().size() == size;
-	}
-
-	protected boolean receivedOnlyYes() {
-		return node.getYesNeighboursSize() == node.getNumOfResponsesNeeded();
 	}
 
 	private Set<Link> getLinksToPrune() {
@@ -102,24 +93,20 @@ public abstract class Receiver extends YoyoAbstractState {
 	private void addIdReceivedOnLink(int id, Link link) {
 		if (linksPerReceivedId.containsKey(id)) {
 			linksPerReceivedId.get(id).add(link);
-		} else {
+		}
+		else {
 			Set<Link> singleLink = new HashSet<>();
 			singleLink.add(link);
 			linksPerReceivedId.put(id, singleLink);
 		}
 	}
 
-	private void selectiveSend(YoyoMessage message, Set<Link> allLinks,
-			Set<Link> linksToIgnore) {
+	private void selectiveSend(YoyoMessage message, Set<Link> allLinks, Set<Link> linksToIgnore) {
 		for (Link link : allLinks) {
 			if (!linksToIgnore.contains(link)) {
 				node.send(message, link);
 			}
 		}
-	}
-
-	private Set<Link> getLinksById(int id) {
-		return new HashSet<Link>(linksPerReceivedId.get(id));
 	}
 
 	private Set<Link> getLinksThatSentDifferentId(int id) {

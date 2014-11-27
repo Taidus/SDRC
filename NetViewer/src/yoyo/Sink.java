@@ -4,23 +4,30 @@ import general.State;
 import netViewer.ArbitraryNodeYoYo;
 import netViewer.Link;
 
-public class Sink extends Receiver {
+public class Sink extends YoyoAbstractState implements IdReceiver{
+	
+	private IdReceiverHelper idReceiverHelper;
 
 	public Sink(ArbitraryNodeYoYo node) {
 		super(node);
+		this.idReceiverHelper = new IdReceiverHelper(node, this);
 	}
 
 	@Override
 	public void handle(YoMessage m, Link sender) {
-		handleYoMessage(m, sender);
+		idReceiverHelper.handleYoMessage(m, sender);
 	}
 
 	@Override
-	protected void whenReceivedIdOnAllLinks() {
+	public void whenReceivedIdOnAllLinks() {
 		System.out.println("Sink id:"+node.getNodeId()+" respond to All");
-		respondToAll();
+		idReceiverHelper.respondToAll();
 		node.chooseState();
-
+	}
+	
+	@Override
+	public boolean hasYesToBeSent() {
+		return true;
 	}
 
 	@Override

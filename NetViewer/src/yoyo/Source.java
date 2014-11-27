@@ -4,17 +4,24 @@ import general.State;
 import netViewer.ArbitraryNodeYoYo;
 import netViewer.Link;
 
-public class Source extends YoyoAbstractState {
+public class Source extends YoyoAbstractState implements IdSender{
+	
+	private IdSenderHelper idSenderHelper;
 
 	public Source(ArbitraryNodeYoYo node) {
 		super(node);
-		// TODO implementare
+		idSenderHelper = new IdSenderHelper(node, this);
 	}
 	
 	@Override
-	protected void whenAllResponsesReceived() {
+	public void whenAllResponsesReceived() {
 			System.out.println("Source all resposes arrived");
 		 node.chooseState();
+	}
+	
+	@Override
+	public void sendMessageToOutgoingLinks(YoyoMessage message) {
+		idSenderHelper.sendMessageToOutgoingLinks(message);
 	}
 
 	@Override
@@ -24,12 +31,12 @@ public class Source extends YoyoAbstractState {
 
 	@Override
 	public void handle(NoMessage m, Link sender) {
-		handleNoMessage(m, sender);
+		idSenderHelper.handleNoMessage(m, sender);
 	}
 
 	@Override
 	public void handle(YesMessage m, Link sender) {
-		handleYesMessage(m, sender);
+		idSenderHelper.handleYesMessage(m, sender);
 	}
 
 }

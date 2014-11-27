@@ -2,6 +2,7 @@ package netViewer;
 
 import general.Message;
 
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -24,10 +25,6 @@ public class ArbitraryNodeYoYo extends Node {
 	private Set<Link> outgoingLinks;
 	private Set<Link> incomingLinks;
 
-	private Set<Link> yesNeighbours;
-	private Set<Link> noNeighbours;
-	private int numOfResponsesNeeded;
-
 	public ArbitraryNodeYoYo(Integer ID) {
 		super(ID);
 
@@ -35,20 +32,16 @@ public class ArbitraryNodeYoYo extends Node {
 		prunedIncoming = false;
 		outgoingLinks = new HashSet<>();
 		incomingLinks = new HashSet<>();
-
-		yesNeighbours = new HashSet<>();
-		noNeighbours = new HashSet<>();
-		numOfResponsesNeeded = 0;
 	}
 
 	@Override
 	protected void initialize() {
 		nodeState.spontaneously();
-		// TODO eventualmente aggiungere altro
 	}
 
 	public void yoyoInitialize() {
-		sendToNeighbours(new SetupMessage(this));
+		// XXX ha davvero senso o si può spostare in Asleep?
+		sendToNeighbours(new SetupMessage(nodeId));
 		become(new Awake(this));
 	}
 
@@ -76,8 +69,6 @@ public class ArbitraryNodeYoYo extends Node {
 	}
 
 	public void chooseState() {
-		// FIXME  numOfResponsesNeeded, yesNeighbours, noNeighbours vanno resettate quando si cambia stato,
-		//per adesso la faccio qui in attesa di rifattorizzare
 		if (incomingLinks.size() + outgoingLinks.size() == 0) {
 			if (!prunedIncoming) {
 				become(new Leader(this));
@@ -85,25 +76,14 @@ public class ArbitraryNodeYoYo extends Node {
 				become(new Follower(this));
 			}
 		} else if (incomingLinks.isEmpty()) {
-			become(new Source(this));
-			sendMessageToOutgoingLinks(new YoMessage(getNodeId()));
+			Source nextState = new Source(this);
+			become(nextState);
+			nextState.sendMessageToOutgoingLinks(new YoMessage(getNodeId()));
 		} else if (outgoingLinks.isEmpty()) {
 			become(new Sink(this));
 		} else {
 			become(new Internal(this));
 		}
-		
-		numOfResponsesNeeded=0;
-		yesNeighbours.clear();
-		noNeighbours.clear();
-	}
-
-	public void addYesNeighbours(Link toAdd) {
-		yesNeighbours.add(toAdd);
-	}
-
-	public void addNoNeighbours(Link toAdd) {
-		noNeighbours.add(toAdd);
 	}
 
 	public void flipIncomingLinks(Set<Link> links) {
@@ -116,6 +96,18 @@ public class ArbitraryNodeYoYo extends Node {
 		assert outgoingLinks.containsAll(links);
 		outgoingLinks.removeAll(links);
 		incomingLinks.addAll(links);
+	}
+	
+	public void flipIncomingLink(Link link) {
+		Set<Link> toFlip = new HashSet<>();
+		toFlip.add(link);
+		flipIncomingLinks(toFlip);
+	}
+
+	public void flipOutgoingLink(Link link) {
+		Set<Link> toFlip = new HashSet<>();
+		toFlip.add(link);
+		flipOutgoingLinks(toFlip);
 	}
 
 	public void pruneIncomingLinks(Set<Link> links) {
@@ -139,23 +131,6 @@ public class ArbitraryNodeYoYo extends Node {
 		outgoingLinks.remove(link);
 	}
 
-	public int getYesNeighboursSize() {
-		return yesNeighbours.size();
-	}
-
-	public int getNoNeighboursSize() {
-		return noNeighbours.size();
-	}
-
-	public int getNumOfResponsesNeeded() {
-		return numOfResponsesNeeded;
-	}
-
-	public void sendMessageToOutgoingLinks(YoyoMessage toSend) {
-		sendToAll(toSend, outgoingLinks);
-		numOfResponsesNeeded += outgoingLinks.size();
-	}
-
 	public Set<Link> getIncomingLinks() {
 		return new HashSet<Link>(incomingLinks);
 	}
@@ -164,17 +139,15 @@ public class ArbitraryNodeYoYo extends Node {
 		return new HashSet<Link>(outgoingLinks);
 	}
 
-	public void sendToAll(YoyoMessage message, Set<Link> links) {
+	public void sendToAll(YoyoMessage message, Collection<Link> links) {
 		for (Link link : links) {
 			send(message, link);
 		}
 	}
 
-	// FIXME: forse ha senso metterla in Node
+	// XXX: forse ha senso metterla in Node
 	private void sendToNeighbours(YoyoMessage message) {
-		for (Link toSendTo : getLinks()) {
-			send(message, toSendTo);
-		}
+		sendToAll(message, links);
 	}
 
 }

@@ -4,10 +4,15 @@ import general.State;
 import netViewer.ArbitraryNodeYoYo;
 import netViewer.Link;
 
-public class Internal extends Receiver {
+public class Internal extends YoyoAbstractState implements IdSender, IdReceiver {
+
+	private IdSenderHelper idSenderHelper;
+	private IdReceiverHelper idReceiverHelper;
 
 	public Internal(ArbitraryNodeYoYo node) {
 		super(node);
+		this.idSenderHelper = new IdSenderHelper(node, this);
+		this.idReceiverHelper = new IdReceiverHelper(node, this);
 	}
 
 	@Override
@@ -17,23 +22,38 @@ public class Internal extends Receiver {
 
 	@Override
 	public void handle(YoMessage m, Link sender) {
-		handleYoMessage(m, sender);
+		idReceiverHelper.handleYoMessage(m, sender);
+	}
+
+	@Override
+	public void whenAllResponsesReceived() {
+		idReceiverHelper.respondToAll();
 	}
 	
 	@Override
-	protected void whenReceivedIdOnAllLinks() {
+	public void sendMessageToOutgoingLinks(YoyoMessage message) {
+		idSenderHelper.sendMessageToOutgoingLinks(message);
+	}
+
+	@Override
+	public void whenReceivedIdOnAllLinks() {
 		System.out.println("Internal send to all outgoing");
-		node.sendMessageToOutgoingLinks(new YoMessage(getMinReceivedId()));
+		sendMessageToOutgoingLinks(new YoMessage(idReceiverHelper.getMinReceivedId()));
+	}
+
+	@Override
+	public boolean hasYesToBeSent() {
+		return idSenderHelper.getYesNeighboursSize() == idSenderHelper.getNumOfResponsesNeeded();
 	}
 
 	@Override
 	public void handle(NoMessage m, Link sender) {
-		handleNoMessage(m, sender);
+		idSenderHelper.handleNoMessage(m, sender);
 	}
 
 	@Override
 	public void handle(YesMessage m, Link sender) {
-		handleYesMessage(m, sender);
+		idSenderHelper.handleYesMessage(m, sender);
 	}
 
 }
