@@ -1,13 +1,13 @@
 package yoyo;
 
-import netViewer.ArbitraryNodeYoYo;
+import netViewer.ArbitraryNodeYoyo;
 import netViewer.Link;
 
 public abstract class YoyoAbstractState implements YoyoState {
 
-	protected ArbitraryNodeYoYo node;
+	protected ArbitraryNodeYoyo node;
 
-	public YoyoAbstractState(ArbitraryNodeYoYo node) {
+	public YoyoAbstractState(ArbitraryNodeYoyo node) {
 		this.node = node;
 	}
 	

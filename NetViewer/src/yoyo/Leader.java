@@ -1,11 +1,11 @@
 package yoyo;
 
 import general.State;
-import netViewer.ArbitraryNodeYoYo;
+import netViewer.ArbitraryNodeYoyo;
 
 public class Leader extends YoyoAbstractState {
 
-	public Leader(ArbitraryNodeYoYo node) {
+	public Leader(ArbitraryNodeYoyo node) {
 		super(node);
 	}
 

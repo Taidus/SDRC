@@ -20,7 +20,7 @@ import yoyo.YoMessage;
 import yoyo.YoyoMessage;
 import yoyo.YoyoState;
 
-public class ArbitraryNodeYoYo extends Node {
+public class ArbitraryNodeYoyo extends Node {
 
 	private YoyoState nodeState;
 	private boolean prunedIncoming;
@@ -30,7 +30,7 @@ public class ArbitraryNodeYoYo extends Node {
 	private Queue<QueueMessage> queue;
 	
 
-	public ArbitraryNodeYoYo(Integer ID) {
+	public ArbitraryNodeYoyo(Integer ID) {
 		super(ID);
 
 		queue = new ArrayDeque<QueueMessage>();

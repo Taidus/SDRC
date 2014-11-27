@@ -5,18 +5,18 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import netViewer.ArbitraryNodeYoYo;
+import netViewer.ArbitraryNodeYoyo;
 import netViewer.Link;
 
 public class IdReceiverHelper {
 
-	private ArbitraryNodeYoYo node;
+	private ArbitraryNodeYoyo node;
 	private IdReceiver owner;
 
 	private Map<Integer, Set<Link>> linksPerReceivedId;
 	private int minReceivedId;
 
-	public IdReceiverHelper(ArbitraryNodeYoYo node, IdReceiver owner) {
+	public IdReceiverHelper(ArbitraryNodeYoyo node, IdReceiver owner) {
 		this.node = node;
 		this.owner = owner;
 

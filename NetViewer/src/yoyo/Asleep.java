@@ -1,12 +1,12 @@
 package yoyo;
 
 import general.State;
-import netViewer.ArbitraryNodeYoYo;
+import netViewer.ArbitraryNodeYoyo;
 import netViewer.Link;
 
 public class Asleep extends YoyoAbstractState {
 
-	public Asleep(ArbitraryNodeYoYo node) {
+	public Asleep(ArbitraryNodeYoyo node) {
 		super(node);
 	}
 

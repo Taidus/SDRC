@@ -3,18 +3,18 @@ package yoyo;
 import java.util.HashSet;
 import java.util.Set;
 
-import netViewer.ArbitraryNodeYoYo;
+import netViewer.ArbitraryNodeYoyo;
 import netViewer.Link;
 
 public class IdSenderHelper {
 
-	private ArbitraryNodeYoYo node;
+	private ArbitraryNodeYoyo node;
 	private IdSender owner;
 	private Set<Link> yesNeighbours;
 	private Set<Link> noNeighbours;
 	private int numOfResponsesNeeded;
 	
-	public IdSenderHelper(ArbitraryNodeYoYo node, IdSender owner) {
+	public IdSenderHelper(ArbitraryNodeYoyo node, IdSender owner) {
 		this.node = node;
 		this.owner = owner;
 		

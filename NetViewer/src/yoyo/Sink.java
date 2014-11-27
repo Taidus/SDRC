@@ -1,14 +1,14 @@
 package yoyo;
 
 import general.State;
-import netViewer.ArbitraryNodeYoYo;
+import netViewer.ArbitraryNodeYoyo;
 import netViewer.Link;
 
 public class Sink extends YoyoAbstractState implements IdReceiver{
 	
 	private IdReceiverHelper idReceiverHelper;
 
-	public Sink(ArbitraryNodeYoYo node) {
+	public Sink(ArbitraryNodeYoyo node) {
 		super(node);
 		this.idReceiverHelper = new IdReceiverHelper(node, this);
 	}

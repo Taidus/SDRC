@@ -1,7 +1,7 @@
 package yoyo;
 
 import general.State;
-import netViewer.ArbitraryNodeYoYo;
+import netViewer.ArbitraryNodeYoyo;
 import netViewer.Link;
 
 public class Internal extends YoyoAbstractState implements IdSender, IdReceiver {
@@ -9,7 +9,7 @@ public class Internal extends YoyoAbstractState implements IdSender, IdReceiver 
 	private IdSenderHelper idSenderHelper;
 	private IdReceiverHelper idReceiverHelper;
 
-	public Internal(ArbitraryNodeYoYo node) {
+	public Internal(ArbitraryNodeYoyo node) {
 		super(node);
 		this.idSenderHelper = new IdSenderHelper(node, this);
 		this.idReceiverHelper = new IdReceiverHelper(node, this);

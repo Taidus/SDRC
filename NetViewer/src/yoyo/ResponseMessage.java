@@ -1,9 +1,9 @@
 package yoyo;
 
-import netViewer.ArbitraryNodeYoYo;
+import netViewer.ArbitraryNodeYoyo;
 import netViewer.Link;
 
 public abstract class ResponseMessage implements YoyoMessage {
 
-	public abstract void prune(ArbitraryNodeYoYo node, Link responseLink);
+	public abstract void prune(ArbitraryNodeYoyo node, Link responseLink);
 }

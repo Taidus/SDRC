@@ -1,14 +1,14 @@
 package yoyo;
 
 import general.State;
-import netViewer.ArbitraryNodeYoYo;
+import netViewer.ArbitraryNodeYoyo;
 import netViewer.Link;
 
 public class Source extends YoyoAbstractState implements IdSender{
 	
 	private IdSenderHelper idSenderHelper;
 
-	public Source(ArbitraryNodeYoYo node) {
+	public Source(ArbitraryNodeYoyo node) {
 		super(node);
 		idSenderHelper = new IdSenderHelper(node, this);
 	}

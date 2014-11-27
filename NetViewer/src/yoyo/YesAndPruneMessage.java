@@ -1,12 +1,12 @@
 package yoyo;
 
-import netViewer.ArbitraryNodeYoYo;
+import netViewer.ArbitraryNodeYoyo;
 import netViewer.Link;
 
 public class YesAndPruneMessage extends YesMessage {
 
 	@Override
-	public void prune(ArbitraryNodeYoYo node, Link responseLink) {
+	public void prune(ArbitraryNodeYoyo node, Link responseLink) {
 		node.pruneOutgoingLink(responseLink);
 	}
 
