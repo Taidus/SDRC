@@ -16,8 +16,7 @@ public class NoMessage implements YoyoMessage{
 		
 	}
 	
-	public void flipOrPrune(ArbitraryNodeYoyo node, Link linkArrivedOn){
-		node.flipOutgoingLink(linkArrivedOn);
+	public void prune(ArbitraryNodeYoyo node, Link linkArrivedOn){
 	}
 
 
