@@ -179,7 +179,7 @@ public abstract class Node extends Thread {
 	 * Send a message; put it on the given link. Used in networks other than the
 	 * ring.
 	 */
-	public void send(String msg, Link link) {
+	protected void send(String msg, Link link) {
 		link.receive(msg, this);
 	}
 

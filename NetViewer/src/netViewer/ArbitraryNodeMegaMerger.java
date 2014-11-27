@@ -26,22 +26,22 @@ public class ArbitraryNodeMegaMerger extends Node {
 	private MegaMergerState nodeState;
 	private String nodeName;
 	private int level;
-	private Set<Link> childrenEdges;
-	private Link parentEdge;
+	private Set<Link> childrenLinks;
+	private Link parentLink;
 	private Map<Link, LetUsMergeMessage> suspendedRequests;
 	private Map<Link, WhereMessage> suspendedQuestions;
 
-	private Set<Link> internalEdges;
-	private Link mergePathNextEdge;
-	private Link outsideRequest_edge;
+	private Set<Link> internalLinks;
+	private Link mergePathNextLink;
+	private Link whereQuestion_link;
 
 	ArbitraryNodeMegaMerger(Integer ID) {
 		super(ID);
 
 		this.nodeState = new Asleep(this);
 
-		this.childrenEdges = new HashSet<>();
-		this.internalEdges = new HashSet<>();
+		this.childrenLinks = new HashSet<>();
+		this.internalLinks = new HashSet<>();
 		this.suspendedRequests = new HashMap<>();
 		this.suspendedQuestions = new HashMap<>();
 	}
@@ -67,7 +67,7 @@ public class ArbitraryNodeMegaMerger extends Node {
 
 		this.nodeName = "City " + nodeId;
 		this.level = 1;
-		this.mergePathNextEdge = FindingMergeEdge.getMinCostLink(links);
+		this.mergePathNextLink = FindingMergeEdge.getMinCostLink(links);
 	}
 
 	@Override
@@ -77,7 +77,7 @@ public class ArbitraryNodeMegaMerger extends Node {
 	}
 
 	public boolean isDowntown() {
-		return null == this.parentEdge;
+		return null == this.parentLink;
 	}
 
 	public String getNodeName() {
@@ -88,16 +88,16 @@ public class ArbitraryNodeMegaMerger extends Node {
 		return level;
 	}
 
-	public Link getMergePathNextEdge() {
-		return mergePathNextEdge;
+	public Link getMergePathNextLink() {
+		return mergePathNextLink;
 	}
 
-	public Link getOutsideRequestEdge() {
-		return outsideRequest_edge;
+	public Link getWhereQuestionLink() {
+		return whereQuestion_link;
 	}
 
-	public void setMergePathNextEdge(Link mergePathNextEdge) {
-		this.mergePathNextEdge = mergePathNextEdge;
+	public void setMergePathNextLink(Link mergePathNextLink) {
+		this.mergePathNextLink = mergePathNextLink;
 	}
 
 	public void suspendRequest(LetUsMergeMessage request, Link sender) {
@@ -118,9 +118,9 @@ public class ArbitraryNodeMegaMerger extends Node {
 		return suspendedQuestions.remove(questionSender);
 	}
 
-	public boolean previousFriendlyMergeRequestOnMergeEdgeFound() {
+	public boolean previousFriendlyMergeRequestOnMergeLinkFound() {
 		for (Link entry : suspendedRequests.keySet()) {
-			if (suspendedRequests.get(entry).getLevel() == level && entry.equals(mergePathNextEdge)) {
+			if (suspendedRequests.get(entry).getLevel() == level && entry.equals(mergePathNextLink)) {
 				return true;
 			}
 		}
@@ -129,56 +129,52 @@ public class ArbitraryNodeMegaMerger extends Node {
 
 	public void addChild(Link child) {
 		assert null != child;
-		childrenEdges.add(child);
+		childrenLinks.add(child);
 	}
 
 	private void removeChild(Link child) {
-		childrenEdges.remove(child);
-		assert !childrenEdges.contains(child);
+		childrenLinks.remove(child);
+		assert !childrenLinks.contains(child);
 	}
 
 	public int getChildrenNumber() {
-		return childrenEdges.size();
+		return childrenLinks.size();
 	}
 
-	public void addInternalEdge(Link link) {
-		this.internalEdges.add(link);
+	public void addInternalLink(Link link) {
+		this.internalLinks.add(link);
 	}
 
-	public void updateInternalEdges() {
-		internalEdges.addAll(childrenEdges);
+	public void updateInternalLinks() {
+		internalLinks.addAll(childrenLinks);
 
 		if (!isDowntown()) {
-			internalEdges.add(parentEdge);
+			internalLinks.add(parentLink);
 		}
 	}
 
 	public Set<Link> getNonInternalLinks() {
 		Set<Link> nonInternalLinks = new HashSet<>(links);
-		nonInternalLinks.removeAll(internalEdges);
+		nonInternalLinks.removeAll(internalLinks);
 
-		assert nonInternalLinks.size() + internalEdges.size() == links.size();
+		assert nonInternalLinks.size() + internalLinks.size() == links.size();
 
 		return nonInternalLinks;
 	}
 
-	public void sendMessage(Message message, Link link) {
-		send(message, link);
-	}
-
 	public void sendToChildren(Message message) {
-		for (Link l : childrenEdges) {
+		for (Link l : childrenLinks) {
 			assert null != l;
-			sendMessage(message, l);
+			send(message, l);
 		}
 	}
 
 	public void sendToParent(Message m) {
-		sendMessage(m, parentEdge);
+		send(m, parentLink);
 	}
 
 	public void sendMergeRequest() {
-		sendMessage(new LetUsMergeMessage(level, nodeId, nodeName), mergePathNextEdge);
+		send(new LetUsMergeMessage(level, nodeId, nodeName), mergePathNextLink);
 
 		WaitingForAnswer newState = new WaitingForAnswer(this);
 		nodeState.changeState(newState);
@@ -186,7 +182,7 @@ public class ArbitraryNodeMegaMerger extends Node {
 	}
 
 	public void delegateMergeRequest() {
-		sendMessage(new MakeMergeRequestMessage(), mergePathNextEdge);
+		send(new MakeMergeRequestMessage(), mergePathNextLink);
 	}
 
 	public void broadcastUpdate(String new_name, int new_level, Link sender_edge) {
@@ -212,13 +208,13 @@ public class ArbitraryNodeMegaMerger extends Node {
 		this.level = new_level;
 
 		if (!isDowntown()) {
-			addChild(parentEdge);
+			addChild(parentLink);
 		}
 		removeChild(sender_edge);
-		parentEdge = sender_edge;
+		parentLink = sender_edge;
 		answerQuestions();
 		addWeakerRequestersAsChildren();
-		assert !childrenEdges.contains(sender_edge);
+		assert !childrenLinks.contains(sender_edge);
 	}
 
 	private void answerQuestions() {
@@ -226,10 +222,10 @@ public class ArbitraryNodeMegaMerger extends Node {
 
 		for (Link l : suspendedQuestions.keySet()) {
 			if (suspendedQuestions.get(l).getName().equals(nodeName)) {
-				sendMessage(new InsideMessage(), l);
+				send(new InsideMessage(), l);
 			}
 			else if (suspendedQuestions.get(l).getLevel() <= level) {
-				sendMessage(new OutsideMessage(), l);
+				send(new OutsideMessage(), l);
 			}
 			else {
 				stillSuspendedQuestions.put(l, suspendedQuestions.get(l));
@@ -261,6 +257,6 @@ public class ArbitraryNodeMegaMerger extends Node {
 	public boolean isRequestLate(Link sender) {
 		// il controllo può servire in caso di rete non-FIFO: in un Friendly merge posso ricevere il messaggio di aggiornamento della nuova
 		// downtown PRIMA di aver ricevuto il Let-us-merge
-		return parentEdge == sender || childrenEdges.contains(sender);
+		return parentLink == sender || childrenLinks.contains(sender);
 	}
 }

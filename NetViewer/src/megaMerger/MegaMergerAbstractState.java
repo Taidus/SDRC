@@ -50,16 +50,16 @@ public abstract class MegaMergerAbstractState implements MegaMergerState {
 	}
 
 	protected void sameCity(Link sender) {
-		node.addInternalEdge(sender);
-		node.sendMessage(new InsideMessage(), sender);
+		node.addInternalLink(sender);
+		node.send(new InsideMessage(), sender);
 	}
 
 	protected void differentCity(Link sender) {
-		node.sendMessage(new OutsideMessage(), sender);
+		node.send(new OutsideMessage(), sender);
 	}
 
 	protected void absorb(Link linkToWeakerCity) {
-		node.sendMessage(new UpdateMessage(node.getNodeName(), node.getLevel()), linkToWeakerCity);
+		node.send(new UpdateMessage(node.getNodeName(), node.getLevel()), linkToWeakerCity);
 		node.addChild(linkToWeakerCity);
 	}
 

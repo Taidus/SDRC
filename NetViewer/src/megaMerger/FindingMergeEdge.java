@@ -39,7 +39,7 @@ public class FindingMergeEdge extends MegaMergerAbstractState {
 		this.bestChildren = new NullLink();
 		this.myMinEdge = new NullLink();
 
-		node.updateInternalEdges();
+		node.updateInternalLinks();
 	}
 
 	@Override
@@ -64,13 +64,13 @@ public class FindingMergeEdge extends MegaMergerAbstractState {
 
 	@Override
 	protected void absorb(Link linkToWeakerCity) {
-		node.sendMessage(new UpdateAndFindMessage(node.getNodeName(), node.getLevel()), linkToWeakerCity);
+		node.send(new UpdateAndFindMessage(node.getNodeName(), node.getLevel()), linkToWeakerCity);
 		node.addChild(linkToWeakerCity);
 	}
 
 	@Override
 	public void handle(InsideMessage m, Link sender) {
-		node.addInternalEdge(sender);
+		node.addInternalLink(sender);
 		findMinExternalEdge();
 	}
 
@@ -89,7 +89,7 @@ public class FindingMergeEdge extends MegaMergerAbstractState {
 	@Override
 	protected void sameCity(Link sender) {
 		if (askingEachOther(sender)) {
-			node.addInternalEdge(sender);
+			node.addInternalLink(sender);
 			findMinExternalEdge();
 		}
 		else {
@@ -98,13 +98,13 @@ public class FindingMergeEdge extends MegaMergerAbstractState {
 	}
 
 	private boolean askingEachOther(Link sender) {
-		return sender.equals(node.getOutsideRequestEdge());
+		return sender.equals(node.getWhereQuestionLink());
 	}
 
 	public void findMinExternalEdge() {
 		Set<Link> nonInternalLinks = node.getNonInternalLinks();
 		if (!nonInternalLinks.isEmpty()) {
-			node.sendMessage(new WhereMessage(node.getNodeName(), node.getLevel()), FindingMergeEdge.getMinCostLink(nonInternalLinks));
+			node.send(new WhereMessage(node.getNodeName(), node.getLevel()), FindingMergeEdge.getMinCostLink(nonInternalLinks));
 		}
 		else {
 			edgeScanningDone = true;
@@ -120,7 +120,7 @@ public class FindingMergeEdge extends MegaMergerAbstractState {
 				changeState(new Leader(node));
 			}
 			else {
-				node.setMergePathNextEdge(getBestPath());
+				node.setMergePathNextLink(getBestPath());
 
 				Awake newState = (isCandidate()) ? new Candidate(node) : new Awake(node);
 				changeState(newState);

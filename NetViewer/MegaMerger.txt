@@ -16,14 +16,14 @@ ASLEEP
   Receiving('let_us_merge', msg_name, msg_level, msg_id)
     PROC_INIT
     PROC_SEND_MERGE_REQUEST
-    if msg_level == level && sender.edge == mergeEdge
-	START_FRIENDLY_MERGE(mergeEdge, msg_id)
+    if msg_level == level && sender.link == mergePathNextLink
+		START_FRIENDLY_MERGE(mergePathNextLink, msg_id)
     else
-      suspendedRequests.add(sender.edge, message)
+      suspendedRequests.add(sender.link, message)
 
   Receiving('outside?', msg_name, msg_level)
     PROC_INIT
-    suspendedQuestions.add(sender.edge, message)
+    suspendedQuestions.add(sender.link, message)
     PROC_SEND_MERGE_REQUEST
 
 
@@ -31,11 +31,12 @@ AWAKE
 
   Receiving('outside?', msg_name, msg_level)
     if name == msg_name
-      send('internal') to sender
+    	internal_links.add(sender.link)
+		send('internal') to sender
     else if level >= msg_level
       send('external') to sender
     else
-      suspendedQuestions.add(sender.edge, message)
+      suspendedQuestions.add(sender.link, message)
     
 
       
@@ -45,23 +46,24 @@ AWAKE
     
     
   Receiving('let_us_merge', msg_name, msg_level, msg_id)
-    if msg_level < level
-      send('absorbed', name, level, false) to sender
-      childrenEdges.add(sender.edge)
-    else if msg_level == level
-      suspendedRequests.add(sender.edge, message)
-    else
-      suspendedRequests.add(sender.edge, message)
+	  if !parentLink == sender.link && !childrenLinks.contains(sender.link) // il controllo serve in caso di rete non-FIFO
+	    if msg_level < level
+	      send('absorbed', name, level, false) to sender
+	      childrenLinks.add(sender.link)
+	    else if msg_level == level
+	      suspendedRequests.add(sender.link, message)
+	    else
+	      suspendedRequests.add(sender.link, message)
   
   Receiving('broadcast_update', msg_name, msg_level, updateAndFind)
     downtown = false
-    UPDATE(msg_name, msg_level, sender.edge, updateAndFind)
+    UPDATE(msg_name, msg_level, sender.link, updateAndFind)
     
     
     
     
   Receiving('notify_done')
-    send('notify_done') along all childrenEdges
+    send('notify_done') along all childrenLinks
     become FOLLOWER
 
 
@@ -69,27 +71,28 @@ WAITING_FOR_ANSWER
   Receiving('let_us_merge', msg_name, msg_level, msg_id)
     if msg_level < level
       send('absorbed', name, level, false) to sender
-      childrenEdges.add(sender.edge)
+      childrenLinks.add(sender.link)
     else if msg_level == level
-      if sender.edge == mergeEdge //friendly merge
-	START_FRIENDLY_MERGE(mergeEdge, msg_id)
+      if sender.link == mergePathNextLink //friendly merge
+		START_FRIENDLY_MERGE(mergePathNextLink, msg_id)
       else
-	suspendedRequests.add(sender.edge, message)
+		suspendedRequests.add(sender.link, message)
     else
-      suspendedRequests.add(sender.edge, message)
+      suspendedRequests.add(sender.link, message)
       
   Receiving('absorbed', msg_name, msg_level, updateAndFind)
     downtown = false
     become(AWAKE)
-    UPDATE(msg_name, msg_level, sender.edge, updateAndFind)
+    UPDATE(msg_name, msg_level, sender.link, updateAndFind)
     
   Receiving('outside?', msg_name, msg_level)
     if name == msg_name
-      send('internal') to sender
+    	internal_links.add(sender.link)
+      	send('internal') to sender
     else if level >= msg_level
       send('external') to sender
     else
-      suspendedQuestions.add(sender.edge, message)
+      suspendedQuestions.add(sender.link, message)
       
       
       
@@ -97,41 +100,41 @@ WAITING_FOR_ANSWER
 FINDING_MERGE_EDGE
   
   Receiving('internal')
-    internal_edges.add(sender.edge)
+    internal_links.add(sender.link)
     PROC_FIND_MIN_EXTERNAL_EDGE
   
   Receiving('external')
-    mergeEdge = sender.edge
-    min_external_edge_found = true
+    mergePathNextLink = sender.link
+    min_external_link_found = true
     PROC_CHECK_FOUND
     
   Receiving('found', child_min)
     if child_min < children_min
       children_min = child_min
-      childEdge_to_mergeEdge = sender.edge
+      childLink_to_mergeLink = sender.link
     count_children_response++
     PROC_CHECK_FOUND
     
   Receiving('outside?', msg_name, msg_level)
     if name == msg_name
-      if sender.edge == outsideRequest_edge
-	internal_edges.add(sender.edge)
-	PROC_FIND_MIN_EXTERNAL_EDGE
+      if sender.link == outsideQuestion_link
+		internal_links.add(sender.link)
+		PROC_FIND_MIN_EXTERNAL_EDGE
       else
-	send('internal') to sender
-    else if level >= msg_level
+		send('internal') to sender
+	else if level >= msg_level
       send('external') to sender
     else
-      suspendedQuestions.add(sender.edge, message)
+      suspendedQuestions.add(sender.link, message)
 
   Receiving('let_us_merge', msg_name, msg_level, msg_id)
     if msg_level < level
       send('absorbed', name, level, true) to sender
-      childrenEdges.add(sender.edge)
+      childrenLinks.add(sender.link)
     else if msg_level == level
-      suspendedRequests.add(sender.edge, message)
+      suspendedRequests.add(sender.link, message)
     else
-      suspendedRequests.add(sender.edge, message)
+      suspendedRequests.add(sender.link, message)
       
     
     
@@ -139,90 +142,93 @@ PROC_INIT
   name = 'City ' + id
   level = 1
   downtown = TRUE
-  parentEdge = NULL
-  childrenEdges = {}
-  childEdge_to_mergeEdge = NULL
+  parentLink = NULL
+  childrenLinks = {}
+  childLink_to_mergeLink = NULL
   count_children_response = 0
   children_min = infinity
-  mergeEdge = min(edges)
-  internal_edges = {}
-  outsideRequest_edge = NULL
-  suspendedRequests = new Map[senderEdge -> message]
-  suspendedQuestions = new Map[senderEdge -> message]
+  mergePathNextLink = min(edges)
+  internal_links = {}
+  outsideQuestion_link = NULL
+  suspendedRequests = new Map[senderLink -> message]
+  suspendedQuestions = new Map[senderLink -> message]
   candidate_node_in_subtree = true
 
 PROC_SEND_MERGE_REQUEST
   if candidate_node_in_subtree
-    send('let_us_merge', name, level, id) along mergeEdge
+    send('let_us_merge', name, level, id) along mergePathNextLink
     request_entry = NULL
     foreach entry in suspendedRequests
-      if entry.message.level == level && entry.senderEdge == mergeEdge
-	request_entry = entry
-	break //#YOLO
+      if entry.message.level == level && entry.senderLink == mergePathNextLink
+		request_entry = entry
+		break
     if request_entry != NULL
-      START_FRIENDLY_MERGE(mergeEdge, request_entry.message.id)
+      START_FRIENDLY_MERGE(mergePathNextLink, request_entry.message.id)
     else
       become(WAITING_FOR_ANSWER)
   else
-    send('make_merge_request') along childEdge_to_mergeEdge
+    send('make_merge_request') along childLink_to_mergeLink
 
 PROC_FIND_NEXT_MERGE_EDGE
-  childEdge_to_mergeEdge = NULL
+  childLink_to_mergeLink = NULL
   count_children_response = 0
   children_min = infinity
-  min_external_edge_found = false
-  mergeEdge = infinity
+  min_external_link_found = false
+  mergePathNextLink = infinity
   candidate_node_in_subtree = false
-  internal_edges = internal_edges U childrenEdges U parentEdge
-  outsideRequest_edge = NULL
+  internal_links = internal_links U childrenLinks U parentLink
+  outsideQuestion_link = NULL
   become(FINDING_MERGE_EDGE)
   PROC_FIND_MIN_EXTERNAL_EDGE
   
 PROC_FIND_MIN_EXTERNAL_EDGE
-  if !isempty(edges\internal_edges)
-    outsideRequest_edge = min(edges\internal_edges)
-    send('outside?', name, level) along outsideRequest_edge
+  if !isempty(edges\internal_links)
+    outsideQuestion_link = min(edges\internal_links)
+    send('outside?', name, level) along outsideQuestion_link
   else
-    min_external_edge_found = true
+    min_external_link_found = true
     PROC_CHECK_FOUND
 
 PROC_CHECK_FOUND
-  if count_children_response == childrenEdges.size && min_external_edge_found
-    if downtown && childEdge_to_mergeEdge == mergeEdge == infinity
-      send('notify_done') along all childrenEdges
+  if count_children_response == childrenLinks.size && min_external_link_found
+    if downtown && childLink_to_mergeLink == mergePathNextLink == infinity
+      send('notify_done') along all childrenLinks
       become LEADER
     else
-      if childEdge_to_mergeEdge > mergeEdge
-	candidate_node_in_subtree = true  
-      become(AWAKE)
-      if !downtown
-	send('found', min(childEdge_to_mergeEdge, mergeEdge)) along parentEdge
-      else
-	PROC_SEND_MERGE_REQUEST
+      if childLink_to_mergeLink > mergePathNextLink
+		candidate_node_in_subtree = true  
+	    become(AWAKE)
+	  if !downtown
+		send('found', min(childLink_to_mergeLink, mergePathNextLink)) along parentLink
+	  else
+		PROC_SEND_MERGE_REQUEST
       
 
     
 UPDATE(new_name, new_level, sender_edge, updateAndFind)
   name = new_name
   level = new_level
-  childrenEdges.add(parentEdge)
-  childrenEdges.remove(sender_edge)
-  parentEdge = sender_edge
-  send('broadcast_update', name, level, updateAndFind) along all childrenEdges
+  childrenLinks.add(parentLink)
+  childrenLinks.remove(sender_edge)
+  parentLink = sender_edge
+  send('broadcast_update', name, level, updateAndFind) along all childrenLinks
   foreach entry in suspendedRequests
     if entry.message.level < level
-      send('absorbed', name, level, updateAndFind) along entry.senderEdge
+      send('absorbed', name, level, updateAndFind) along entry.senderLink
+      suspendedRequests.remove(entry)
   foreach entry in suspendedQuestions
     if entry.message.name == name
-      send('internal') along entry.senderEdge
+      send('internal') along entry.senderLink
+      suspendedQuestions.remove(entry)
     else if entry.message.level <= level
-      send('external') along entry.senderEdge
+      send('external') along entry.senderLink
+      suspendedQuestions.remove(entry)
   if updateAndFind == TRUE
     PROC_FIND_NEXT_MERGE_EDGE
    
-START_FRIENDLY_MERGE(mergeEdge, otherCityNode_id)
+START_FRIENDLY_MERGE(mergePathNextLink, otherCityNode_id)
   if id < otherCityNode_id
     downtown = true
-    childrenEdges.add(mergeEdge)
-    UPDATE(mergeEdge.name, level+1, NULL, true)
+    childrenLinks.add(mergePathNextLink)
+    UPDATE(mergePathNextLink.name, level+1, NULL, true)
     

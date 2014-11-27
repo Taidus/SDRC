@@ -11,8 +11,8 @@ public class WaitingForAnswer extends MegaMergerAbstractState {
 	}
 
 	public void checkForPreviousRequests() {
-		if (node.previousFriendlyMergeRequestOnMergeEdgeFound()) {
-			acceptFriendlyMerge(node.processSuspendedRequest(node.getMergePathNextEdge()).getId());
+		if (node.previousFriendlyMergeRequestOnMergeLinkFound()) {
+			acceptFriendlyMerge(node.processSuspendedRequest(node.getMergePathNextLink()).getId());
 		}
 	}
 
@@ -23,8 +23,8 @@ public class WaitingForAnswer extends MegaMergerAbstractState {
 
 	private void acceptFriendlyMerge(int otherCityNode_id) {
 		if (newDowntown(otherCityNode_id)) {
-			node.addChild(node.getMergePathNextEdge());
-			node.broadcastUpdateAndFind(node.getMergePathNextEdge().getName(), node.getLevel() + 1, null);
+			node.addChild(node.getMergePathNextLink());
+			node.broadcastUpdateAndFind(node.getMergePathNextLink().getName(), node.getLevel() + 1, null);
 		}
 	}
 
@@ -63,6 +63,6 @@ public class WaitingForAnswer extends MegaMergerAbstractState {
 	}
 
 	private boolean mergeRequestOnSameLink(Link link) {
-		return link.equals(node.getMergePathNextEdge());
+		return link.equals(node.getMergePathNextLink());
 	}
 }
