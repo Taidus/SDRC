@@ -11,6 +11,8 @@ import java.awt.event.ComponentListener;
 
 class ChordalRingPanel extends DrawingPanel implements ComponentListener {
 
+	private static final long serialVersionUID = 1L;
+
 	ChordalRingPanel(NetworkPanel parent) {
 		super(parent);
 		addComponentListener(this);

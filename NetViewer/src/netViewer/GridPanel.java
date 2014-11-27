@@ -13,6 +13,7 @@ import java.awt.event.ComponentListener;
 
 class GridPanel extends DrawingPanel implements ComponentListener {
 
+	private static final long serialVersionUID = 1L;
 	private int rows, cols;
 
 	GridPanel(NetworkPanel parent) {

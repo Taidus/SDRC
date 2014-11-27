@@ -20,6 +20,7 @@ import java.awt.event.ComponentEvent;
 class ArbitraryPanel extends DrawingPanel implements MouseListener,
 		MouseMotionListener, ComponentListener {
 
+	private static final long serialVersionUID = 1L;
 	private Node originalNode;
 	private double offsetX, offsetY; // used when dragging a node to a new
 										// position

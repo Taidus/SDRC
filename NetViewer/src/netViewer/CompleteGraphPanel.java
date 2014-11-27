@@ -11,6 +11,8 @@ import java.awt.event.ComponentListener;
 
 class CompleteGraphPanel extends DrawingPanel implements ComponentListener {
 
+	private static final long serialVersionUID = 1L;
+
 	CompleteGraphPanel(NetworkPanel parent) {
 		super(parent);
 		this.addComponentListener(this);

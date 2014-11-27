@@ -22,6 +22,7 @@ import java.util.Enumeration;
 class TreePanel extends DrawingPanel implements MouseListener,
 		MouseMotionListener, ComponentListener {
 
+	private static final long serialVersionUID = 1L;
 	static final private int MARGIN_TOP = 3;
 	private final double heightOfALevel = 3 * Node.DIAMETER;
 	private int BUFFER = Node.DIAMETER + Node.RADIUS;

@@ -5,6 +5,7 @@ import java.awt.event.ComponentEvent;
 
 public class MinSizeFrame extends Frame implements ComponentListener {
 
+	private static final long serialVersionUID = 1L;
 	static final int MIN_WIDTH = 300;
 	static final int MIN_HEIGHT = 400;
 

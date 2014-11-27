@@ -1,4 +1,5 @@
 package netViewer;
+
 /*
  * NetViewer
  * Class: RingPanel
@@ -9,6 +10,8 @@ import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
 
 class RingPanel extends DrawingPanel implements ComponentListener {
+
+	private static final long serialVersionUID = 1L;
 
 	RingPanel(NetworkPanel parent) {
 		super(parent);
