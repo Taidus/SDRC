@@ -25,7 +25,7 @@ public class IdSenderHelper {
 	
 	public void handleNoMessage(NoMessage m, Link sender){
 		noNeighbours.add(sender);
-		m.flipOrPrune(node, sender);
+		m.prune(node, sender);
 		checkIfReceivedAllResponses();
 	}
 	
@@ -48,6 +48,10 @@ public class IdSenderHelper {
 	public void sendMessageToOutgoingLinks(YoyoMessage message) {
 		node.sendToAll(message, node.getOutgoingLinks());
 		numOfResponsesNeeded += node.getOutgoingLinks().size();
+	}
+	
+	public void flipNoNeighbours(){
+		node.flipOutgoingLinks(noNeighbours);
 	}
 	
 	public int getYesNeighboursSize() {

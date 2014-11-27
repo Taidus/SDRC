@@ -28,6 +28,7 @@ public class Internal extends YoyoAbstractState implements IdSender, IdReceiver 
 	@Override
 	public void whenAllResponsesReceived() {
 		idReceiverHelper.respondToAll();
+		idSenderHelper.flipNoNeighbours();
 	}
 	
 	@Override

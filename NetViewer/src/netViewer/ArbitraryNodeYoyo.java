@@ -127,16 +127,20 @@ public class ArbitraryNodeYoyo extends Node {
 		}
 	}
 
-	public void flipIncomingLinks(Set<Link> links) {
-		assert incomingLinks.containsAll(links);
-		incomingLinks.removeAll(links);
-		outgoingLinks.addAll(links);
+	public void flipIncomingLinks(Set<Link> linksToFlip) {
+		Set<Link> incomingLinksToFlip = linksToFlip;
+		incomingLinksToFlip.retainAll(incomingLinks);
+		assert incomingLinks.containsAll(incomingLinksToFlip);
+		incomingLinks.removeAll(incomingLinksToFlip);
+		outgoingLinks.addAll(incomingLinksToFlip);
 	}
 
-	public void flipOutgoingLinks(Set<Link> links) {
-		assert outgoingLinks.containsAll(links);
-		outgoingLinks.removeAll(links);
-		incomingLinks.addAll(links);
+	public void flipOutgoingLinks(Set<Link> linksToFlip) {
+		Set<Link> incomingLinksToFlip = linksToFlip;
+		incomingLinksToFlip.retainAll(outgoingLinks);
+		assert outgoingLinks.containsAll(linksToFlip);
+		outgoingLinks.removeAll(linksToFlip);
+		incomingLinks.addAll(linksToFlip);
 	}
 
 	public void flipIncomingLink(Link link) {
