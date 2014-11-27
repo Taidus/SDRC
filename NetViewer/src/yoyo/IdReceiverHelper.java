@@ -22,7 +22,7 @@ public class IdReceiverHelper {
 
 		linksPerReceivedId = new HashMap<>();
 		minReceivedId = Integer.MAX_VALUE;
-		
+
 	}
 
 	public int getMinReceivedId() {
@@ -49,18 +49,15 @@ public class IdReceiverHelper {
 			sendNoLinks = getLinksThatSentDifferentId(minReceivedId);
 
 			Set<Link> sendYesLinks = linksPerReceivedId.get(minReceivedId);
-			selectiveSend(new YesMessage(), sendYesLinks, linksToPrune);
-			sendYesLinks.retainAll(linksToPrune);
-			node.sendToAll(new YesAndPruneMessage(), sendYesLinks);
+			node.sendToAll(new YesMessage(), difference(sendYesLinks, linksToPrune));
+			node.sendToAll(new YesAndPruneMessage(), intersection(sendYesLinks, linksToPrune));
 		}
 
-		selectiveSend(new NoMessage(), sendNoLinks, linksToPrune);
-		sendNoLinks.retainAll(linksToPrune);
-		node.sendToAll(new NoAndPruneMessage(), sendNoLinks);
+		node.sendToAll(new NoMessage(), difference(sendNoLinks, linksToPrune));
+		node.sendToAll(new NoAndPruneMessage(), intersection(sendNoLinks, linksToPrune));
 
 		node.pruneIncomingLinks(linksToPrune);
-		sendNoLinks.removeAll(linksToPrune);
-		node.flipIncomingLinks(sendNoLinks);
+		node.flipIncomingLinks(difference(sendNoLinks, linksToPrune));
 
 		node.chooseState();
 	}
@@ -102,12 +99,16 @@ public class IdReceiverHelper {
 		}
 	}
 
-	private void selectiveSend(YoyoMessage message, Set<Link> allLinks, Set<Link> linksToIgnore) {
-		for (Link link : allLinks) {
-			if (!linksToIgnore.contains(link)) {
-				node.send(message, link);
-			}
-		}
+	private Set<Link> difference(Set<Link> allLinks, Set<Link> linksToIgnore) {
+		Set<Link> difference = new HashSet<>(allLinks);
+		difference.removeAll(linksToIgnore);
+		return difference;
+	}
+
+	private Set<Link> intersection(Set<Link> setA, Set<Link> setB) {
+		Set<Link> intersection = new HashSet<>(setA);
+		intersection.retainAll(setB);
+		return intersection;
 	}
 
 	private Set<Link> getLinksThatSentDifferentId(int id) {
@@ -119,8 +120,8 @@ public class IdReceiverHelper {
 		}
 		return links;
 	}
-	
-	private boolean isSink(){
+
+	private boolean isSink() {
 		return node.getOutgoingLinks().size() == 0;
 	}
 }

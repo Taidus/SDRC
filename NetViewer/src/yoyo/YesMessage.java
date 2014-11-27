@@ -3,7 +3,7 @@ package yoyo;
 import netViewer.ArbitraryNodeYoyo;
 import netViewer.Link;
 
-public class YesMessage extends ResponseMessage implements YoyoMessage {
+public class YesMessage implements YoyoMessage {
 	
 	@Override
 	public String printString() {
@@ -16,8 +16,8 @@ public class YesMessage extends ResponseMessage implements YoyoMessage {
 		
 	}
 
-	@Override
-	public void prune(ArbitraryNodeYoyo node, Link responseLink){
+	public void prune(ArbitraryNodeYoyo node, Link linkArrivedOn){
 		
 	}
+
 }

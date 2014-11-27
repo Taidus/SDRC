@@ -6,8 +6,8 @@ import netViewer.Link;
 public class YesAndPruneMessage extends YesMessage {
 
 	@Override
-	public void prune(ArbitraryNodeYoyo node, Link responseLink) {
-		node.pruneOutgoingLink(responseLink);
+	public void prune(ArbitraryNodeYoyo node, Link linkArrivedOn) {
+		node.pruneOutgoingLink(linkArrivedOn);
 	}
 
 	@Override

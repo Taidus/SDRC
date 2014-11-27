@@ -25,8 +25,7 @@ public class IdSenderHelper {
 	
 	public void handleNoMessage(NoMessage m, Link sender){
 		noNeighbours.add(sender);
-		m.prune(node, sender);
-		node.flipOutgoingLink(sender);
+		m.flipOrPrune(node, sender);
 		checkIfReceivedAllResponses();
 	}
 	

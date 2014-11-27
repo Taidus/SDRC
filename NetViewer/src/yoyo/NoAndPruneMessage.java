@@ -6,8 +6,8 @@ import netViewer.Link;
 public class NoAndPruneMessage extends NoMessage {
 
 	@Override
-	public void prune(ArbitraryNodeYoyo node, Link responseLink) {
-		node.pruneOutgoingLink(responseLink);
+	public void flipOrPrune(ArbitraryNodeYoyo node, Link linkArrivedOn) {
+		node.pruneOutgoingLink(linkArrivedOn);
 	}
 
 	@Override
