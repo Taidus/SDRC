@@ -13,12 +13,14 @@ public class Sink extends Receiver {
 	@Override
 	public void handle(YoMessage m, Link sender) {
 		handleYoMessage(m, sender);
-		node.chooseState();
 	}
 
 	@Override
 	protected void whenReceivedIdOnAllLinks() {
+		System.out.println("Sink id:"+node.getNodeId()+" respond to All");
 		respondToAll();
+		node.chooseState();
+
 	}
 
 	@Override

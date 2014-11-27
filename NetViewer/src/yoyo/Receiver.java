@@ -39,6 +39,7 @@ public abstract class Receiver extends YoyoAbstractState {
 			setMinReceivedId(m.getId());
 		}
 		if (idReceivedFromAllLinks()) {
+			System.out.println("Receved from all Links id: "+node.getNodeId());
 			whenReceivedIdOnAllLinks();
 		}
 	}

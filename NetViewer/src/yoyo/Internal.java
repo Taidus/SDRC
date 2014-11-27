@@ -22,6 +22,7 @@ public class Internal extends Receiver {
 	
 	@Override
 	protected void whenReceivedIdOnAllLinks() {
+		System.out.println("Internal send to all outgoing");
 		node.sendMessageToOutgoingLinks(new YoMessage(getMinReceivedId()));
 	}
 

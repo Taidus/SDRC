@@ -38,16 +38,15 @@ public class ArbitraryNodeYoYo extends Node {
 
 		yesNeighbours = new HashSet<>();
 		noNeighbours = new HashSet<>();
-
 		numOfResponsesNeeded = 0;
 	}
-	
+
 	@Override
 	protected void initialize() {
 		nodeState.spontaneously();
 		// TODO eventualmente aggiungere altro
 	}
-	
+
 	public void yoyoInitialize() {
 		sendToNeighbours(new SetupMessage(this));
 		become(new Awake(this));
@@ -66,35 +65,37 @@ public class ArbitraryNodeYoYo extends Node {
 	}
 
 	public void setupLink(SetupMessage m, Link sender) {
-		//FIXME: è giusta questa guardia?
-		if (m.getId() < getNodeId())
+		if (m.getId() > getNodeId()) {
 			outgoingLinks.add(sender);
-		else
+		} else {
 			incomingLinks.add(sender);
-		if (outgoingLinks.size() + incomingLinks.size() == getLinks().size())
+		}
+		if (outgoingLinks.size() + incomingLinks.size() == getLinks().size()) {
 			chooseState();
+		}
 	}
 
 	public void chooseState() {
-		// FIXME mi sa che da qualche parte numOfResponsesNeeded dovrà essere resettata
+		// FIXME  numOfResponsesNeeded, yesNeighbours, noNeighbours vanno resettate quando si cambia stato,
+		//per adesso la faccio qui in attesa di rifattorizzare
 		if (incomingLinks.size() + outgoingLinks.size() == 0) {
 			if (!prunedIncoming) {
 				become(new Leader(this));
-			}
-			else {
+			} else {
 				become(new Follower(this));
 			}
-		}
-		else if (incomingLinks.isEmpty()) {
+		} else if (incomingLinks.isEmpty()) {
 			become(new Source(this));
 			sendMessageToOutgoingLinks(new YoMessage(getNodeId()));
-		}
-		else if (outgoingLinks.isEmpty()) {
+		} else if (outgoingLinks.isEmpty()) {
 			become(new Sink(this));
-		}
-		else {
+		} else {
 			become(new Internal(this));
 		}
+		
+		numOfResponsesNeeded=0;
+		yesNeighbours.clear();
+		noNeighbours.clear();
 	}
 
 	public void addYesNeighbours(Link toAdd) {
@@ -158,7 +159,7 @@ public class ArbitraryNodeYoYo extends Node {
 	public Set<Link> getIncomingLinks() {
 		return new HashSet<Link>(incomingLinks);
 	}
-	
+
 	public Set<Link> getOutgoingLinks() {
 		return new HashSet<Link>(outgoingLinks);
 	}
@@ -169,11 +170,11 @@ public class ArbitraryNodeYoYo extends Node {
 		}
 	}
 
-	//FIXME: forse ha senso metterla in Node
+	// FIXME: forse ha senso metterla in Node
 	private void sendToNeighbours(YoyoMessage message) {
-		for(Link toSendTo:getLinks()) {
+		for (Link toSendTo : getLinks()) {
 			send(message, toSendTo);
 		}
 	}
-	
+
 }

@@ -13,6 +13,7 @@ public class Source extends YoyoAbstractState {
 	
 	@Override
 	protected void whenAllResponsesReceived() {
+			System.out.println("Source all resposes arrived");
 		 node.chooseState();
 	}
 

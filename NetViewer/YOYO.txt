@@ -89,7 +89,7 @@ send('Setup',id(x)) to N(x)
 become AWAKE
 
 PROC_SETUP_EDGE
-  if(id(x)> id)
+  if(id(x) < id)
     outgoingEdges.add(sender.edge)
   else
     ingoingEdges.add(sender.edge)
