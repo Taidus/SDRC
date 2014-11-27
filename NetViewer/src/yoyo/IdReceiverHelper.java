@@ -58,8 +58,6 @@ public class IdReceiverHelper {
 
 		node.pruneIncomingLinks(linksToPrune);
 		node.flipIncomingLinks(difference(sendNoLinks, linksToPrune));
-
-		node.chooseState();
 	}
 
 	private boolean idReceivedFromAllLinks() {
