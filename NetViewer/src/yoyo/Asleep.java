@@ -17,12 +17,13 @@ public class Asleep extends YoyoAbstractState {
 	
 	@Override
 	public void handle(SetupMessage m, Link sender){
-		//TODO implementare
+		node.yoyoInitialize();
+		node.setupLink(m, sender);
 	}
 	
 	@Override
 	public void spontaneously() {
-		//TODO implementare
+		node.yoyoInitialize();
 	}
 
 }

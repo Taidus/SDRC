@@ -1,5 +1,8 @@
 package yoyo;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import netViewer.ArbitraryNodeYoYo;
 import netViewer.Link;
 
@@ -47,7 +50,10 @@ public abstract class YoyoAbstractState implements YoyoState {
 		node.addNoNeighbours(sender);
 		m.prune(node, sender);
 		checkIfReceivedAllResponses();
-		//TODO ci vorrebbe un flip sull'outgoing
+		//FIXME: verificare
+		Set<Link> toFlip = new HashSet<>();
+		toFlip.add(sender);
+		node.flipOutgoingLinks(toFlip);
 	}
 	
 	protected void handleYesMessage(YesMessage m, Link sender){

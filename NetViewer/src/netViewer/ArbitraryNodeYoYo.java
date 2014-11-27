@@ -5,6 +5,7 @@ import general.Message;
 import java.util.HashSet;
 import java.util.Set;
 
+import yoyo.Awake;
 import yoyo.Asleep;
 import yoyo.Follower;
 import yoyo.Internal;
@@ -40,11 +41,16 @@ public class ArbitraryNodeYoYo extends Node {
 
 		numOfResponsesNeeded = 0;
 	}
-
+	
 	@Override
 	protected void initialize() {
 		nodeState.spontaneously();
 		// TODO eventualmente aggiungere altro
+	}
+	
+	public void yoyoInitialize() {
+		sendToNeighbours(new SetupMessage(this));
+		become(new Awake(this));
 	}
 
 	public void become(YoyoState nextState) {
@@ -60,7 +66,8 @@ public class ArbitraryNodeYoYo extends Node {
 	}
 
 	public void setupLink(SetupMessage m, Link sender) {
-		if (m.getId() > getNodeId())
+		//FIXME: è giusta questa guardia?
+		if (m.getId() < getNodeId())
 			outgoingLinks.add(sender);
 		else
 			incomingLinks.add(sender);
@@ -158,4 +165,11 @@ public class ArbitraryNodeYoYo extends Node {
 		}
 	}
 
+	//FIXME: forse ha senso metterla in Node
+	private void sendToNeighbours(YoyoMessage message) {
+		for(Link toSendTo:getLinks()) {
+			send(message, toSendTo);
+		}
+	}
+	
 }
