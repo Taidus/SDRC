@@ -15,6 +15,9 @@ public abstract class MegaMergerAbstractState implements MegaMergerState {
 	public void changeState(MegaMergerState nextState) {
 		node.become(nextState);
 	}
+	
+	@Override
+	public void spontaneously() {}
 
 	protected void handleWhere(WhereMessage m, Link sender) {
 		if (node.getNodeName().equals(m.getName())) {

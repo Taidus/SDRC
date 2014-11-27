@@ -19,6 +19,6 @@ public interface State {
 
 	public int intValue();
 
-	default public void spontaneously(){}
+	public void spontaneously();
 
 }

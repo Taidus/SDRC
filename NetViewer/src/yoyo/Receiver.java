@@ -10,8 +10,6 @@ import netViewer.Link;
 
 public abstract class Receiver extends YoyoAbstractState {
 	private Map<Integer, Set<Link>> linksPerReceivedId;
-	// private Set<Link> receivedIDs; // XXX non credo che questa variabile abbia senso. Di sicuro non con questa coppia nome/tipo. Se ha senso
-	// ricordarsi di inizializzarla
 	private int minReceivedId;
 
 	public Receiver(ArbitraryNodeYoYo node) {
@@ -92,14 +90,8 @@ public abstract class Receiver extends YoyoAbstractState {
 				redudantLinks.remove(linksPerReceivedId.get(id).iterator().next());
 			}
 		}
-
-		// XXX questo codice non l'ho proprio capito
-		// if (redudantLinks.size() == node.getIncomingLinks().size()) {
-		// return new HashSet<Link>(node.getIncomingLinks());
-		// }
-		// else {
-		// return redudantLinks;
-		// }
+		
+		//TODO gestire caso size = 1
 
 		return redudantLinks;
 	}

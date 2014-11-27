@@ -10,6 +10,9 @@ public abstract class YoyoAbstractState implements YoyoState {
 	public YoyoAbstractState(ArbitraryNodeYoYo node) {
 		this.node = node;
 	}
+	
+	@Override
+	public void spontaneously() {}
 
 	@Override
 	public void handle(SetupMessage m, Link sender) {
@@ -44,7 +47,7 @@ public abstract class YoyoAbstractState implements YoyoState {
 		node.addNoNeighbours(sender);
 		m.prune(node, sender);
 		checkIfReceivedAllResponses();
-		//FIXME non ci vorrebbe un flip?
+		//TODO ci vorrebbe un flip sull'outgoing
 	}
 	
 	protected void handleYesMessage(YesMessage m, Link sender){
