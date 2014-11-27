@@ -22,6 +22,7 @@ public class IdReceiverHelper {
 
 		linksPerReceivedId = new HashMap<>();
 		minReceivedId = Integer.MAX_VALUE;
+		
 	}
 
 	public int getMinReceivedId() {

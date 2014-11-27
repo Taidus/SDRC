@@ -2,8 +2,10 @@ package netViewer;
 
 import general.Message;
 
+import java.util.ArrayDeque;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.Queue;
 import java.util.Set;
 
 import yoyo.Awake;
@@ -25,13 +27,50 @@ public class ArbitraryNodeYoYo extends Node {
 	private Set<Link> outgoingLinks;
 	private Set<Link> incomingLinks;
 
+	private Queue<QueueMessage> queue;
+	
+
 	public ArbitraryNodeYoYo(Integer ID) {
 		super(ID);
 
+		queue = new ArrayDeque<QueueMessage>();
 		nodeState = new Asleep(this);
 		prunedIncoming = false;
 		outgoingLinks = new HashSet<>();
 		incomingLinks = new HashSet<>();
+	}
+	
+	private class QueueMessage {
+		private YoyoMessage message;
+		private Link sender;
+
+		public YoyoMessage getMessage() {
+			return message;
+		}
+
+		public Link getSender() {
+			return sender;
+		}
+
+		public QueueMessage(YoyoMessage message, Link sender) {
+			super();
+			this.message = message;
+			this.sender = sender;
+		}
+
+	}
+
+	public void enqueueMessage(YoyoMessage m, Link sender) {
+		queue.add(new QueueMessage(m, sender));
+	}
+
+	public void processEnqueuedMessages() {
+		QueueMessage m = queue.poll();
+		while (m != null) {
+
+			m.getMessage().accept(nodeState, m.getSender());
+			m = queue.poll();
+		}
 	}
 
 	@Override
@@ -81,8 +120,10 @@ public class ArbitraryNodeYoYo extends Node {
 			nextState.sendMessageToOutgoingLinks(new YoMessage(getNodeId()));
 		} else if (outgoingLinks.isEmpty()) {
 			become(new Sink(this));
+			processEnqueuedMessages();
 		} else {
 			become(new Internal(this));
+			processEnqueuedMessages();
 		}
 	}
 
@@ -97,7 +138,7 @@ public class ArbitraryNodeYoYo extends Node {
 		outgoingLinks.removeAll(links);
 		incomingLinks.addAll(links);
 	}
-	
+
 	public void flipIncomingLink(Link link) {
 		Set<Link> toFlip = new HashSet<>();
 		toFlip.add(link);
