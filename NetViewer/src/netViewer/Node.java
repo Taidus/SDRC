@@ -58,6 +58,12 @@ public abstract class Node extends Thread {
 														// finished
 	static final Color COLOUR_WAITING = Color.gray;
 	static final Color COLOUR_BUSY = Color.orange;
+	
+	
+	public static final Color COLOUR_INTERNAL = Color.magenta;
+	public static final Color COLOUR_SINK = Color.cyan;
+	public static final Color COLOUR_SOURCE = Color.PINK;
+	
 
 	// Mapping of states to colours
 	static final HashMap<Integer, Color> coloursMap = new HashMap<>();
@@ -70,6 +76,10 @@ public abstract class Node extends Thread {
 		coloursMap.put(new Integer(general.State.FOLLOWER), COLOUR_FOLLOWER);
 		coloursMap.put(new Integer(general.State.WAITING_FOR_ANSWER), COLOUR_WAITING);
 		coloursMap.put(new Integer(general.State.FINDING_MERGE_EDGE), COLOUR_BUSY);
+		coloursMap.put(new Integer(general.State.INTERNAL), COLOUR_INTERNAL);
+		coloursMap.put(new Integer(general.State.SINK), COLOUR_SINK);
+		coloursMap.put(new Integer(general.State.SOURCE), COLOUR_SOURCE);
+		
 	}
 
 	public static Color MESSAGE_QUEUE_COLOUR = Color.black; // for drawing
