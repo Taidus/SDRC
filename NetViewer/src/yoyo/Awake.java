@@ -17,6 +17,6 @@ public class Awake extends YoyoAbstractState {
 
 	@Override
 	public void handle(SetupMessage m, Link sender) {
-		node.setupEdge(m, sender);
+		node.setupLink(m, sender);
 	}
 }

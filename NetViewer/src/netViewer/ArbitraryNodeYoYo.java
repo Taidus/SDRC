@@ -3,11 +3,7 @@ package netViewer;
 import general.Message;
 
 import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Map;
 import java.util.Set;
-
-import javax.naming.LimitExceededException;
 
 import yoyo.Asleep;
 import yoyo.Follower;
@@ -23,32 +19,32 @@ import yoyo.YoyoState;
 public class ArbitraryNodeYoYo extends Node {
 
 	private YoyoState nodeState;
-	private boolean pruned_incoming;
-	private Set<Link> outgoingEdges;
-	private Set<Link> incomingEdges;
+	private boolean prunedIncoming;
+	private Set<Link> outgoingLinks;
+	private Set<Link> incomingLinks;
 
 	private Set<Link> yesNeighbours;
 	private Set<Link> noNeighbours;
-	private Set<Link> receivedIDs;
-
-	private Map<Integer, Set<Link>> linksPerSentId;
-	private int minReceivedValue;
-
-	int numOfResponsesNeeded;
+	private int numOfResponsesNeeded;
 
 	public ArbitraryNodeYoYo(Integer ID) {
 		super(ID);
 
 		nodeState = new Asleep(this);
-		pruned_incoming = false;
-		outgoingEdges = new HashSet<>();
-		incomingEdges = new HashSet<>();
+		prunedIncoming = false;
+		outgoingLinks = new HashSet<>();
+		incomingLinks = new HashSet<>();
 
 		yesNeighbours = new HashSet<>();
 		noNeighbours = new HashSet<>();
-		receivedIDs = new HashSet<>();
 
 		numOfResponsesNeeded = 0;
+	}
+
+	@Override
+	protected void initialize() {
+		nodeState.spontaneously();
+		// TODO eventualmente aggiungere altro
 	}
 
 	public void become(YoyoState nextState) {
@@ -63,32 +59,33 @@ public class ArbitraryNodeYoYo extends Node {
 		((YoyoMessage) msg).accept(nodeState, link);
 	}
 
-	public void sendMessage(Message message, Link link) {
-		send(message, link);
-	}
-
-	public void setupEdge(SetupMessage m, Link sender) {
+	public void setupLink(SetupMessage m, Link sender) {
 		if (m.getId() > getNodeId())
-			outgoingEdges.add(sender);
+			outgoingLinks.add(sender);
 		else
-			incomingEdges.add(sender);
-		if (outgoingEdges.size() + incomingEdges.size() == getLinks().size())
+			incomingLinks.add(sender);
+		if (outgoingLinks.size() + incomingLinks.size() == getLinks().size())
 			chooseState();
 	}
 
 	public void chooseState() {
-		if (incomingEdges.size() + outgoingEdges.size() == 0) {
-			if (!pruned_incoming) {
+		// FIXME mi sa che da qualche parte numOfResponsesNeeded dovrà essere resettata
+		if (incomingLinks.size() + outgoingLinks.size() == 0) {
+			if (!prunedIncoming) {
 				become(new Leader(this));
-			} else {
+			}
+			else {
 				become(new Follower(this));
 			}
-		} else if (incomingEdges.isEmpty()) {
+		}
+		else if (incomingLinks.isEmpty()) {
 			become(new Source(this));
-			sendMessageToOutgoingEdges(new YoMessage(getNodeId()));
-		} else if (outgoingEdges.isEmpty()) {
+			sendMessageToOutgoingLinks(new YoMessage(getNodeId()));
+		}
+		else if (outgoingLinks.isEmpty()) {
 			become(new Sink(this));
-		} else {
+		}
+		else {
 			become(new Internal(this));
 		}
 	}
@@ -102,36 +99,36 @@ public class ArbitraryNodeYoYo extends Node {
 	}
 
 	public void flipIncomingLinks(Set<Link> links) {
-		assert incomingEdges.containsAll(links);
-		incomingEdges.removeAll(links);
-		outgoingEdges.addAll(links);
+		assert incomingLinks.containsAll(links);
+		incomingLinks.removeAll(links);
+		outgoingLinks.addAll(links);
 	}
 
 	public void flipOutgoingLinks(Set<Link> links) {
-		assert outgoingEdges.containsAll(links);
-		outgoingEdges.removeAll(links);
-		incomingEdges.addAll(links);
+		assert outgoingLinks.containsAll(links);
+		outgoingLinks.removeAll(links);
+		incomingLinks.addAll(links);
 	}
 
 	public void pruneIncomingLinks(Set<Link> links) {
-		assert incomingEdges.containsAll(links);
-		incomingEdges.removeAll(links);
+		assert incomingLinks.containsAll(links);
+		incomingLinks.removeAll(links);
 	}
 
 	public void pruneOutgoingLinks(Set<Link> links) {
-		assert outgoingEdges.containsAll(links);
-		outgoingEdges.removeAll(links);
+		assert outgoingLinks.containsAll(links);
+		outgoingLinks.removeAll(links);
 	}
 
 	public void pruneIncomingLink(Link link) {
-		assert incomingEdges.contains(link);
-		incomingEdges.remove(link);
-		pruned_incoming=true;
+		assert incomingLinks.contains(link);
+		incomingLinks.remove(link);
+		prunedIncoming = true;
 	}
 
 	public void pruneOutgoingLink(Link link) {
-		assert outgoingEdges.contains(link);
-		outgoingEdges.remove(link);
+		assert outgoingLinks.contains(link);
+		outgoingLinks.remove(link);
 	}
 
 	public int getYesNeighboursSize() {
@@ -146,97 +143,19 @@ public class ArbitraryNodeYoYo extends Node {
 		return numOfResponsesNeeded;
 	}
 
-	public int getMinReceivedValue() {
-		return minReceivedValue;
+	public void sendMessageToOutgoingLinks(YoyoMessage toSend) {
+		sendToAll(toSend, outgoingLinks);
+		numOfResponsesNeeded += outgoingLinks.size();
 	}
 
-	public void setMinReceivedValue(int minValue) {
-		minReceivedValue = minValue;
+	public Set<Link> getIncomingLinks() {
+		return new HashSet<Link>(incomingLinks);
 	}
 
-	public Set<Link> getLinksById(int id) {
-		return new HashSet<Link>(linksPerSentId.get(id));
-	}
-
-	public Set<Link> linksThatSentDifferentId(int id) {
-		Set<Link> links = new HashSet<>();
-		for (Integer currentId : linksPerSentId.keySet()) {
-			if (currentId != id) {
-				links.addAll(linksPerSentId.get(currentId));
-			}
-		}
-		return links;
-	}
-
-	public Set<Integer> getKeysOfLinksPerSentId() {
-		return linksPerSentId.keySet();
-	}
-
-	public void receivedIdOn(Link link, int id) {
-		linksPerSentId.get(id).add(link);
-	}
-
-	public void clearIdMap() {
-		linksPerSentId.clear();
-	}
-
-	// FIXME: cambiare nome
-	public boolean idReceivedFromAllLinks() {
-		int size = 0;
-		for (Set<Link> toCompute : linksPerSentId.values()) {
-			size += toCompute.size();
-		}
-		return incomingEdges.size() == size;
-	}
-
-	public void sendMessageToOutgoingEdges(Message toSend) {
-		for (Link toSendTo : outgoingEdges) {
-			send(toSend, toSendTo);
-			numOfResponsesNeeded++;
+	public void sendToAll(YoyoMessage message, Set<Link> links) {
+		for (Link link : links) {
+			send(message, link);
 		}
 	}
 
-	public void sendMessageToAllIdLinks(Message toSend, int id) {
-		for (Link toSendTo : linksPerSentId.get(id)) {
-			send(toSend, toSendTo);
-		}
-	}
-
-	// FIXME: non so se � possibile farlo in modo pi� rapido
-	public void addElementToMap(int id, Link link) {
-		if (linksPerSentId.containsKey(id)) {
-			linksPerSentId.get(id).add(link);
-		} else {
-			Set<Link> singleLink = new HashSet<>();
-			singleLink.add(link);
-			linksPerSentId.put(id, singleLink);
-		}
-	}
-
-	// FIXME: ho fatto cos� visto che ad Alessio Sarullo non gli piace ritornare
-	// l'intero Set
-	public Set<Link> copyIncomingEdges() {
-		Set<Link> Edge = incomingEdges;
-		return Edge;
-	}
-
-	public Set<Link> getLinksToPrune() {
-		Set<Link> redudantLinks = new HashSet<Link>();
-		for (Integer id : linksPerSentId.keySet()) {
-
-			Set<Link> links = linksPerSentId.get(id);
-			if (!links.isEmpty()) {
-				redudantLinks.addAll(links);
-				Iterator<Link> it = links.iterator();
-				redudantLinks.remove(it.next());
-			}
-
-		}
-
-		if (redudantLinks.size() == incomingEdges.size()) {
-			return new HashSet<Link>(incomingEdges);
-		} else {
-			return redudantLinks;
-		}
-	}
 }

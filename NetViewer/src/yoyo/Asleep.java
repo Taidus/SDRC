@@ -1,5 +1,6 @@
 package yoyo;
 
+import general.State;
 import netViewer.ArbitraryNodeYoYo;
 import netViewer.Link;
 
@@ -11,13 +12,17 @@ public class Asleep extends YoyoAbstractState {
 
 	@Override
 	public int intValue() {
-		// TODO Auto-generated method stub
-		return 0;
+		return State.ASLEEP;
 	}
 	
 	@Override
 	public void handle(SetupMessage m, Link sender){
-		
+		//TODO implementare
+	}
+	
+	@Override
+	public void spontaneously() {
+		//TODO implementare
 	}
 
 }
