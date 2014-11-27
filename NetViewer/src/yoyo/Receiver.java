@@ -32,7 +32,7 @@ public abstract class Receiver extends YoyoAbstractState {
 	protected void whenAllResponsesReceived() {
 		respondToAll();
 	}
-	
+
 	protected void handleYoMessage(YoMessage m, Link sender) {
 		addIdReceivedOnLink(m.getId(), sender);
 		if (m.getId() < getMinReceivedId()) {
@@ -82,32 +82,34 @@ public abstract class Receiver extends YoyoAbstractState {
 	}
 
 	private Set<Link> getLinksToPrune() {
-		Set<Link> redudantLinks = new HashSet<>();
 
+		Set<Link> notToPruneLinks = new HashSet<Link>();
 		for (Integer id : linksPerReceivedId.keySet()) {
-			if (!linksPerReceivedId.get(id).isEmpty()) { // XXX sarebbe meglio un'asserzione: non ha senso che la lista relativa ad un id sia vuota
-				redudantLinks.addAll(linksPerReceivedId.get(id));
-				redudantLinks.remove(linksPerReceivedId.get(id).iterator().next());
-			}
+			assert !linksPerReceivedId.get(id).isEmpty();
+			notToPruneLinks.add(linksPerReceivedId.get(id).iterator().next());
 		}
-		
-		//TODO gestire caso size = 1
+		if (node.getOutgoingLinks().size() == 0 && notToPruneLinks.size() == 1) {
+			notToPruneLinks.clear();
+		}
 
-		return redudantLinks;
+		Set<Link> toPruneLinks = node.getIncomingLinks();
+		toPruneLinks.removeAll(notToPruneLinks);
+		return toPruneLinks;
+
 	}
 
 	private void addIdReceivedOnLink(int id, Link link) {
 		if (linksPerReceivedId.containsKey(id)) {
 			linksPerReceivedId.get(id).add(link);
-		}
-		else {
+		} else {
 			Set<Link> singleLink = new HashSet<>();
 			singleLink.add(link);
 			linksPerReceivedId.put(id, singleLink);
 		}
 	}
 
-	private void selectiveSend(YoyoMessage message, Set<Link> allLinks, Set<Link> linksToIgnore) {
+	private void selectiveSend(YoyoMessage message, Set<Link> allLinks,
+			Set<Link> linksToIgnore) {
 		for (Link link : allLinks) {
 			if (!linksToIgnore.contains(link)) {
 				node.send(message, link);

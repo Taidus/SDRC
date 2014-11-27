@@ -158,6 +158,10 @@ public class ArbitraryNodeYoYo extends Node {
 	public Set<Link> getIncomingLinks() {
 		return new HashSet<Link>(incomingLinks);
 	}
+	
+	public Set<Link> getOutgoingLinks() {
+		return new HashSet<Link>(outgoingLinks);
+	}
 
 	public void sendToAll(YoyoMessage message, Set<Link> links) {
 		for (Link link : links) {
