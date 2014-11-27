@@ -3,6 +3,8 @@ States:
 	S_init = {ASLEEP};
 	S_term = {FOLLOWER, LEADER}.
 	
+Restrictions: IR.
+	
 ASLEEP
   Spontaneously
      PROC_INIT
