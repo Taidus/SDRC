@@ -140,20 +140,17 @@ public class ArbitraryNodeYoyo extends Node {
 	}
 
 	public void flipIncomingLink(Link link) {
-		Set<Link> toFlip = new HashSet<>();
-		toFlip.add(link);
-		flipIncomingLinks(toFlip);
+		flipIncomingLinks(createSingleton(link));
 	}
 
 	public void flipOutgoingLink(Link link) {
-		Set<Link> toFlip = new HashSet<>();
-		toFlip.add(link);
-		flipOutgoingLinks(toFlip);
+		flipOutgoingLinks(createSingleton(link));
 	}
 
 	public void pruneIncomingLinks(Set<Link> links) {
 		assert incomingLinks.containsAll(links);
 		incomingLinks.removeAll(links);
+		prunedIncoming = true;
 	}
 
 	public void pruneOutgoingLinks(Set<Link> links) {
@@ -162,14 +159,11 @@ public class ArbitraryNodeYoyo extends Node {
 	}
 
 	public void pruneIncomingLink(Link link) {
-		assert incomingLinks.contains(link);
-		incomingLinks.remove(link);
-		prunedIncoming = true;
+		pruneIncomingLinks(createSingleton(link));
 	}
 
 	public void pruneOutgoingLink(Link link) {
-		assert outgoingLinks.contains(link);
-		outgoingLinks.remove(link);
+		pruneOutgoingLinks(createSingleton(link));
 	}
 
 	public Set<Link> getIncomingLinks() {
@@ -189,6 +183,12 @@ public class ArbitraryNodeYoyo extends Node {
 	// XXX: forse ha senso metterla in Node
 	private void sendToNeighbours(YoyoMessage message) {
 		sendToAll(message, links);
+	}
+	
+	private Set<Link> createSingleton(Link link){
+		Set<Link> singleton = new HashSet<Link>();
+		singleton.add(link);
+		return singleton;
 	}
 
 }
