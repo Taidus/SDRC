@@ -54,13 +54,13 @@ public class IdReceiverHelper {
 			node.sendToAll(new YesAndPruneMessage(), sendYesLinks);
 		}
 
-		node.flipIncomingLinks(sendNoLinks);
-
 		selectiveSend(new NoMessage(), sendNoLinks, linksToPrune);
 		sendNoLinks.retainAll(linksToPrune);
 		node.sendToAll(new NoAndPruneMessage(), sendNoLinks);
 
 		node.pruneIncomingLinks(linksToPrune);
+		sendNoLinks.removeAll(linksToPrune);
+		node.flipIncomingLinks(sendNoLinks);
 
 		node.chooseState();
 	}
@@ -81,7 +81,7 @@ public class IdReceiverHelper {
 			assert !linksPerReceivedId.get(id).isEmpty();
 			notToPruneLinks.add(linksPerReceivedId.get(id).iterator().next());
 		}
-		if (node.getOutgoingLinks().size() == 0 && notToPruneLinks.size() == 1) {
+		if (isSink() && notToPruneLinks.size() == 1) {
 			notToPruneLinks.clear();
 		}
 
@@ -118,5 +118,9 @@ public class IdReceiverHelper {
 			}
 		}
 		return links;
+	}
+	
+	private boolean isSink(){
+		return node.getOutgoingLinks().size() == 0;
 	}
 }
