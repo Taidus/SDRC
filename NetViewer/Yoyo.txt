@@ -1,5 +1,8 @@
-/*********************** STATES *************************/
-//TODO:spanning tree?
+States: 
+	S = {ASLEEP, AWAKE, INTERNAL, SOURCE, SINK, FOLLOWER, LEADER};
+	S_init = {ASLEEP};
+	S_term = {FOLLOWER, LEADER}.
+	
 ASLEEP
   Spontaneously
      PROC_INIT
@@ -13,10 +16,10 @@ AWAKE
   Receiving('Setup',id)
       PROC_SETUP_EDGE
   
-  Receveing any other message  //dovrebbe essere l'unico punto che permette di togliere l'assunzione FIFO
-    store the message for later processing
+    Receveing any other message
+    store the message for later(when the node becomes INTERNAL or SOURCE or SINK) processing
     
-INTERNAL_NODE
+INTERNAL
   //receivedIDs deve essere una multimap (chiave-multivalore) perchè posso ricevere lo stesso id da più rami
     Receiving('Yo',id)
       receivedIDs.put(id,sender.edge);
@@ -73,10 +76,6 @@ SOURCE
       
 
 
-
-
-/********************** PROC & FUN **********************/
-
 PROC_INIT
 outgoingEdges = {}
 ingoingEdges = {}
@@ -84,7 +83,7 @@ yes_neighbours ={}
 no_neighbours ={}
 receivedIDs={}
 num_of_responses_needed=0;
-pruned_ingoing=false; //per discriminare i sink che hanno prunato tutto e diventano FOLLWER e l'ultima sorgente che diventana LEDADER
+pruned_ingoing=false; 
 send('Setup',id(x)) to N(x)
 become AWAKE
 
@@ -97,6 +96,12 @@ PROC_SETUP_EDGE
     PROC_CHOOSE_STATE
 
 PROC_CHOOSE_STATE
+
+  yes_neighbours ={}
+  no_neighbours ={}
+  receivedIDs={}
+  num_of_responses_needed=outgoingEdges.size
+
   if(ingoingEdges.size +outgoingEdges=0)
     if(!pruned_ingoing)
       become LEADER
@@ -108,13 +113,9 @@ PROC_CHOOSE_STATE
   else if(outgoingEdges.size = 0)
     become SINK
   else 
-    become INTERNAL_NODE
+    become INTERNAL
       
-  yes_neighbours ={}
-  no_neighbours ={}
-  receivedIDs={}
-  num_of_responses_needed=outgoingEdges.size
-  
+
     
 PROC_CHECK_YES_NO
 
@@ -157,7 +158,7 @@ PROC_CHECK_YES_NO
 
 PROC_SELECT_TO_PRUNE_EDGES
 to_prune_edges = edges in receivedIDs.values which share the same id except one (randomly chosen)
-if(outgoingEdges.size=0 && ingoingEdges-to_prune_edges.size=1)  //se rimanesse un solo outgoing edge, sarei un sink foglia e quindi pruno anche questo ultimo arco
+if(outgoingEdges.size=0 && ingoingEdges-to_prune_edges.size=1)
   to_prune_edges=ingoingEdges
 if(to_prune_edges.size >0)
   pruned_ingoing=true
