@@ -19,4 +19,9 @@ public class Awake extends YoyoAbstractState {
 	public void handle(SetupMessage m, Link sender) {
 		node.setupLink(m, sender);
 	}
+	
+	@Override
+	public void handle(YoMessage m, Link sender){
+		//node.enqueueMessage(m, sender);
+	}
 }
