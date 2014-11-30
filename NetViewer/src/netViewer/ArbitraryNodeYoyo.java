@@ -2,86 +2,32 @@ package netViewer;
 
 import general.Message;
 
-import java.util.ArrayDeque;
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.Queue;
 import java.util.Set;
 
-import yoyo.Awake;
 import yoyo.Asleep;
-import yoyo.Follower;
-import yoyo.Internal;
-import yoyo.Leader;
 import yoyo.SetupMessage;
-import yoyo.Sink;
-import yoyo.Source;
-import yoyo.YoMessage;
 import yoyo.YoyoMessage;
 import yoyo.YoyoState;
 
 public class ArbitraryNodeYoyo extends Node {
 
 	private YoyoState nodeState;
-	private boolean prunedIncoming;
 	private Set<Link> outgoingLinks;
 	private Set<Link> incomingLinks;
-
-	private Queue<QueueMessage> queue;
-	
 
 	public ArbitraryNodeYoyo(Integer ID) {
 		super(ID);
 
-		queue = new ArrayDeque<QueueMessage>();
 		nodeState = new Asleep(this);
-		prunedIncoming = false;
 		outgoingLinks = new HashSet<>();
 		incomingLinks = new HashSet<>();
-	}
-	
-	private class QueueMessage {
-		private YoyoMessage message;
-		private Link sender;
-
-		public YoyoMessage getMessage() {
-			return message;
-		}
-
-		public Link getSender() {
-			return sender;
-		}
-
-		public QueueMessage(YoyoMessage message, Link sender) {
-			super();
-			this.message = message;
-			this.sender = sender;
-		}
-
-	}
-
-	public void enqueueMessage(YoyoMessage m, Link sender) {
-		queue.add(new QueueMessage(m, sender));
-	}
-
-	public void processEnqueuedMessages() {
-		QueueMessage m = queue.poll();
-		while (m != null) {
-
-			m.getMessage().accept(nodeState, m.getSender());
-			m = queue.poll();
-		}
 	}
 
 	@Override
 	protected void initialize() {
 		nodeState.spontaneously();
-	}
-
-	public void yoyoInitialize() {
-		// XXX ha davvero senso o si può spostare in Asleep?
-		sendToNeighbours(new SetupMessage(nodeId));
-		become(new Awake(this));
 	}
 
 	public void become(YoyoState nextState) {
@@ -99,31 +45,9 @@ public class ArbitraryNodeYoyo extends Node {
 	public void setupLink(SetupMessage m, Link sender) {
 		if (m.getId() > getNodeId()) {
 			outgoingLinks.add(sender);
-		} else {
+		}
+		else {
 			incomingLinks.add(sender);
-		}
-		if (outgoingLinks.size() + incomingLinks.size() == getLinks().size()) {
-			chooseState();
-		}
-	}
-
-	public void chooseState() {
-		if (incomingLinks.size() + outgoingLinks.size() == 0) {
-			if (!prunedIncoming) {
-				become(new Leader(this));
-			} else {
-				become(new Follower(this));
-			}
-		} else if (incomingLinks.isEmpty()) {
-			Source nextState = new Source(this);
-			become(nextState);
-			nextState.sendMessageToOutgoingLinks(new YoMessage(getNodeId()));
-		} else if (outgoingLinks.isEmpty()) {
-			become(new Sink(this));
-			processEnqueuedMessages();
-		} else {
-			become(new Internal(this));
-			processEnqueuedMessages();
 		}
 	}
 
@@ -154,7 +78,6 @@ public class ArbitraryNodeYoyo extends Node {
 	public void pruneIncomingLinks(Set<Link> links) {
 		assert incomingLinks.containsAll(links);
 		incomingLinks.removeAll(links);
-		prunedIncoming = true;
 	}
 
 	public void pruneOutgoingLinks(Set<Link> links) {
@@ -184,12 +107,15 @@ public class ArbitraryNodeYoyo extends Node {
 		}
 	}
 
-	// XXX: forse ha senso metterla in Node
-	private void sendToNeighbours(YoyoMessage message) {
-		sendToAll(message, links);
+	public void sendSetupMessage() {
+		sendToAll(new SetupMessage(nodeId), links);
 	}
 	
-	private Set<Link> createSingleton(Link link){
+	public boolean isSetupCompleted(){
+		return incomingLinks.size() + outgoingLinks.size() == links.size();
+	}
+
+	private Set<Link> createSingleton(Link link) {
 		Set<Link> singleton = new HashSet<Link>();
 		singleton.add(link);
 		return singleton;

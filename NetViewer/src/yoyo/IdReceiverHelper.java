@@ -31,11 +31,9 @@ public class IdReceiverHelper {
 
 	public void handleYoMessage(YoMessage m, Link sender) {
 		addIdReceivedOnLink(m.getId(), sender);
-		if (m.getId() < minReceivedId) {
-			this.minReceivedId = m.getId();
-		}
-		if (idReceivedFromAllLinks()) {
-			System.out.println("Receved from all Links id: " + node.getNodeId());
+		minReceivedId = Math.min(m.getId(), minReceivedId);
+		if (receivedIdFromAllLinks()) {
+			System.out.println("Node " + node.getNodeId() + " received from all links");
 			owner.whenReceivedIdOnAllLinks();
 		}
 	}
@@ -60,7 +58,7 @@ public class IdReceiverHelper {
 		node.flipIncomingLinks(difference(sendNoLinks, linksToPrune));
 	}
 
-	private boolean idReceivedFromAllLinks() {
+	private boolean receivedIdFromAllLinks() {
 		int size = 0;
 		for (Set<Link> toCompute : linksPerReceivedId.values()) {
 			size += toCompute.size();

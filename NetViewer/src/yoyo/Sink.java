@@ -22,7 +22,7 @@ public class Sink extends YoyoAbstractState implements IdReceiver{
 	public void whenReceivedIdOnAllLinks() {
 		System.out.println("Sink id:"+node.getNodeId()+" respond to All");
 		idReceiverHelper.respondToAll();
-		node.chooseState();
+		chooseState();
 	}
 	
 	@Override

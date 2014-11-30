@@ -22,16 +22,22 @@ public class Internal extends YoyoAbstractState implements IdSender, IdReceiver 
 
 	@Override
 	public void handle(YoMessage m, Link sender) {
-		idReceiverHelper.handleYoMessage(m, sender);
+		if (node.getIncomingLinks().contains(sender)) {
+			idReceiverHelper.handleYoMessage(m, sender);
+		}
+		else {
+			assert node.getOutgoingLinks().contains(sender);
+			enqueueMessage(m, sender);
+		}
 	}
 
 	@Override
 	public void whenAllResponsesReceived() {
 		idReceiverHelper.respondToAll();
 		idSenderHelper.flipNoNeighbours();
-		node.chooseState();
+		chooseState();
 	}
-	
+
 	@Override
 	public void sendMessageToOutgoingLinks(YoyoMessage message) {
 		idSenderHelper.sendMessageToOutgoingLinks(message);

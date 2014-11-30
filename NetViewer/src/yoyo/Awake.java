@@ -17,11 +17,11 @@ public class Awake extends YoyoAbstractState {
 
 	@Override
 	public void handle(SetupMessage m, Link sender) {
-		node.setupLink(m, sender);
+		handleSetupMessage(m, sender);
 	}
 
 	@Override
 	public void handle(YoMessage m, Link sender) {
-		node.enqueueMessage(m, sender);
+		enqueueMessage(m, sender);
 	}
 }

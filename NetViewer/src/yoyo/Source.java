@@ -15,14 +15,19 @@ public class Source extends YoyoAbstractState implements IdSender {
 
 	@Override
 	public void whenAllResponsesReceived() {
-		System.out.println("Source all resposes arrived");
+		System.out.println("Source: all responses arrived");
 		idSenderHelper.flipNoNeighbours();
-		node.chooseState();
+		chooseState();
 	}
 
 	@Override
 	public void sendMessageToOutgoingLinks(YoyoMessage message) {
 		idSenderHelper.sendMessageToOutgoingLinks(message);
+	}
+	
+	@Override
+	protected void allLinksPruned() {
+		changeState(new Leader(node));
 	}
 
 	@Override
@@ -38,6 +43,11 @@ public class Source extends YoyoAbstractState implements IdSender {
 	@Override
 	public void handle(YesMessage m, Link sender) {
 		idSenderHelper.handleYesMessage(m, sender);
+	}
+	
+	@Override
+	public void handle(YoMessage m, Link sender) {
+		enqueueMessage(m, sender);
 	}
 
 }
