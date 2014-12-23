@@ -1,12 +1,12 @@
-package color;
+package sixColors;
 
 import general.State;
 import netViewer.Link;
-import netViewer.TreeNodeColor;
+import netViewer.TreeNodeSixColors;
 
-public class Asleep extends AbstractColorState {
+public class Asleep extends AbstractSixColorsState {
 
-	public Asleep(TreeNodeColor node) {
+	public Asleep(TreeNodeSixColors node) {
 		super(node);
 	}
 
@@ -18,7 +18,7 @@ public class Asleep extends AbstractColorState {
 	@Override
 	public void spontaneously() {
 		
-		node.setupInitColor();
+		//node.setupInitColor();
 		node.sendColorToChildren();
 		if(node.isRoot()){
 			System.out.println("ROOT OF EVIL!!! id: "+node.getNodeId());
@@ -28,7 +28,7 @@ public class Asleep extends AbstractColorState {
 
 	@Override
 	public void handle(NewColorMessage m, Link sender) {
-		node.setupInitColor();
+		//node.setupInitColor();
 		node.sendColorToChildren();
 		node.setupNewColor(m.getColor());
 		if (!hasColorBeenFound()) {

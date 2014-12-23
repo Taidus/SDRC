@@ -1,4 +1,4 @@
-package color;
+package sixColors;
 
 
 public class Color {

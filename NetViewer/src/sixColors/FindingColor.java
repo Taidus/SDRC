@@ -1,12 +1,12 @@
-package color;
+package sixColors;
 
 import general.State;
 import netViewer.Link;
-import netViewer.TreeNodeColor;
+import netViewer.TreeNodeSixColors;
 
-public class FindingColor extends AbstractColorState {
+public class FindingColor extends AbstractSixColorsState {
 
-	public FindingColor(TreeNodeColor node) {
+	public FindingColor(TreeNodeSixColors node) {
 		super(node);
 	}
 

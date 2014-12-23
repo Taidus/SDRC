@@ -1,20 +1,20 @@
-package color;
+package sixColors;
 
 import general.State;
 import netViewer.Link;
-import netViewer.TreeNodeColor;
+import netViewer.TreeNodeSixColors;
 
-public abstract class AbstractColorState implements ColorState {
+public abstract class AbstractSixColorsState implements SixColorsState {
 
-	protected TreeNodeColor node;
+	protected TreeNodeSixColors node;
 
-	public AbstractColorState(TreeNodeColor node) {
+	public AbstractSixColorsState(TreeNodeSixColors node) {
 		super();
 		this.node = node;
 	}
 
 	@Override
-	public void changeState(ColorState nextState) {
+	public void changeState(SixColorsState nextState) {
 		node.become(nextState);
 	}
 

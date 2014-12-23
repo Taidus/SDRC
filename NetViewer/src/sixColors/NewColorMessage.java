@@ -1,8 +1,8 @@
-package color;
+package sixColors;
 
 import netViewer.Link;
 
-public class NewColorMessage implements ColorMessage {
+public class NewColorMessage implements SixColorsMessage {
 	
 	private Color color;
 	
@@ -19,7 +19,7 @@ public class NewColorMessage implements ColorMessage {
 	}
 
 	@Override
-	public void accept(ColorState state, Link sender) {
+	public void accept(SixColorsState state, Link sender) {
 		state.handle(this, sender);
 		
 	}

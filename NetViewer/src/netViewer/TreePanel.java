@@ -77,11 +77,17 @@ class TreePanel extends DrawingPanel implements MouseListener,
 	}
 
 	public TreeNode drawRoot() {
-		double XCoord = getSize().width / 2 - Node.RADIUS;
+		double XCoord = getSize().width/2-Node.RADIUS;
 		drawingAreaIsBlank = false;
-		TreeNode node = (TreeNode) parent.networkManager.newNode((int) Math
-				.round(5 * Math.random())); // generate a random first id
-											// between 0 and 5
+		TreeNode node;
+		if(parent.networkManager.getAlgorithm().equals("SixColorsColouring")){
+			node = (TreeNode)parent.networkManager.newNode(0);
+		}
+		else {
+			node = (TreeNode)parent.networkManager.newNode((int)Math.round(Math.random()*5)); // generate a random first id between 0 and 5
+		}
+		
+			
 		node.setCoords(XCoord, MARGIN_TOP);
 		repaint();
 		return node;

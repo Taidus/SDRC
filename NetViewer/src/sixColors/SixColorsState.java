@@ -1,14 +1,14 @@
-package color;
+package sixColors;
 
 import netViewer.Link;
 import general.State;
 
-public interface ColorState extends State {
+public interface SixColorsState extends State {
 
 	// Message visitor
 
 	public void handle(NewColorMessage m, Link sender);
 
-	void changeState(ColorState nextState);
+	void changeState(SixColorsState nextState);
 
 }

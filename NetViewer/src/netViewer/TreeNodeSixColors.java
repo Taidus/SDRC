@@ -4,24 +4,25 @@ import general.Message;
 
 import java.util.List;
 
-import color.Asleep;
-import color.Color;
-import color.ColorMessage;
-import color.ColorState;
-import color.NewColorMessage;
+import sixColors.Asleep;
+import sixColors.Color;
+import sixColors.NewColorMessage;
+import sixColors.SixColorsMessage;
+import sixColors.SixColorsState;
 
-public class TreeNodeColor extends TreeNode {
+public class TreeNodeSixColors extends TreeNode {
 
 	private Color color;
-	private ColorState nodeState;
+	private SixColorsState nodeState;
 	
 
-	TreeNodeColor(Integer ID) {
+	TreeNodeSixColors(Integer ID) {
 		super(ID);
+		setupInitColor();
 		nodeState = new Asleep(this);
 	}
 	
-	public void become(ColorState nextState) {
+	public void become(SixColorsState nextState) {
 		this.nodeState = nextState;
 		become(nextState.intValue());
 	}
@@ -34,7 +35,7 @@ public class TreeNodeColor extends TreeNode {
 	protected synchronized void receive(Message msg, Link link) {
 		// XXX bruttura: cast. Ma se non si ristruttura la classe Node è
 		// difficile far di meglio
-		((ColorMessage) msg).accept(nodeState, link);
+		((SixColorsMessage) msg).accept(nodeState, link);
 	}
 
 	@Override
@@ -57,9 +58,7 @@ public class TreeNodeColor extends TreeNode {
 	}
 	
 	
-	public void setupInitColor(){
-		//deve essere chiamato dopo l'avvio del protocollo perchè ho fatto un trick malzano per far venire la radice sempre
-		//0 e come conseguenza nn può stare nel costruttore
+	private void setupInitColor(){
 		color = new Color(getNodeId()); 
 
 	}

@@ -1,13 +1,13 @@
-package color;
+package sixColors;
 
 import netViewer.Link;
-import netViewer.TreeNodeColor;
+import netViewer.TreeNodeSixColors;
 
-public class Colored extends AbstractColorState {
+public class Colored extends AbstractSixColorsState {
 	
 	public static int count=0;
 
-	public Colored(TreeNodeColor node) {
+	public Colored(TreeNodeSixColors node) {
 		super(node);
 		count++;
 		System.out.println("COUNT: "+count+" color= "+getColorStateNumber()+" node id: "+node.getNodeId());
