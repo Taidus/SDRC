@@ -9,6 +9,8 @@ package netViewer;
  *
  */
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Vector;
 import java.util.Enumeration;
 
@@ -21,7 +23,7 @@ abstract class TreeNode extends Node {
 		super(ID);
 	}
 
-	protected boolean isRoot() {
+	public boolean isRoot() {
 		return backwardsLink == null; // has no parent
 	}
 
@@ -94,6 +96,18 @@ abstract class TreeNode extends Node {
 				else
 					children.add(link.getNode(LEFT));
 			}
+		}
+		return children;
+	}
+	
+	public List<Link> getChildrenLinks() {
+		List<Link> children = new ArrayList<>(numChildren());
+		Enumeration<Link> allLinks = links.elements();
+		while (allLinks.hasMoreElements()) {
+			Link l = (Link)allLinks.nextElement();
+			if (l != backwardsLink) {
+				children.add(l);
+				}
 		}
 		return children;
 	}

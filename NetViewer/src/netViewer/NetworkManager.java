@@ -286,6 +286,27 @@ class NetworkManager implements ActionListener {
 	 * Only used when the user selects automatic tree creation.
 	 * Otherwise, the tree is created manually by clicking the mouse.
 	 */
+//	public void createTree(int numNodes_) {
+//		clear(); // data structures that store links, nodes, ids
+//		NetViewer.getNetworkPanel().getLastDirtyCanvas().setIsBlank(true);
+//		NetViewerMessage.resetTotalMessages(); // back to 0
+//		TreePanel drawingPanel = (TreePanel)NetViewer.getNetworkPanel().getDrawingArea();
+//		drawingPanel.drawRoot(); // create the root
+//		int random; TreeNode node;
+//		while (numNodes < numNodes_) { // add nodes until n is reached
+//			// pick an existing node
+//			random = (int)Math.round((numNodes-1)*Math.random()); // generate a random index between 0 and 5
+//			node = (TreeNode)nodesVector.get(random);
+//			// add a child
+//			drawingPanel.addChild(node);
+//		}
+//		drawingPanel.resizePanel();
+//		drawingPanel.centreTree();
+//		drawingPanel.repaint();
+//	}
+	
+	
+	//MODIFICA PER AVERE RADICE CON ID 0
 	public void createTree(int numNodes_) {
 		clear(); // data structures that store links, nodes, ids
 		NetViewer.getNetworkPanel().getLastDirtyCanvas().setIsBlank(true);
@@ -300,10 +321,29 @@ class NetworkManager implements ActionListener {
 			// add a child
 			drawingPanel.addChild(node);
 		}
+		
+		
+		for(int i=0;i<nodesVector.size();i++){
+			node = (TreeNode)nodesVector.get(i);
+			if(node.isRoot()){
+				node.setNodeId(0);
+			}else{
+				if(node.getNodeId()==0){
+					node.setNodeId(numNodes+1);
+				}
+			}
+		}
+		
 		drawingPanel.resizePanel();
 		drawingPanel.centreTree();
 		drawingPanel.repaint();
+		
+		
+		
 	}
+	
+	
+	
 
 	/* Create an arbitrary network with the given number of nodes.
 	 * Assign random locations to nodes until n is reached. Do not

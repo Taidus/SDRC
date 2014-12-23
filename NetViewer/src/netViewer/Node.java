@@ -58,12 +58,18 @@ public abstract class Node extends Thread {
 														// finished
 	static final Color COLOUR_WAITING = Color.gray;
 	static final Color COLOUR_BUSY = Color.orange;
-	
-	
+
 	public static final Color COLOUR_INTERNAL = Color.magenta;
 	public static final Color COLOUR_SINK = Color.cyan;
 	public static final Color COLOUR_SOURCE = Color.PINK;
-	
+
+	public static final Color COLOUR_FINDING_COLOR = Color.BLUE;
+	public static final Color COLOUR_COLORED_0 = Color.black;
+	public static final Color COLOUR_COLORED_1 = Color.green;
+	public static final Color COLOUR_COLORED_2 = Color.cyan;
+	public static final Color COLOUR_COLORED_3 = Color.red;
+	public static final Color COLOUR_COLORED_4 = Color.orange;
+	public static final Color COLOUR_COLORED_5 = Color.gray;
 
 	// Mapping of states to colours
 	static final HashMap<Integer, Color> coloursMap = new HashMap<>();
@@ -74,12 +80,22 @@ public abstract class Node extends Thread {
 		coloursMap.put(new Integer(general.State.PASSIVE), COLOUR_PASSIVE);
 		coloursMap.put(new Integer(general.State.LEADER), COLOUR_LEADER);
 		coloursMap.put(new Integer(general.State.FOLLOWER), COLOUR_FOLLOWER);
-		coloursMap.put(new Integer(general.State.WAITING_FOR_ANSWER), COLOUR_WAITING);
-		coloursMap.put(new Integer(general.State.FINDING_MERGE_EDGE), COLOUR_BUSY);
+		coloursMap.put(new Integer(general.State.WAITING_FOR_ANSWER),
+				COLOUR_WAITING);
+		coloursMap.put(new Integer(general.State.FINDING_MERGE_EDGE),
+				COLOUR_BUSY);
 		coloursMap.put(new Integer(general.State.INTERNAL), COLOUR_INTERNAL);
 		coloursMap.put(new Integer(general.State.SINK), COLOUR_SINK);
 		coloursMap.put(new Integer(general.State.SOURCE), COLOUR_SOURCE);
-		
+		coloursMap.put(new Integer(general.State.FINDING_COLOR),
+				COLOUR_FINDING_COLOR);
+		coloursMap.put(new Integer(general.State.COLORED_0), COLOUR_COLORED_0);
+		coloursMap.put(new Integer(general.State.COLORED_1), COLOUR_COLORED_1);
+		coloursMap.put(new Integer(general.State.COLORED_2), COLOUR_COLORED_2);
+		coloursMap.put(new Integer(general.State.COLORED_3), COLOUR_COLORED_3);
+		coloursMap.put(new Integer(general.State.COLORED_4), COLOUR_COLORED_4);
+		coloursMap.put(new Integer(general.State.COLORED_5), COLOUR_COLORED_5);
+
 	}
 
 	public static Color MESSAGE_QUEUE_COLOUR = Color.black; // for drawing
@@ -124,17 +140,16 @@ public abstract class Node extends Thread {
 			// a sleeping node. The print order makes more sense that way.
 		}
 	}
-	
+
 	@Override
 	@Deprecated
 	public long getId() {
 		return super.getId();
 	}
-	
+
 	public int getNodeId() {
 		return nodeId;
 	}
-	
 
 	public void setNodeId(int ID) {
 		nodeId = ID;
@@ -233,13 +248,19 @@ public abstract class Node extends Thread {
 		this.state = state;
 	}
 
-
 	protected Point getCentre() {
 		return new Point(coords.x + RADIUS, coords.y + RADIUS);
 	}
 
 	public boolean isFinished() {
-		return (state == general.State.LEADER || state == general.State.FOLLOWER);
+		return (state == general.State.LEADER
+				|| state == general.State.FOLLOWER
+				|| state == general.State.COLORED_1
+				|| state == general.State.COLORED_2
+				|| state == general.State.COLORED_3
+				|| state == general.State.COLORED_4 
+				|| state == general.State.COLORED_5
+				|| state == general.State.COLORED_0);
 	}
 
 	/*
@@ -311,8 +332,8 @@ public abstract class Node extends Thread {
 	public String toString() {
 		return idString();
 	}
-	
-	protected String idString(){
+
+	protected String idString() {
 		return String.valueOf(nodeId);
 	}
 
@@ -355,6 +376,6 @@ public abstract class Node extends Thread {
 		if (nodeId != other.nodeId)
 			return false;
 		return true;
-	}	
+	}
 
 }
