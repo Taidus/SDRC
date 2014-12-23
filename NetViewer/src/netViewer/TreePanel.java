@@ -80,7 +80,7 @@ class TreePanel extends DrawingPanel implements MouseListener,
 		double XCoord = getSize().width/2-Node.RADIUS;
 		drawingAreaIsBlank = false;
 		TreeNode node;
-		if(parent.networkManager.getAlgorithm().equals("SixColorsColouring")){
+		if(parent.networkManager.getAlgorithm().equals("SixColors")){
 			node = (TreeNode)parent.networkManager.newNode(0);
 		}
 		else {
