@@ -64,12 +64,13 @@ public abstract class Node extends Thread {
 	public static final Color COLOUR_SOURCE = Color.PINK;
 
 	public static final Color COLOUR_FINDING_COLOR = Color.BLUE;
-	public static final Color COLOUR_COLORED_0 = Color.black;
+	public static final Color COLOUR_COLORED_0 = Color.pink;
 	public static final Color COLOUR_COLORED_1 = Color.green;
 	public static final Color COLOUR_COLORED_2 = Color.cyan;
 	public static final Color COLOUR_COLORED_3 = Color.red;
 	public static final Color COLOUR_COLORED_4 = Color.orange;
-	public static final Color COLOUR_COLORED_5 = Color.gray;
+	public static final Color COLOUR_COLORED_5 = Color.magenta;
+	
 
 	// Mapping of states to colours
 	static final HashMap<Integer, Color> coloursMap = new HashMap<>();
