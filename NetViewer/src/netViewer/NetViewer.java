@@ -757,7 +757,6 @@ public class NetViewer extends JApplet implements ActionListener {
 			} // key typed
 		};
 
-		// TODO: listener per twoSites
 		numNodesField.addKeyListener(validateKey);
 		numNodesFieldCR.addKeyListener(validateKey);
 		numNodesFieldCG.addKeyListener(validateKey);
@@ -765,6 +764,7 @@ public class NetViewer extends JApplet implements ActionListener {
 		colsField.addKeyListener(validateKey);
 		rowsFieldTorus.addKeyListener(validateKey);
 		colsFieldTorus.addKeyListener(validateKey);
+		numDataItemsField.addKeyListener(validateKey);
 
 		// validation - only accept numbers
 		chordsField.addKeyListener(new KeyListener() {
@@ -904,6 +904,7 @@ public class NetViewer extends JApplet implements ActionListener {
 			}
 		};
 
+		// TODO: listener per TwoSites
 		algorithmMenuGrid.addItemListener(changeAlgorithm);
 		algorithmMenuTorus.addItemListener(changeAlgorithm);
 		algorithmMenuCR.addItemListener(changeAlgorithm);
@@ -1121,6 +1122,7 @@ public class NetViewer extends JApplet implements ActionListener {
 					toolBar.add(twoSitesOptions, 2);
 					selector = algorithmMenuTwoSites;
 					casesMenu.setEnabled(false);
+					newNetworkButton.setEnabled(true);
 					newNetworkPanel.remove(autoBoxTree);
 					newNetworkPanel.remove(autoBoxArb);
 				}
@@ -1177,6 +1179,7 @@ public class NetViewer extends JApplet implements ActionListener {
 						String whichCase = casesMenu.getActionCommand();
 						networkManager.createRingNetwork(numNodes, algorithm,
 								whichCase);
+
 						networkPanel.getDrawingArea().setIsDirty(false);
 						clearResults();
 						topologyLabel.setText(networkManager.getNetworkType());
@@ -1446,10 +1449,23 @@ public class NetViewer extends JApplet implements ActionListener {
 				} // arb
 				else if (topologyMenu.getSelectedIndex() == 7) {
 					// FIXME: mettere un valore sensato
+
+					// if (numDataItemsField.getText().equals("")) { // popup
+					// // window
+					// // with error
+					// // message
+					// JOptionPane
+					// .showMessageDialog(
+					// playPauseButton,
+					// "Please enter a value for the number of data items (N).",
+					// "Input Error",
+					// JOptionPane.WARNING_MESSAGE);
+					// numNodesField.requestFocus();
+					// } else {
 					String algorithm = (String) algorithmMenuTwoSites
 							.getSelectedItem();
-					networkManager.createTwoSitesNetwork(
-							algorithm, 0);
+					networkManager.createTwoSitesNetwork(algorithm, 5);
+					// }
 				}
 			} // actionPerformed
 		}); // new network

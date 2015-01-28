@@ -99,8 +99,9 @@ class DrawingPanel extends JPanel implements ComponentListener {
 				g.fillOval(node.coords.x - 2, node.coords.y - 2,
 						Node.DIAMETER + 4, Node.DIAMETER + 4);
 			}
-			// draw node
+			
 			Color nodeColour = (Color) Node.coloursMap.get(new Integer(state));
+
 			g.setColor(nodeColour);
 			g.fillOval(node.coords.x, node.coords.y, Node.DIAMETER,
 					Node.DIAMETER);
@@ -355,7 +356,6 @@ class DrawingPanel extends JPanel implements ComponentListener {
 	}
 
 	public void paintComponent(Graphics g) {
-
 		// check if there is a network to draw
 		if (!parent.networkManager.getNetworkType().equals(
 				NetViewer.getNetworkType())

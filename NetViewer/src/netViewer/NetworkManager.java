@@ -476,7 +476,7 @@ class NetworkManager implements ActionListener {
 	
 	public void createTwoSitesNetwork(String algorithm_, int numOfDataItems) {
 		//TODO: implementare
-		networkType = "TwoSites";
+		networkType = "Two Sites";
 		algorithm = algorithm_;
 		clear(); // data structures that store links, nodes, ids
 		NetViewer.getNetworkPanel().getLastDirtyCanvas().setIsBlank(true);
@@ -492,10 +492,9 @@ class NetworkManager implements ActionListener {
 		x = (int)Math.round((drawingPanel.getPreferredSize().width-Node.DIAMETER)*Math.random()); // generate a random index between 0 and the width of the drawing panel
 		y = (int)Math.round((drawingPanel.getPreferredSize().height-Node.DIAMETER)*Math.random()); // generate a random index between 0 and the height of the drawing panel
 		second.setCoords(x,y);
-		
 		newLink(first, second);
 		isNewNetwork = true;
-		
+		drawingPanel.repaint();
 	}
 
 	public void initializeNetwork() {
