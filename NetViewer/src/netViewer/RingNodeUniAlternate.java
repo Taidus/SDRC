@@ -1,188 +1,152 @@
 package netViewer;
+
+import general.Message;
+
+import java.util.Collection;
 import java.util.HashMap;
-import java.util.Map;
+
+import uniAlternate.Asleep;
+import uniAlternate.Candidate;
+import uniAlternate.ElectionMessage;
+import uniAlternate.UniAlternateMessage;
+import uniAlternate.UniAlternateState;
 
 public class RingNodeUniAlternate extends Node {
 
+	private static final Direction defaultDir = Direction.RIGHT;
 	private int step;
 	private int value;
-
-	private final int trueId; // perché gli id vengono modificati per stampare
-
-	private Map<Integer, String> msgsPerStep;
-
-	private static final int ringDirection = Node.LEFT;
-	private static final String msgSeparator = ";";
-	private static final String notification = "Leader: ";
+	private UniAlternateState state;
+	private HashMap<Integer, ElectionMessage> buffer; // Coda di messaggi
+														// utilizzata quando la
+														// rete non è FIFO
 
 	RingNodeUniAlternate(Integer ID) {
 		super(ID);
-		this.msgsPerStep = new HashMap<>();
-
-		this.trueId = ID.intValue();
+		become(new Asleep(this));
+		step = 0;
+		value = ID;
+		buffer = new HashMap<>();
+	}
+	
+	
+	
+	public void become(UniAlternateState nextState) {
+		this.state = nextState;
+		become(nextState.intValue());
 	}
 
-	protected void initialize() {
-		this.step = 1;
-		this.value = this.nodeId;
-
-		NetViewer.out.println("Node " + trueId + " has been initialized");
-
-		become(general.State.CANDIDATE);
-		sendCandidateMessage();
+	protected synchronized void receive(Message msg, int dir) {
+		// XXX bruttura: cast. Ma se non si ristruttura la classe Node è
+		// difficile far di meglio
+		((UniAlternateMessage) msg).accept(state);
 	}
 
-	@Override
-	protected synchronized void receive(String msg, int dir) {
-		if (dir == ringDirection) { // è arrivato un messaggio dalla direzione dell'anello (cioè 'controcorrente')
-			throw new IllegalStateException("Received a message from wrong direction");
-		}
-
-		if (state != general.State.FOLLOWER && state != general.State.LEADER) {
-			if (msg.matches(notification + "\\d+")) {
-				int leaderId = Integer.parseInt(msg.split(notification)[1]);
-				checkLeaderAndForward(leaderId);
-				NetViewer.out.println("\tNode " + trueId + " forwards notification message");
-			}
-			else {
-				if (general.State.ASLEEP == state) {
-					asleep(msg);
-				}
-				else if (general.State.CANDIDATE == state) {
-					candidate(msg);
-				}
-				else if (general.State.PASSIVE == state) {
-					sendMessage(msg);
-					NetViewer.out.println("\tNode " + trueId + " with value " + this.value + " forwards message \"" + msg + "\"");
-				}
-			}
-		}
+	public void send(Message p) {
+		send(p, defaultDir.getDir());
 	}
 
-	private void checkLeaderAndForward(int leaderId) {
-		this.nodeId = trueId;
+	public void initialize() {
+		step = 1;
+		ElectionMessage m = new ElectionMessage(step, Direction.RIGHT, value);
+		become(new Candidate(this));
+		send(m);
 
-		if (this.nodeId != leaderId) {
-			become(general.State.FOLLOWER);
-		}
-		else {
-			become(general.State.LEADER);
-		}
-		sendMessage(notification + leaderId);
 	}
-
-	private void asleep(String msg) {
-		NetViewer.out.println("\tNode " + trueId + " receives message " + msg + " while asleep");
+	
+	
+	public void initialize(ElectionMessage m){
 		initialize();
-		// if (NetViewer.isFIFO()) {
-		// try {
-		// Thread.sleep(100); // in modo che aspetti un po' ad inviare il prossimo messaggio. Essendo la coda FIFO, il risultato è
-		// // equivalente
-		// } catch (InterruptedException e) {
-		// }
-		// }
-		candidate(msg);
+		try {
+			Thread.sleep(200); // Per non far sovrapporre i messaggi
+								// nell'interfaccia grafica
+		} catch (InterruptedException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		m.accept(state);
+	}
+	
+
+	public static enum Direction {
+		LEFT(1), RIGHT(0);
+
+		Direction(int i) {
+			dir = i;
+		}
+
+		private final int dir;
+
+		public int getDir() {
+			return dir;
+		}
+
+		public String toString() {
+			return dir == 1 ? "L" : "R";
+
+		}
+
 	}
 
-	private void candidate(String msg) {
-		int[] msgParts = parseMsg(msg);
-		int msgValue = msgParts[0];
-		int msgStep = msgParts[1];
-
-		if (msgStep > this.step) {
-			msgsPerStep.put(msgStep, msg);
-			NetViewer.out.println("Node " + trueId + " is at step " + this.step + " and enqueues message " + msg);
-		}
-		else {
-			if (msgStep < this.step) {
-				throw new IllegalStateException("Received a message from past");
-			}
-			processMessage(msgValue, msgStep);
-		}
-	}
-
-	private void processMessage(int msgValue, int msgStep) {
-		if (msgValue == this.value) {
-			checkLeaderAndForward(msgValue);
-			NetViewer.out.println("\tNode " + trueId + " sends notification message");
-		}
-		else {
-			int msgDir = msgStep % 2;
-
-			if (LEFT == msgDir) {
-				if (msgValue > this.value) {
-					NetViewer.out.println("Node " + trueId + " with value " + this.value + " receives " + msgValue + msgSeparator + msgStep
-							+ " and is defeated.");
-					becomePassive();
-				}
-				else {
-					NetViewer.out.println("Node " + trueId + " with value " + this.value + " receives " + msgValue + msgSeparator + msgStep
-							+ " and survives.");
-					this.value = msgValue;
-					nextStep();
-				}
-			}
-			else if (RIGHT == msgDir) {
-				if (msgValue < this.value) {
-					NetViewer.out.println("Node " + trueId + " with value " + this.value + " receives " + msgValue + msgSeparator + msgStep
-							+ " and is defeated.");
-					becomePassive();
-				}
-				else {
-					NetViewer.out.println("Node " + trueId + " with value " + this.value + " receives " + msgValue + msgSeparator + msgStep
-							+ " and survives.");
-					nextStep();
-				}
+	public void sendAllEnqueuedMessages() {
+		Collection<ElectionMessage> messages = buffer.values();
+		for (ElectionMessage m : messages) {
+			send(m);
+			try {
+				Thread.sleep(200); // Per non far sovrapporre i messaggi
+									// nell'interfaccia grafica
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 			}
 		}
 	}
 
-	private void nextStep() {
-		this.nodeId = this.value; // per mostrare a video il valore corrente
-		this.step++;
+	public boolean checkStageAndEnqueue(ElectionMessage m) {
+		
+		if(m.getStep() < step){
+			System.err.println("Something went wrong! Election message arrived from the past");
+		}
 
-		sendCandidateMessage();
-
-		String msg = msgsPerStep.remove(this.step);
-		if (null != msg) {
-			candidate(msg);
+		if (m.getStep() != step) {
+			buffer.put(m.getStep(), m);
+			return false;
+		} else {
+			return true;
 		}
 	}
 
-	private void becomePassive() {
-		become(general.State.PASSIVE);
-		this.nodeId = this.trueId;
-
-		if (!msgsPerStep.isEmpty()) {
-			NetViewer.out.print("\tNode " + trueId + " with value " + this.value + " sends all enqueued messages: ");
-			for (Integer s : msgsPerStep.keySet()) {
-				String curr_msg = msgsPerStep.get(s); // Nota: i messaggi non vengono rimossi. Questo non è un problema, perché il nodo è diventato
-														// passivo e non estrarrà nuovamente messaggi dalla coda
-				sendMessage(curr_msg);
-				NetViewer.out.print(curr_msg + " ");
-			}
-			NetViewer.out.println();
+	public void checkAndProcessNext() {
+		if (buffer.containsKey(step)) {
+			ElectionMessage nextMessage = buffer.remove(step);
+			state.handle(nextMessage);
 		}
 	}
 
-	private void sendCandidateMessage() {
-		String msg = value + msgSeparator + step;
-		sendMessage(msg);
-		NetViewer.out.println("\tNode " + trueId + " with value " + this.value + " sends message \"" + msg + "\"");
+
+
+	public int getStep() {
+		return step;
+	}
+	
+	public void nextStep(){
+		step++;
 	}
 
-	private void sendMessage(String msg) {
-		send(msg, ringDirection);
+
+
+	public int getValue() {
+		return value;
 	}
 
-	private int[] parseMsg(String msg) {
-		String[] msgParts = msg.split(msgSeparator);
-		int[] parsedMsg = new int[msgParts.length];
 
-		for (int i = 0; i < msgParts.length; i++) {
-			parsedMsg[i] = Integer.parseInt(msgParts[i]);
-		}
 
-		return parsedMsg;
+	public void setValue(int value) {
+		this.value = value;
 	}
+	
+	
+
+
+
 }
