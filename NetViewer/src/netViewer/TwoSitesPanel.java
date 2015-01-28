@@ -1,10 +1,8 @@
 package netViewer;
 
-import java.awt.Graphics;
-import java.awt.event.ComponentEvent;
-import java.awt.event.ComponentListener;
-
-public class TwoSitesPanel extends RingPanel {
+//TODO: ripulire
+public class TwoSitesPanel extends RingPanel {	
+	private static final long serialVersionUID = 1L;
 
 	TwoSitesPanel(NetworkPanel parent) {
 		super(parent);

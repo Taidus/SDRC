@@ -116,7 +116,7 @@ public class NetViewer extends JApplet implements ActionListener {
 									// class and cannot be final
 	protected static ImageIcon netViewerIcon; // goes in the upper left corner
 												// of the window
-	private static JTextField numNodesField, numDataItemsField; // so we can
+	private static JTextField numNodesField, numDataItemsField, kToFind; // so we can
 																// request focus
 																// from
 	// main()
@@ -149,7 +149,7 @@ public class NetViewer extends JApplet implements ActionListener {
 		String[] torusAlgorithms = { "Wake Up" };
 		String[] arbitraryAlgorithms = { "Yoyo", "MegaMerger", "Wake Up",
 				"Shout", "ShortestPathTree" };
-		String[] twoSitesAlgorithms = { "Halving" };
+		String[] twoSitesAlgorithms = { "Halving", "Da Togliere" };
 
 		// -------------------------------------------------------
 
@@ -455,9 +455,14 @@ public class NetViewer extends JApplet implements ActionListener {
 		numDataItemsField = new JTextField(3); // text field for inputting #
 												// nodes
 		numDataItemsField.setPreferredSize(new Dimension(30, 26));
+		JLabel kToFindLabel = new JLabel("K: ");
+		kToFind = new JTextField(3);
+		kToFind.setPreferredSize(new Dimension(30, 26));
 		Box numDataItemsBox = Box.createHorizontalBox();
 		numDataItemsBox.add(numDataItemsLabel);
 		numDataItemsBox.add(numDataItemsField);
+		numDataItemsBox.add(kToFindLabel);
+		numDataItemsBox.add(kToFind);
 		final JPanel twoSitesOptions = new JPanel(new GridLayout(2, 1, 5, 5));
 		twoSitesOptions.add(algorithmMenuTwoSites);
 		twoSitesOptions.add(numDataItemsBox);
@@ -765,7 +770,8 @@ public class NetViewer extends JApplet implements ActionListener {
 		rowsFieldTorus.addKeyListener(validateKey);
 		colsFieldTorus.addKeyListener(validateKey);
 		numDataItemsField.addKeyListener(validateKey);
-
+		kToFind.addKeyListener(validateKey);
+		
 		// validation - only accept numbers
 		chordsField.addKeyListener(new KeyListener() {
 			public void keyPressed(KeyEvent e) {
@@ -1464,7 +1470,9 @@ public class NetViewer extends JApplet implements ActionListener {
 					// } else {
 					String algorithm = (String) algorithmMenuTwoSites
 							.getSelectedItem();
-					networkManager.createTwoSitesNetwork(algorithm, 5);
+					int N = Integer.parseInt(numDataItemsField.getText());
+					int K = Integer.parseInt(kToFind.getText());
+					networkManager.createTwoSitesNetwork(algorithm, N, K);
 					// }
 				}
 			} // actionPerformed
@@ -1536,6 +1544,9 @@ public class NetViewer extends JApplet implements ActionListener {
 						aborted = false;
 					timeStampBegin = System.currentTimeMillis();
 					networkManager.startAlgorithm();
+					//FIXME: questa è una bruttura d'altri tempi
+					//if(networkManager.)
+					
 					playPauseButton.setIcon(pauseImage);
 					playPauseButton.removeActionListener(this);
 					playPauseButton.addActionListener(pauseResumeAction);

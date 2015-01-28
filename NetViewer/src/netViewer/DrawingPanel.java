@@ -119,6 +119,10 @@ class DrawingPanel extends JPanel implements ComponentListener {
 														// if it's the Franklin
 														// algorithm
 				drawMessageQueues(node);
+			if (node instanceof TwoSitesNodeHalving) {
+				drawDataItems((TwoSitesNodeHalving)node);
+			}
+			
 			if (nodesFinished && !node.isFinished())
 				nodesFinished = false;
 		}
@@ -335,6 +339,14 @@ class DrawingPanel extends JPanel implements ComponentListener {
 	/*
 	 * Draw message queues at each of the node's links.
 	 */
+	
+	//TODO: spostare in luoghi più adatti (TwoSitesPanel, per esempio)
+	private void drawDataItems(TwoSitesNodeHalving node) {
+		
+		g.drawString(node.getData().toString(), node.getCentre().x,
+				node.getCentre().y + node.DIAMETER);
+	}
+	
 	private void drawMessageQueues(Node node) {
 		g.setColor(Node.MESSAGE_QUEUE_COLOUR);
 		Vector v = ((RingNodeFranklinStages) node)

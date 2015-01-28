@@ -18,8 +18,10 @@ import java.awt.Dimension;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Enumeration;
+import java.util.List;
 import java.util.Random;
 import java.util.StringTokenizer;
 import java.util.Vector;
@@ -473,25 +475,65 @@ class NetworkManager implements ActionListener {
 									// when necessary)
 		drawingPanel.repaint();
 	}
-	
-	public void createTwoSitesNetwork(String algorithm_, int numOfDataItems) {
-		//TODO: implementare
+
+	public void createTwoSitesNetwork(String algorithm_, int numOfDataItems,
+			int k) {
+		// TODO: implementare
 		networkType = "Two Sites";
 		algorithm = algorithm_;
 		clear(); // data structures that store links, nodes, ids
 		NetViewer.getNetworkPanel().getLastDirtyCanvas().setIsBlank(true);
 		NetViewerMessage.resetTotalMessages(); // back to 0
-		
+
 		Node first = newNode();
-		TwoSitesPanel drawingPanel = (TwoSitesPanel)NetViewer.getNetworkPanel().getDrawingArea();
-		int x = (int)Math.round((drawingPanel.getPreferredSize().width-Node.DIAMETER)*Math.random()); // generate a random index between 0 and the width of the drawing panel
-		int y = (int)Math.round((drawingPanel.getPreferredSize().height-Node.DIAMETER)*Math.random()); // generate a random index between 0 and the height of the drawing panel
-		first.setCoords(x,y);
-		
+		TwoSitesPanel drawingPanel = (TwoSitesPanel) NetViewer
+				.getNetworkPanel().getDrawingArea();
+		// TODO: aggiustare la posizione
+		int x = (int) Math
+				.round((drawingPanel.getPreferredSize().width - Node.DIAMETER)
+						* Math.random()); // generate a random index between 0
+											// and the width of the drawing
+											// panel
+		int y = (int) Math
+				.round((drawingPanel.getPreferredSize().height - Node.DIAMETER)
+						* Math.random()); // generate a random index between 0
+											// and the height of the drawing
+											// panel
+		first.setCoords(x, y);
+
+		List<Integer> firstNodeData = new ArrayList<Integer>();
+
+		for (int i = 0; i < numOfDataItems / 2; i++) {
+			firstNodeData.add((int) (Math.random() * numOfDataItems));
+		}
+
+		((TwoSitesNodeHalving) first).setData(firstNodeData);
+
 		Node second = newNode();
-		x = (int)Math.round((drawingPanel.getPreferredSize().width-Node.DIAMETER)*Math.random()); // generate a random index between 0 and the width of the drawing panel
-		y = (int)Math.round((drawingPanel.getPreferredSize().height-Node.DIAMETER)*Math.random()); // generate a random index between 0 and the height of the drawing panel
-		second.setCoords(x,y);
+		// TODO: aggiustare la posizione
+		x = (int) Math
+				.round((drawingPanel.getPreferredSize().width - Node.DIAMETER)
+						* Math.random()); // generate a random index between 0
+											// and the width of the drawing
+											// panel
+		y = (int) Math
+				.round((drawingPanel.getPreferredSize().height - Node.DIAMETER)
+						* Math.random()); // generate a random index between 0
+											// and the height of the drawing
+											// panel
+		second.setCoords(x, y);
+
+		List<Integer> secondNodeData = new ArrayList<Integer>();
+
+		for (int i = 0; i < (numOfDataItems / 2) + 1; i++) {
+			secondNodeData.add((int) (Math.random() * numOfDataItems));
+		}
+
+		((TwoSitesNodeHalving) second).setData(secondNodeData);
+
+		((TwoSitesNodeHalving) first).setK(k);
+		((TwoSitesNodeHalving) second).setK(k);
+
 		newLink(first, second);
 		isNewNetwork = true;
 		drawingPanel.repaint();
