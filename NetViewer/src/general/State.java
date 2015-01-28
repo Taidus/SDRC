@@ -19,6 +19,11 @@ public interface State {
 	public static final int CAPTURED =12;
 	
 	
+	public static final int INITIATOR = 13;
+	public static final int IDLE = 14;
+	public static final int ACTIVE = 15;
+	public static final int DONE = 16;
+	
 	public static final int WAITING_FOR_TOKEN_NEEDING= 20;
 	public static final int WAITING_FOR_TOKEN_NON_NEEDING =21;
 	public static final int TOKEN_HOLDER=22;

@@ -14,4 +14,10 @@ public class StringMessage implements Message {
 		return msg;
 	}
 
+	public String getMsg() {
+		return msg;
+	}
+	
+	
+
 }

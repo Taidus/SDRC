@@ -70,14 +70,17 @@ public abstract class Node extends Thread {
 	public static final Color COLOUR_COLORED_3 = Color.red;
 	public static final Color COLOUR_COLORED_4 = Color.orange;
 	public static final Color COLOUR_COLORED_5 = Color.magenta;
-	
-	public static final Color COLOUR_WAITING_FOR_TOKEN_NEEDING= Color.RED;
-	public static final Color COLOUR_WAITING_FOR_TOKEN_NON_NEEDING =Color.white;
-	public static final Color COLOUR_TOKEN_HOLDER=Color.green;
-	
+
+	public static final Color COLOUR_WAITING_FOR_TOKEN_NEEDING = Color.RED;
+	public static final Color COLOUR_WAITING_FOR_TOKEN_NON_NEEDING = Color.white;
+	public static final Color COLOUR_TOKEN_HOLDER = Color.green;
+
 	public static final Color COLOUR_CAPTURED = Color.blue;
 
-	
+	static final Color COLOUR_INITIATOR = Color.cyan;
+	static final Color COLOUR_IDLE = Color.yellow;
+	static final Color COLOUR_ACTIVE = Color.green;
+	static final Color COLOUR_DONE = Color.gray;
 
 	// Mapping of states to colours
 	static final HashMap<Integer, Color> coloursMap = new HashMap<>();
@@ -103,14 +106,18 @@ public abstract class Node extends Thread {
 		coloursMap.put(new Integer(general.State.COLORED_3), COLOUR_COLORED_3);
 		coloursMap.put(new Integer(general.State.COLORED_4), COLOUR_COLORED_4);
 		coloursMap.put(new Integer(general.State.COLORED_5), COLOUR_COLORED_5);
-		coloursMap.put(new Integer(general.State.WAITING_FOR_TOKEN_NEEDING), COLOUR_WAITING_FOR_TOKEN_NEEDING);
-		coloursMap.put(new Integer(general.State.WAITING_FOR_TOKEN_NON_NEEDING), COLOUR_WAITING_FOR_TOKEN_NON_NEEDING);
-		coloursMap.put(new Integer(general.State.TOKEN_HOLDER), COLOUR_TOKEN_HOLDER);
+		coloursMap.put(new Integer(general.State.WAITING_FOR_TOKEN_NEEDING),
+				COLOUR_WAITING_FOR_TOKEN_NEEDING);
+		coloursMap.put(
+				new Integer(general.State.WAITING_FOR_TOKEN_NON_NEEDING),
+				COLOUR_WAITING_FOR_TOKEN_NON_NEEDING);
+		coloursMap.put(new Integer(general.State.TOKEN_HOLDER),
+				COLOUR_TOKEN_HOLDER);
 		coloursMap.put(new Integer(general.State.CAPTURED), COLOUR_CAPTURED);
-
-
-
-		
+		coloursMap.put(new Integer(general.State.INITIATOR), COLOUR_INITIATOR);
+		coloursMap.put(new Integer(general.State.IDLE), COLOUR_IDLE);
+		coloursMap.put(new Integer(general.State.ACTIVE), COLOUR_ACTIVE);
+		coloursMap.put(new Integer(general.State.DONE), COLOUR_DONE);
 
 	}
 
@@ -274,9 +281,8 @@ public abstract class Node extends Thread {
 				|| state == general.State.COLORED_1
 				|| state == general.State.COLORED_2
 				|| state == general.State.COLORED_3
-				|| state == general.State.COLORED_4 
-				|| state == general.State.COLORED_5
-				|| state == general.State.COLORED_0);
+				|| state == general.State.COLORED_4
+				|| state == general.State.COLORED_5 || state == general.State.COLORED_0);
 	}
 
 	/*
