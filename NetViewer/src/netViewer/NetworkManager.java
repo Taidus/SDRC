@@ -473,6 +473,30 @@ class NetworkManager implements ActionListener {
 									// when necessary)
 		drawingPanel.repaint();
 	}
+	
+	public void createTwoSitesNetwork(String algorithm_, int numOfDataItems) {
+		//TODO: implementare
+		networkType = "TwoSites";
+		algorithm = algorithm_;
+		clear(); // data structures that store links, nodes, ids
+		NetViewer.getNetworkPanel().getLastDirtyCanvas().setIsBlank(true);
+		NetViewerMessage.resetTotalMessages(); // back to 0
+		
+		Node first = newNode();
+		TwoSitesPanel drawingPanel = (TwoSitesPanel)NetViewer.getNetworkPanel().getDrawingArea();
+		int x = (int)Math.round((drawingPanel.getPreferredSize().width-Node.DIAMETER)*Math.random()); // generate a random index between 0 and the width of the drawing panel
+		int y = (int)Math.round((drawingPanel.getPreferredSize().height-Node.DIAMETER)*Math.random()); // generate a random index between 0 and the height of the drawing panel
+		first.setCoords(x,y);
+		
+		Node second = newNode();
+		x = (int)Math.round((drawingPanel.getPreferredSize().width-Node.DIAMETER)*Math.random()); // generate a random index between 0 and the width of the drawing panel
+		y = (int)Math.round((drawingPanel.getPreferredSize().height-Node.DIAMETER)*Math.random()); // generate a random index between 0 and the height of the drawing panel
+		second.setCoords(x,y);
+		
+		newLink(first, second);
+		isNewNetwork = true;
+		
+	}
 
 	public void initializeNetwork() {
 		clear(); // clear data structures that store links, nodes, ids

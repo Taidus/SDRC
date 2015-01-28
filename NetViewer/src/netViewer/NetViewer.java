@@ -90,7 +90,7 @@ public class NetViewer extends JApplet implements ActionListener {
 											// etc.)
 	private static JComboBox casesMenu, algorithmMenuRing, algorithmMenuCG,
 			algorithmMenuCR, algorithmMenuGrid, algorithmMenuTorus,
-			algorithmMenuTree, algorithmMenuArb;
+			algorithmMenuTree, algorithmMenuArb, algorithmMenuTwoSites;
 	private static ActionListener playAction, pauseResumeAction; // static
 																	// because
 																	// accessed
@@ -116,8 +116,10 @@ public class NetViewer extends JApplet implements ActionListener {
 									// class and cannot be final
 	protected static ImageIcon netViewerIcon; // goes in the upper left corner
 												// of the window
-	private static JTextField numNodesField; // so we can request focus from
-												// main()
+	private static JTextField numNodesField, numDataItemsField; // so we can
+																// request focus
+																// from
+	// main()
 	private static int javaVersion;
 	private JSplitPane innerSplitPane;
 	private long pauseBegin;
@@ -137,14 +139,17 @@ public class NetViewer extends JApplet implements ActionListener {
 
 		-------------------------------------------------------*/
 
-		String[] ringAlgorithms = { "OnDemandTraversal","UniAlternate", "Franklin Stages",
-				"Alternating Steps", "All The Way", "Far As Can" };
+		String[] ringAlgorithms = { "OnDemandTraversal", "UniAlternate",
+				"Franklin Stages", "Alternating Steps", "All The Way",
+				"Far As Can" };
 		String[] chordalRingAlgorithms = { "Wake Up" };
 		String[] completeGraphAlgorithms = { "Wake Up", "Election" };
-		String[] treeAlgorithms = { "Wake Up","SixColors" };
+		String[] treeAlgorithms = { "Wake Up", "SixColors" };
 		String[] gridAlgorithms = { "Smallest Corner" };
 		String[] torusAlgorithms = { "Wake Up" };
-		String[] arbitraryAlgorithms = { "Yoyo", "MegaMerger", "Wake Up", "Shout","ShortestPathTree" };
+		String[] arbitraryAlgorithms = { "Yoyo", "MegaMerger", "Wake Up",
+				"Shout", "ShortestPathTree" };
+		String[] twoSitesAlgorithms = { "Halving" };
 
 		// -------------------------------------------------------
 
@@ -320,7 +325,7 @@ public class NetViewer extends JApplet implements ActionListener {
 
 		// Create the combo box for selecting a network type
 		String[] topologyStrings = { "Ring", "Grid", "Tree", "Arbitrary",
-				"Complete Graph", "Chordal Ring", "Torus" };
+				"Complete Graph", "Chordal Ring", "Torus", "Two Sites" };
 		topologyMenu = new JComboBox(topologyStrings);
 		topologyMenu.setMinimumSize(new Dimension(120, 26));
 		topologyMenu.setMaximumSize(new Dimension(120, 26));
@@ -444,6 +449,22 @@ public class NetViewer extends JApplet implements ActionListener {
 		arbitraryOptions.add(b3);
 		arbitraryOptions.setMaximumSize(new Dimension(135, 60));
 		arbitraryOptions.setMinimumSize(new Dimension(135, 60));
+
+		algorithmMenuTwoSites = new JComboBox(twoSitesAlgorithms);
+		JLabel numDataItemsLabel = new JLabel("N: ");
+		numDataItemsField = new JTextField(3); // text field for inputting #
+												// nodes
+		numDataItemsField.setPreferredSize(new Dimension(30, 26));
+		Box numDataItemsBox = Box.createHorizontalBox();
+		numDataItemsBox.add(numDataItemsLabel);
+		numDataItemsBox.add(numDataItemsField);
+		final JPanel twoSitesOptions = new JPanel(new GridLayout(2, 1, 5, 5));
+		twoSitesOptions.add(algorithmMenuTwoSites);
+		twoSitesOptions.add(numDataItemsBox);
+		twoSitesOptions.setMaximumSize(new Dimension(135, 60));
+		twoSitesOptions.setMinimumSize(new Dimension(135, 60));
+		JPanel spacerTwoSites = new JPanel();
+		spacerTwoSites.setMinimumSize(new Dimension(10, 1));
 
 		/*-------- GUI COMPONENTS ON THE RESULTS TAB --------*/
 
@@ -736,6 +757,7 @@ public class NetViewer extends JApplet implements ActionListener {
 			} // key typed
 		};
 
+		// TODO: listener per twoSites
 		numNodesField.addKeyListener(validateKey);
 		numNodesFieldCR.addKeyListener(validateKey);
 		numNodesFieldCG.addKeyListener(validateKey);
@@ -1095,6 +1117,12 @@ public class NetViewer extends JApplet implements ActionListener {
 						newNetworkButton.setEnabled(false);
 					newNetworkPanel.remove(autoBoxTree);
 					newNetworkPanel.add(autoBoxArb);
+				} else if (topologyName.equals("Two Sites")) {
+					toolBar.add(twoSitesOptions, 2);
+					selector = algorithmMenuTwoSites;
+					casesMenu.setEnabled(false);
+					newNetworkPanel.remove(autoBoxTree);
+					newNetworkPanel.remove(autoBoxArb);
 				}
 				/*---------------------------------------
 				Validate this container and all of its subcomponents.
@@ -1416,6 +1444,13 @@ public class NetViewer extends JApplet implements ActionListener {
 					algorithmLabel.setText(networkManager.getAlgorithm());
 					networkPanel.repaint();
 				} // arb
+				else if (topologyMenu.getSelectedIndex() == 7) {
+					// FIXME: mettere un valore sensato
+					String algorithm = (String) algorithmMenuTwoSites
+							.getSelectedItem();
+					networkManager.createTwoSitesNetwork(
+							algorithm, 0);
+				}
 			} // actionPerformed
 		}); // new network
 

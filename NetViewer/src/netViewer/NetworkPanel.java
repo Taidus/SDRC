@@ -32,6 +32,7 @@ class NetworkPanel extends JPanel implements MouseListener {
 	private CompleteGraphPanel completeGraphPanel;
 	private ChordalRingPanel chordalRingPanel;
 	private TorusPanel torusPanel;
+	private TwoSitesPanel twoSitesPanel;
 	private JPopupMenu popupMenu;
 	private JMenuItem delete, rename;
 	private DrawingPanel lastDirtyCanvas;
@@ -88,6 +89,7 @@ class NetworkPanel extends JPanel implements MouseListener {
 		completeGraphPanel = new CompleteGraphPanel(this);
 		chordalRingPanel = new ChordalRingPanel(this);
 		torusPanel = new TorusPanel(this);
+		twoSitesPanel = new TwoSitesPanel(this);
 		lastDirtyCanvas = ringPanel;
 		popupMenu = new JPopupMenu();
 		delete = new JMenuItem("Delete");
@@ -235,6 +237,9 @@ class NetworkPanel extends JPanel implements MouseListener {
 			popupMenu.remove(delete);
 		} else if (switchingTo.equals("Torus")) {
 			add(torusPanel, BorderLayout.CENTER);
+			popupMenu.remove(delete);
+		} else if (switchingTo.equals("Two Sites")) {
+			add(twoSitesPanel, BorderLayout.CENTER);
 			popupMenu.remove(delete);
 		}
 		validate();
