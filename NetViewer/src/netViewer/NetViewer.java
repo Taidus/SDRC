@@ -144,7 +144,7 @@ public class NetViewer extends JApplet implements ActionListener {
 		String[] treeAlgorithms = { "Wake Up","SixColors" };
 		String[] gridAlgorithms = { "Smallest Corner" };
 		String[] torusAlgorithms = { "Wake Up" };
-		String[] arbitraryAlgorithms = { "Yoyo", "MegaMerger", "Wake Up", "Shout" };
+		String[] arbitraryAlgorithms = { "Yoyo", "MegaMerger", "Wake Up", "Shout","ShortestPathTree" };
 
 		// -------------------------------------------------------
 

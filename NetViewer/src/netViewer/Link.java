@@ -341,6 +341,11 @@ public class Link {
 	public Node getNode(int whichNode) {
 		return nodesArray[whichNode];
 	}
+	
+	public Node getOtherNode(Node n){
+		  if(nodesArray[RIGHT].getNodeId()!=n.getNodeId())	return nodesArray[RIGHT];
+		  else return nodesArray[LEFT];
+	  }
 
 	private static void getNewSpeedSeed() {
 		speedSeed = ((int) Math.round(Math.random() * 10000) + 2000) / 2; // a
