@@ -215,9 +215,6 @@ public abstract class Node extends Thread {
 	/*
 	 * Send a message; put it on the link in direction dir. Used in the ring.
 	 */
-	protected void send(String msg, int dir) {
-		links.get(dir).receive(msg, dir);
-	}
 
 	public void send(Message msg, int dir) {
 		links.get(dir).receive(msg, dir);
@@ -227,9 +224,6 @@ public abstract class Node extends Thread {
 	 * Send a message; put it on the given link. Used in networks other than the
 	 * ring.
 	 */
-	protected void send(String msg, Link link) {
-		link.receive(msg, this);
-	}
 
 	/*
 	 * The receive() and initialize() functions are overridden in all
@@ -248,15 +242,6 @@ public abstract class Node extends Thread {
 	protected synchronized void receive(Message msg, Link link) {
 	} // to be overridden
 
-	protected synchronized void receive(String msg, int dir) {
-	} // to be overridden
-
-	protected synchronized void receive(String msg, Link link) {
-	} // to be overridden
-
-	protected synchronized void receive(String msg, int dir,
-			int numNodesSeenByMessage) {
-	} // to be overridden
 
 	protected void initialize() {
 	} // overriden for each algorithm

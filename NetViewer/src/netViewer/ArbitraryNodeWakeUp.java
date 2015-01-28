@@ -1,4 +1,5 @@
 package netViewer;
+
 /*
  * NetViewer
  *
@@ -15,6 +16,9 @@ package netViewer;
  *
  */
 
+import general.Message;
+import general.StringMessage;
+
 import java.util.Enumeration;
 
 class ArbitraryNodeWakeUp extends Node {
@@ -24,51 +28,68 @@ class ArbitraryNodeWakeUp extends Node {
 	}
 
 	/* Overrides Node */
-  public boolean isFinished() {
-    return (state == general.State.AWAKE);
-  }
+	public boolean isFinished() {
+		return (state == general.State.AWAKE);
+	}
 
-	/* Receive a message
-	 * Dispatch to correct method depending on state.
+	public synchronized void receive(Message m, Link link) {
+		StringMessage sm = (StringMessage) m;
+		receive(sm.getMsg(), link);
+	}
+
+	/*
+	 * Receive a message Dispatch to correct method depending on state.
 	 */
-	public synchronized void receive(String msg, Link link) {
+	private void receive(String msg, Link link) {
 		switch (state) {
-			case general.State.ASLEEP: asleep(msg, link);
-					 				 break;
-			case general.State.AWAKE:  awake(msg, link);
-					 			   break;
+		case general.State.ASLEEP:
+			asleep(msg, link);
+			break;
+		case general.State.AWAKE:
+			awake(msg, link);
+			break;
 		}
 	}
 
-	/* Process message received while state = ASLEEP.
+	private void send(String str, Link link) {
+		Message m = new StringMessage(str);
+		send(m, link);
+	}
+
+	/*
+	 * Process message received while state = ASLEEP.
 	 */
 	private void asleep(String msg, Link linkMsgArrivedOn) {
-    become(general.State.AWAKE);
+		become(general.State.AWAKE);
 		Link link;
 		Enumeration allLinks = links.elements();
 		while (allLinks.hasMoreElements()) {
-			link = (Link)allLinks.nextElement();
+			link = (Link) allLinks.nextElement();
 			if (link != linkMsgArrivedOn)
 				send(msg, link);
 		}
-		NetViewer.out.println("Node "+nodeId+" has been woken up. Sent wake up to other neighbours.");
+		NetViewer.out.println("Node " + nodeId
+				+ " has been woken up. Sent wake up to other neighbours.");
 	}
 
-	/* Process message received while state = AWAKE.
+	/*
+	 * Process message received while state = AWAKE.
 	 */
 	private void awake(String msg, Link linkMsgArrivedOn) {
-		NetViewer.out.println("Node "+nodeId+" is already awake and received "+msg);
+		NetViewer.out.println("Node " + nodeId
+				+ " is already awake and received " + msg);
 	}
 
-  /* Initialization sequence.
-   * Send Wake Up call in ALL directions (broadcast).
-   */
-  protected void initialize() {
-    become(general.State.AWAKE);
-    Enumeration allLinks = links.elements();
-    while (allLinks.hasMoreElements())
-			send ("wake up", (Link)allLinks.nextElement());
-    NetViewer.out.println("Node "+nodeId+" initialized. Sent wake up in all directions.");
-  }
+	/*
+	 * Initialization sequence. Send Wake Up call in ALL directions (broadcast).
+	 */
+	protected void initialize() {
+		become(general.State.AWAKE);
+		Enumeration allLinks = links.elements();
+		while (allLinks.hasMoreElements())
+			send("wake up", (Link) allLinks.nextElement());
+		NetViewer.out.println("Node " + nodeId
+				+ " initialized. Sent wake up in all directions.");
+	}
 
 }

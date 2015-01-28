@@ -28,7 +28,12 @@ public class ArbitraryNodeShout extends Node {
 			become(general.State.IDLE);
 			root = false;
 		}
-	}	
+	}
+	
+	private void send(String str, Link link ){
+		Message m = new StringMessage(str);
+		send(m,link);
+	}
 	
 	public boolean isFinished() {
 		return (state == general.State.DONE);

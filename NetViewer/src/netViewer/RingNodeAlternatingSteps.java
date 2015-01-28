@@ -1,5 +1,8 @@
 package netViewer;
 
+import general.Message;
+import general.StringMessage;
+
 
 class RingNodeAlternatingSteps extends Node {
 
@@ -7,10 +10,21 @@ class RingNodeAlternatingSteps extends Node {
 		super(ID);
 	}
 
+	
+	  private void send(String str, int dir ){
+			Message m = new StringMessage(str);
+			send(m,dir);
+		}
+	  
+	 public synchronized void receive(Message m,int dir){
+		 StringMessage sm = (StringMessage)m;
+		 receive(sm.getMsg(), dir);
+	 } 
+	
 	/* Receive a message.
 	 * Dispatch to correct method depending on state.
 	 */
-	public synchronized void receive(String msg, int dir) {
+	private void receive(String msg, int dir) {
 		NetViewer.out.println("Node "+nodeId+" received message "+msg+" on the "+((dir==0)?("RIGHT"):("LEFT"))+".");
 		switch (state) {
 			case general.State.ASLEEP: asleep(msg, dir);

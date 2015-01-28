@@ -15,6 +15,9 @@ package netViewer;
  *
  */
 
+import general.Message;
+import general.StringMessage;
+
 import java.util.Enumeration;
 
 class CompleteGraphNodeWakeUp extends Node {
@@ -27,11 +30,21 @@ class CompleteGraphNodeWakeUp extends Node {
   public boolean isFinished() {
     return (state == general.State.AWAKE);
   }
+  
+  private void send(String str, Link link ){
+		Message m = new StringMessage(str);
+		send(m,link);
+	}
+  
+ public synchronized void receive(Message m,Link link){
+	 StringMessage sm = (StringMessage)m;
+	 receive(sm.getMsg(), link);
+ } 
 
 	/* Receive a message.
 	 * Dispatch to correct method depending on state.
 	 */
-	public synchronized void receive(String msg, Link link) {
+	private void receive(String msg, Link link) {
 		switch (state) {
 			case general.State.ASLEEP: asleep(msg, link);
 					 				 break;

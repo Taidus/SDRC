@@ -18,7 +18,8 @@ import java.awt.Color;
 public class Link {
 
 	static final int RIGHT = 0, LEFT = 1;
-	static private long unitOfTime; // for synchronous networks, unit of time is the same for all links
+	static private long unitOfTime; // for synchronous networks, unit of time is
+									// the same for all links
 
 	private int cost;
 
@@ -38,10 +39,17 @@ public class Link {
 	private static int speedSeed;
 	private Node[] nodesArray;
 	private String type; // type of network the link is part of
-	private Vector<NetViewerMessage> activeMessages; // the messages currently travelling along the link (in both directions)
+	private Vector<NetViewerMessage> activeMessages; // the messages currently
+														// travelling along the
+														// link (in both
+														// directions)
 	protected Point startCoords, endCoords; // drawing coordinates
-	private Vector<NetViewerMessage> queue; // queue to hold messages that arrive out of order and must wait because it's FIFO
-	private Object control; // to control flow through the alertMsgFinished() function for FIFO networks so that messages arrive in the same order as
+	private Vector<NetViewerMessage> queue; // queue to hold messages that
+											// arrive out of order and must wait
+											// because it's FIFO
+	private Object control; // to control flow through the alertMsgFinished()
+							// function for FIFO networks so that messages
+							// arrive in the same order as
 							// they were sent
 	private NetViewerMessage[] syncMessage;
 
@@ -81,7 +89,8 @@ public class Link {
 	}
 
 	// Constructor used in tree and arbitrary networks.
-	// Manual drawing means a link may be created before its final endpoints are known
+	// Manual drawing means a link may be created before its final endpoints are
+	// known
 	// (user draws the link with the mouse)
 	public Link() {
 		activeMessages = new Vector<>();
@@ -97,35 +106,48 @@ public class Link {
 	}
 
 	/*
-	 * Receive a message. Spawn a thread that waits a certain amount of time (to simulate the message travelling along the link) and then sends a
-	 * notification when it is finished. dir is the direction the message came from
+	 * Receive a message. Spawn a thread that waits a certain amount of time (to
+	 * simulate the message travelling along the link) and then sends a
+	 * notification when it is finished. dir is the direction the message came
+	 * from
 	 */
 	public synchronized void receive(String msg, int dir) {
 		type = "basic ring";
-		NetViewerMessage m = new NetViewerMessage(new StringMessage(msg), dir, this);
-		activeMessages.add(m); // add before starting the thread, in case the thread dies really fast and tries to remove itself from the queue before
+		NetViewerMessage m = new NetViewerMessage(new StringMessage(msg), dir,
+				this);
+		activeMessages.add(m); // add before starting the thread, in case the
+								// thread dies really fast and tries to remove
+								// itself from the queue before
 								// being added.
 		if (!NetViewer.isSynchronous())
 			m.start();
 	}
 
 	/*
-	 * Receive a message with a counter (for ring algorithm "all the way"). Spawn a thread that waits a certain amount of time (to simulate the
-	 * message travelling along the link) and then sends a notification when it is finished. dir is the direction the message came from The method is
-	 * synchronized to regulate access to the active messages vector - To avoid two message threads being created and added to the queue in one order
-	 * but started in another order. In other words, it makes the adding and starting of message threads happen atomically (as one statement).
+	 * Receive a message with a counter (for ring algorithm "all the way").
+	 * Spawn a thread that waits a certain amount of time (to simulate the
+	 * message travelling along the link) and then sends a notification when it
+	 * is finished. dir is the direction the message came from The method is
+	 * synchronized to regulate access to the active messages vector - To avoid
+	 * two message threads being created and added to the queue in one order but
+	 * started in another order. In other words, it makes the adding and
+	 * starting of message threads happen atomically (as one statement).
 	 */
-	public synchronized void receive(String msg, int dir, int numNodesSeenByMessage) {
+	public synchronized void receive(String msg, int dir,
+			int numNodesSeenByMessage) {
 		type = "basic ring";
-		NetViewerMessage m = new NetViewerMessage(new StringMessage(msg), dir, this);
+		NetViewerMessage m = new NetViewerMessage(new StringMessage(msg), dir,
+				this);
 		activeMessages.add(m);
 		if (!NetViewer.isSynchronous())
 			m.start();
 	}
 
 	/*
-	 * Receive a message from a particular node (used in the grid). Spawn a thread that waits a certain amount of time (to simulate the message
-	 * travelling along the link) and then sends a notification when it is finished. node is the node the message came from (use it to find the
+	 * Receive a message from a particular node (used in the grid). Spawn a
+	 * thread that waits a certain amount of time (to simulate the message
+	 * travelling along the link) and then sends a notification when it is
+	 * finished. node is the node the message came from (use it to find the
 	 * direction to send in)
 	 */
 
@@ -145,7 +167,9 @@ public class Link {
 	public synchronized void receive(Message msg, int dir) {
 		type = "basic ring";
 		NetViewerMessage m = new NetViewerMessage(msg, dir, this);
-		activeMessages.add(m); // add before starting the thread, in case the thread dies really fast and tries to remove itself from the queue before
+		activeMessages.add(m); // add before starting the thread, in case the
+								// thread dies really fast and tries to remove
+								// itself from the queue before
 								// being added.
 		if (!NetViewer.isSynchronous())
 			m.start();
@@ -158,27 +182,13 @@ public class Link {
 			dir = RIGHT;
 		else
 			dir = LEFT; // direction the message must travel
-		NetViewerMessage m = new NetViewerMessage(new StringMessage(msg), dir, this);
+		NetViewerMessage m = new NetViewerMessage(new StringMessage(msg), dir,
+				this);
 		activeMessages.add(m);
 		if (!NetViewer.isSynchronous())
 			m.start();
 	}
 
-	/*
-	 * Send a message. - Deliver the message to the node at the opposite end of the link.
-	 */
-	protected void send(String msg, int dir) {
-		Node node = nodesArray[dir];
-		if (node.state == State.ASLEEP) // Wake up the node if it is ASLEEP
-		{
-			NetViewer.out.println("Node " + node.nodeId + " got interrupted.");
-			node.interrupt();
-		}
-		if (type.equals("basic ring"))
-			node.receive(msg, Math.abs(dir - 1));
-		else
-			node.receive(msg, this);
-	}
 
 	protected void send(Message msg, int dir) {
 		Node node = nodesArray[dir];
@@ -190,65 +200,46 @@ public class Link {
 		if (type.equals("basic ring")) {
 			// System.out.println("qui");
 			node.receive(msg, Math.abs(dir - 1));
-		}
-		else
+		} else
 			node.receive(msg, this);
 	}
 
 	/*
-	 * Send a message to a node for the All the Way ring algorithm. - Deliver the message to the node at the opposite end of the link. - Include
-	 * counter (for ring algorithm "all the way")
-	 */
-	protected void send(String msg, int dir, int numNodesSeenByMessage) {
-		if (nodesArray[dir].state == State.ASLEEP) { // Wake up the node if it is ASLEEP
-			NetViewer.out.println("Node " + nodesArray[dir].nodeId + " got interrupted.");
-			nodesArray[dir].interrupt();
-		}
-		nodesArray[dir].receive(msg, Math.abs(dir - 1), numNodesSeenByMessage);
-	}
-
-	/*
-	 * Receive an alert indicating a message has finished travelling across the link Deliver the message to the opposite end of the link.
+	 * Receive an alert indicating a message has finished travelling across the
+	 * link Deliver the message to the opposite end of the link.
 	 */
 	public void alertMsgFinished(NetViewerMessage m) {
 		if (NetViewer.isSynchronous())
 			return; // central clock in NetworkManager handles it
-		if (NetViewer.isFIFO()) { // send msg if it is the next in line to go; otherwise queue msg
+		if (NetViewer.isFIFO()) { // send msg if it is the next in line to go;
+									// otherwise queue msg
 			synchronized (control) {
 				// String id = m.toString();
 				if (arrivedTooSoon(m)) {
 					queue.add(m);
-				}
-				else {
-					while (m != null) { // while there are still messages to send
-						if (m.getNumNodesSeenByMessage() == -1) {
-							// System.out.println("FIFO + non all the way");
-							send(m.getPacket(), m.getDirection());
-						}
-						else
-							// ring algorithm "All The Way"
-							send(m.getPacket().printString(), m.getDirection(), m.getNumNodesSeenByMessage());
+				} else {
+					while (m != null) { // while there are still messages to
+										// send
+						// System.out.println("FIFO + non all the way");
+						send(m.getPacket(), m.getDirection());
 						activeMessages.remove(m);
-						m = checkQueue(m.getDirection()); // get the next msg in the queue that can go now
+						m = checkQueue(m.getDirection()); // get the next msg in
+															// the queue that
+															// can go now
 					}
 				}
 			}
-		}
-		else { // not FIFO; send messages in the order they arrive
-			if (m.getNumNodesSeenByMessage() == -1) {
-				// System.out.println("NON FIFO + non all the way");
-				send(m.getPacket(), m.getDirection());
-			}
-			else
-				// ring algorithm "All The Way"
-				send(m.getPacket().printString(), m.getDirection(), m.getNumNodesSeenByMessage());
+		} else { // not FIFO; send messages in the order they arrive
+					// System.out.println("NON FIFO + non all the way");
+			send(m.getPacket(), m.getDirection());
 			activeMessages.remove(m);
 		}
 
 	}
 
 	/*
-	 * Check if the given message arrived too soon, ie. out of order. If there is an active message with the same direction nearer to the beginning of
+	 * Check if the given message arrived too soon, ie. out of order. If there
+	 * is an active message with the same direction nearer to the beginning of
 	 * the queue, return true.
 	 */
 	private boolean arrivedTooSoon(NetViewerMessage m) {
@@ -264,8 +255,8 @@ public class Link {
 	}
 
 	/*
-	 * Check the queue for messages that arrived too early but can now be sent. Checks if queue contains the next in line in the activeMessages
-	 * vector.
+	 * Check the queue for messages that arrived too early but can now be sent.
+	 * Checks if queue contains the next in line in the activeMessages vector.
 	 */
 	private NetViewerMessage checkQueue(int direction) {
 		if (queue.isEmpty())
@@ -274,18 +265,21 @@ public class Link {
 		NetViewerMessage msg = null;
 		while (msgs.hasMoreElements()) {
 			msg = (NetViewerMessage) msgs.nextElement();
-			if (msg.getDirection() == direction) // get the first active message with the correct direction
+			if (msg.getDirection() == direction) // get the first active message
+													// with the correct
+													// direction
 				break;
 		}
 		if (queue.remove(msg)) {
 			return msg;
-		}
-		else
+		} else
 			return null;
 	}
 
-	// Remove a message that has been forced to terminate from the active messge queue.
-	// Used from Message when simulation has been aborted while the message is still alive.
+	// Remove a message that has been forced to terminate from the active messge
+	// queue.
+	// Used from Message when simulation has been aborted while the message is
+	// still alive.
 	public void removeMessage(NetViewerMessage m) {
 		activeMessages.remove(m);
 	}
@@ -311,7 +305,8 @@ public class Link {
 	}
 
 	/*
-	 * Get the two messages for this link in a synchronous network. One message for each direction, containing all messages on the link separated by
+	 * Get the two messages for this link in a synchronous network. One message
+	 * for each direction, containing all messages on the link separated by
 	 * commas for better viewing.
 	 */
 	public Vector<NetViewerMessage> getSyncMessages() {
@@ -332,34 +327,51 @@ public class Link {
 	}
 
 	/*
-	 * Set the node at one end of the link (LEFT or RIGHT). Used during network construction.
+	 * Set the node at one end of the link (LEFT or RIGHT). Used during network
+	 * construction.
 	 */
 	public void setNode(int whichNode, Node node) {
 		nodesArray[whichNode] = node;
 	}
 
 	/*
-	 * Get the node at one end of the link (LEFT or RIGHT). Used when re-constructing all nodes to re-run an algorithm.
+	 * Get the node at one end of the link (LEFT or RIGHT). Used when
+	 * re-constructing all nodes to re-run an algorithm.
 	 */
 	public Node getNode(int whichNode) {
 		return nodesArray[whichNode];
 	}
 
 	private static void getNewSpeedSeed() {
-		speedSeed = ((int) Math.round(Math.random() * 10000) + 2000) / 2; // a message will take between 2 and 12 seconds to travel along the link
+		speedSeed = ((int) Math.round(Math.random() * 10000) + 2000) / 2; // a
+																			// message
+																			// will
+																			// take
+																			// between
+																			// 2
+																			// and
+																			// 12
+																			// seconds
+																			// to
+																			// travel
+																			// along
+																			// the
+																			// link
 	}
 
 	/*
-	 * Generate a new speed. Used when the speed is adjusted using the speed slider. Can be used to set the speed of messages as well.
+	 * Generate a new speed. Used when the speed is adjusted using the speed
+	 * slider. Can be used to set the speed of messages as well.
 	 */
 	public static long getNewSpeed() {
 		getNewSpeedSeed();
 		int sliderValue = NetViewer.getSpeed();
 		if (sliderValue < 90) {
-			return (long) ((double) speedSeed / Math.sin(Math.toRadians(sliderValue)));
-		}
-		else {
-			return (long) ((double) speedSeed * Math.sin(Math.toRadians(sliderValue)));
+			return (long) ((double) speedSeed / Math.sin(Math
+					.toRadians(sliderValue)));
+		} else {
+			return (long) ((double) speedSeed * Math.sin(Math
+					.toRadians(sliderValue)));
 		}
 	}
 
@@ -430,16 +442,18 @@ public class Link {
 	}
 
 	/*
-	 * Get the unit of time (for a synchronous network). This is the time between clock ticks, or the time it takes for any message to travel along a
-	 * link (all links same speed).
+	 * Get the unit of time (for a synchronous network). This is the time
+	 * between clock ticks, or the time it takes for any message to travel along
+	 * a link (all links same speed).
 	 */
 	public static long getUnitOfTime() {
 		return unitOfTime;
 	}
 
 	/*
-	 * Set the unit of time (for a synchronous network). This is the time between clock ticks, or the time it takes for any message to travel along a
-	 * link (all links same speed).
+	 * Set the unit of time (for a synchronous network). This is the time
+	 * between clock ticks, or the time it takes for any message to travel along
+	 * a link (all links same speed).
 	 */
 	public static void setUnitOfTime(long t) {
 		unitOfTime = t;
