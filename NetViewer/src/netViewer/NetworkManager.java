@@ -30,7 +30,8 @@ import javax.swing.Timer;
 class NetworkManager implements ActionListener {
 
 	private int numNodes, numLinks, rows, cols, previousNumNodes, previousNumLinks, previousNumRows, previousNumCols, mirrors, tick;
-	private Vector nodesVector, linksVector, previousNodesVector, previousLinksVector, previousIdsUsed, chordLengths;
+	private Vector linksVector, previousNodesVector, previousLinksVector, previousIdsUsed, chordLengths;
+	private Vector<Node> nodesVector;
 	private String algorithm, networkType, previousAlgorithm, previousNetworkType;
 	private boolean isRunning, isNewNetwork;
 	private Class[] integerClass; // helper during dynamic object creation
@@ -99,6 +100,7 @@ class NetworkManager implements ActionListener {
 		}
 
 		isNewNetwork = true; // forces resize upon next drawing, to recalculate network dimensions
+		
 	}
 
 	public void createCompleteGraphNetwork(int numNodes_, String algorithm_, String whichCase) {
@@ -500,7 +502,8 @@ class NetworkManager implements ActionListener {
 	public Integer getNewID() {
 		Integer newID;
 		if (numNodes == 0) // generate a random first id between 0 and 5 (so that it's not always 0)
-			newID = new Integer((int)Math.round(5*Math.random()));
+			//newID = new Integer((int)Math.round(5*Math.random()));
+			newID=0; //0 è bello!
 		else {
 			do
 				newID = new Integer((int)Math.round((2*numNodes)*Math.random()));

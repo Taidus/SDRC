@@ -27,7 +27,10 @@ public interface State {
 	public static final int COLORED_5 = COLORED_OFFSET+5;
 
 	
-
+	public static final int WAITING_FOR_TOKEN_NEEDING= 20;
+	public static final int WAITING_FOR_TOKEN_NON_NEEDING =21;
+	public static final int TOKEN_HOLDER=22;
+	
 	public int intValue();
 
 	public void spontaneously();

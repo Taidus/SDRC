@@ -137,7 +137,7 @@ public class NetViewer extends JApplet implements ActionListener {
 
 		-------------------------------------------------------*/
 
-		String[] ringAlgorithms = { "UniAlternate", "Franklin Stages",
+		String[] ringAlgorithms = { "OnDemandTraversal","UniAlternate", "Franklin Stages",
 				"Alternating Steps", "All The Way", "Far As Can" };
 		String[] chordalRingAlgorithms = { "Wake Up" };
 		String[] completeGraphAlgorithms = { "Wake Up" };
