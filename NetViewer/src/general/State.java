@@ -16,7 +16,12 @@ public interface State {
 	public static final int SINK = 9;
 	public static final int SOURCE = 10;
 	public static final int FINDING_COLOR=11;
+	public static final int CAPTURED =12;
 	
+	
+	public static final int WAITING_FOR_TOKEN_NEEDING= 20;
+	public static final int WAITING_FOR_TOKEN_NON_NEEDING =21;
+	public static final int TOKEN_HOLDER=22;
 	
 	public static final int COLORED_OFFSET=100;
 	public static final int COLORED_0 = COLORED_OFFSET+0;
@@ -27,9 +32,7 @@ public interface State {
 	public static final int COLORED_5 = COLORED_OFFSET+5;
 
 	
-	public static final int WAITING_FOR_TOKEN_NEEDING= 20;
-	public static final int WAITING_FOR_TOKEN_NON_NEEDING =21;
-	public static final int TOKEN_HOLDER=22;
+	
 	
 	public int intValue();
 

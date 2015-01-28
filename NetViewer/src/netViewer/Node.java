@@ -75,6 +75,9 @@ public abstract class Node extends Thread {
 	public static final Color COLOUR_WAITING_FOR_TOKEN_NON_NEEDING =Color.white;
 	public static final Color COLOUR_TOKEN_HOLDER=Color.green;
 	
+	public static final Color COLOUR_CAPTURED = Color.blue;
+
+	
 
 	// Mapping of states to colours
 	static final HashMap<Integer, Color> coloursMap = new HashMap<>();
@@ -103,6 +106,8 @@ public abstract class Node extends Thread {
 		coloursMap.put(new Integer(general.State.WAITING_FOR_TOKEN_NEEDING), COLOUR_WAITING_FOR_TOKEN_NEEDING);
 		coloursMap.put(new Integer(general.State.WAITING_FOR_TOKEN_NON_NEEDING), COLOUR_WAITING_FOR_TOKEN_NON_NEEDING);
 		coloursMap.put(new Integer(general.State.TOKEN_HOLDER), COLOUR_TOKEN_HOLDER);
+		coloursMap.put(new Integer(general.State.CAPTURED), COLOUR_CAPTURED);
+
 
 
 		
