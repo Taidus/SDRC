@@ -18,6 +18,9 @@ public class TwoSitesNodeHalving extends Node {
 	private HalvingState nodeState;
 	private Link neighbor;
 	private List<Integer> originalData;
+	private List<Integer> leftDiscarded;
+	private List<Integer> rightDiscarded;
+
 	// TODO FIFO queue
 
 	public TwoSitesNodeHalving(Integer ID, int k, List<Integer> data) {
@@ -26,11 +29,12 @@ public class TwoSitesNodeHalving extends Node {
 		this.data = new ArrayList<Integer>();
 		this.data.addAll(data);
 		this.originalData = data;
+		this.leftDiscarded = new ArrayList<Integer>();
+		this.rightDiscarded = new ArrayList<Integer>();
+
 		nodeState = new Asleep(this);
 		Collections.sort(this.data);
 	}
-	
-	
 
 	public int getN() {
 		return data.size();
@@ -49,7 +53,7 @@ public class TwoSitesNodeHalving extends Node {
 	public List<Integer> getData() {
 		return data;
 	}
-	
+
 	public List<Integer> getOriginalData() {
 		return originalData;
 	}
@@ -79,14 +83,14 @@ public class TwoSitesNodeHalving extends Node {
 		int n = getN();
 
 		// TODO CHECK n/2
-		double t = Math.ceil(((double) n*2) / 2);
+		double t = Math.ceil(((double) n * 2) / 2);
 		if (k > t) {
-
-			data = data.subList(n - k + 1, n);
+			
+			discardLeft(n - k + 1);
 
 		} else if (k < t) {
 
-			data = data.subList(0, k);
+			discardRight(k);
 
 		}
 
@@ -96,31 +100,56 @@ public class TwoSitesNodeHalving extends Node {
 	}
 
 	public void halve(int m, boolean lastIter) {
+
 		if (!lastIter) {
 			if (m < getMedian()) {
 
-				data = data.subList(0, getMedianIndex() + 1);
+				discardRight(getMedianIndex() + 1);
 
 			} else if (m > getMedian()) {
 
-				data = data.subList(getMedianIndex() + 1, getN());
+				discardLeft(getMedianIndex() + 1);
 
 			}
 		} else {
 			if (m < getMedian()) {
+				rightDiscarded.addAll(data);
 				data.clear();
 			}
 		}
 	}
 
-
-
 	public int getK() {
 		return k;
 	}
-	
+
 	public Link getLink() {
 		return neighbor;
+	}
+
+	public List<Integer> getLeftDiscarded() {
+		return new ArrayList<Integer>(leftDiscarded);
+	}
+
+	public List<Integer> getRightDiscarded() {
+		return new ArrayList<Integer>(rightDiscarded);
+	}
+
+	private void discardLeft(int index) {
+
+		List<Integer> tmp = new ArrayList<Integer>(data);
+		data = data.subList(index, getN());
+		tmp.removeAll(data);
+		leftDiscarded.addAll(tmp);
+
+	}
+
+	private void discardRight(int index) {
+
+		List<Integer> tmp = new ArrayList<Integer>(data);
+		data = data.subList(0, index);
+		tmp.removeAll(data);
+		rightDiscarded.addAll(tmp);
 	}
 
 }
