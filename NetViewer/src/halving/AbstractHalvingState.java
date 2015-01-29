@@ -33,6 +33,11 @@ public abstract class AbstractHalvingState implements HalvingState {
 	}
 
 	protected void processSetupMessage(SetupMessage m) {
+		
+		node.setOtherNodeId(m.getId());
+		node.setOtherNodeN(m.getN());
+		
+		node.setupForKQuery();
 
 		int q = Math.max(node.getN(), m.getN());
 		int p = (int) Math.ceil(Math.log(q) / Math.log(2));

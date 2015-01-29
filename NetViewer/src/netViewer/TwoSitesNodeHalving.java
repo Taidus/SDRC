@@ -27,6 +27,7 @@ public class TwoSitesNodeHalving extends Node {
 	private int currentStep;
 	private Map<Integer, MedianMessage> queue;
 	private int otherNodeId;
+	private int otherNodeN;
 
 	// TODO FIFO queue
 
@@ -92,10 +93,18 @@ public class TwoSitesNodeHalving extends Node {
 
 	public void initialize() {
 
+
+		become(new SettingUp(this));
+		SetupMessage m = new SetupMessage(getNodeId(),getN());
+		send(m);
+	}
+	
+	public void setupForKQuery(){
+		
+	//FIXME non funziona
 		int n = getN();
 
-		// TODO CHECK n/2
-		double t = Math.ceil(((double) n * 2) / 2);
+		double t = Math.ceil(((double) n  + getOtherNodeN() ) / 2);
 		if (k > t) {
 
 			discardLeft(n - k + 1);
@@ -105,10 +114,6 @@ public class TwoSitesNodeHalving extends Node {
 			discardRight(k);
 
 		}
-
-		become(new SettingUp(this));
-		SetupMessage m = new SetupMessage(getNodeId(),getN());
-		send(m);
 	}
 
 	public void halve(int m, boolean lastIter) {
@@ -206,6 +211,14 @@ public class TwoSitesNodeHalving extends Node {
 		}
 		
 		Collections.sort(data);
+	}
+
+	public int getOtherNodeN() {
+		return otherNodeN;
+	}
+
+	public void setOtherNodeN(int otherNodeN) {
+		this.otherNodeN = otherNodeN;
 	}
 
 }
