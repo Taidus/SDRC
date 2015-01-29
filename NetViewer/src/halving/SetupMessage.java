@@ -15,7 +15,7 @@ public class SetupMessage implements HalvingMessage{
 
 	@Override
 	public String printString() {
-		return String.format("N: %d, Id: %d", id,n);
+		return String.format("N: %d, id: %d", n,id);
 	}
 
 	@Override

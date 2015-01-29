@@ -33,21 +33,23 @@ public abstract class AbstractHalvingState implements HalvingState {
 	}
 
 	protected void processSetupMessage(SetupMessage m) {
-		// TODO
 
 		int q = Math.max(node.getN(), m.getN());
 		int p = (int) Math.ceil(Math.log(q) / Math.log(2));
-		int r = (int) Math.pow(q, 2);
+		int r = (int) Math.pow(2,p);
 
 		double n_symbols = 2 * r - m.getN() - node.getN();
 		int tot_minus = (int) Math.floor(n_symbols / 2);
 		int tot_plus = (int) Math.ceil(n_symbols / 2);
 
-		double n1_places = r - node.getN();
+		int min_id_N =( node.getNodeId() < m.getId())? node.getN(): m.getN();
+		
+		double n1_places = r - min_id_N;
 		int n1_plus = (int) Math.floor(n1_places / 2);
-		int n1_minus = (int) Math.floor(n1_places / 2);
+		int n1_minus = (int) Math.ceil(n1_places / 2);
 
 		if (node.getNodeId() < m.getId()) {
+			
 
 			node.pad(n1_minus, n1_plus);
 
