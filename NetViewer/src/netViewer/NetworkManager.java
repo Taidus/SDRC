@@ -823,7 +823,13 @@ class NetworkManager implements ActionListener {
 		nodesVector.clear();
 		for (int i = 0; i < nodes.size(); i++) {
 			originalNode = (Node) nodes.get(i);
-			newNode = newNode(new Integer(originalNode.nodeId));
+			if (originalNode instanceof TwoSitesNodeHalving) {
+				TwoSitesNodeHalving original = ((TwoSitesNodeHalving) originalNode);
+				newNode = new TwoSitesNodeHalving(originalNode.nodeId,
+						original.getK(), original.getData());
+			} else {
+				newNode = newNode(new Integer(originalNode.nodeId));
+			}
 			newNode.setCoords(originalNode.coords.x, originalNode.coords.y);
 			newNode.setWakeUpDelay(originalNode.wakeUpDelay);
 			newNode.setWakeUpPosition(originalNode.wakeUpPosition); // in case
