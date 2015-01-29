@@ -242,7 +242,6 @@ public abstract class Node extends Thread {
 	protected synchronized void receive(Message msg, Link link) {
 	} // to be overridden
 
-
 	protected void initialize() {
 	} // overriden for each algorithm
 
@@ -263,6 +262,7 @@ public abstract class Node extends Thread {
 	public boolean isFinished() {
 		return (state == general.State.LEADER
 				|| state == general.State.FOLLOWER
+				|| state == general.State.DONE
 				|| state == general.State.COLORED_1
 				|| state == general.State.COLORED_2
 				|| state == general.State.COLORED_3
