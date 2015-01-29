@@ -19,8 +19,14 @@ import java.awt.Image;
 import java.awt.Point;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
+import java.awt.font.TextAttribute;
 import java.awt.image.MemoryImageSource;
+import java.text.AttributedString;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Enumeration;
+import java.util.List;
 import java.util.Vector;
 
 import javax.swing.JPanel;
@@ -99,7 +105,7 @@ class DrawingPanel extends JPanel implements ComponentListener {
 				g.fillOval(node.coords.x - 2, node.coords.y - 2,
 						Node.DIAMETER + 4, Node.DIAMETER + 4);
 			}
-			
+
 			Color nodeColour = (Color) Node.coloursMap.get(new Integer(state));
 
 			g.setColor(nodeColour);
@@ -120,9 +126,9 @@ class DrawingPanel extends JPanel implements ComponentListener {
 														// algorithm
 				drawMessageQueues(node);
 			if (node instanceof TwoSitesNodeHalving) {
-				drawDataItems((TwoSitesNodeHalving)node);
+				drawDataItems((TwoSitesNodeHalving) node);
 			}
-			
+
 			if (nodesFinished && !node.isFinished())
 				nodesFinished = false;
 		}
@@ -339,14 +345,59 @@ class DrawingPanel extends JPanel implements ComponentListener {
 	/*
 	 * Draw message queues at each of the node's links.
 	 */
-	
-	//TODO: spostare in luoghi più adatti (TwoSitesPanel, per esempio)
+
+	// TODO: spostare in luoghi più adatti (TwoSitesPanel, per esempio)
 	private void drawDataItems(TwoSitesNodeHalving node) {
-		
-		g.drawString(node.getData().toString(), node.getCentre().x,
-				node.getCentre().y + node.DIAMETER);
+		// TODO: rimuovere
+		List<Integer> test = new ArrayList<Integer>();
+		test.add(1);
+		test.add(2);
+		// TODO: ripristinare
+		// g.drawString(node.getData().toString(), node.getCentre().x,
+		// node.getCentre().y + node.DIAMETER);
+		List<Integer> tooSmall = node.getLeftDiscarded();
+		List<Integer> tooBig = node.getRightDiscarded();
+		List<Integer> valid = node.getData();
+		Collections.sort(tooSmall);
+		Collections.sort(valid);
+		Collections.sort(tooBig);
+		StringBuilder stringToDisplay = new StringBuilder();
+		stringToDisplay.append("[");
+		int firstCut;
+		int secondCut;
+		for (int i = 0; i < tooSmall.size(); i++) {
+			stringToDisplay.append(tooSmall.get(i) + " ");
+		}
+		firstCut = stringToDisplay.length();
+		if (!tooBig.isEmpty()) {
+			for (int i = 0; i < valid.size(); i++) {
+				stringToDisplay.append(valid.get(i) + " ");
+			}
+			secondCut = stringToDisplay.length();
+			for (int i = 0; i < tooBig.size() - 1; i++) {
+				stringToDisplay.append(tooBig.get(i) + " ");
+			}
+			stringToDisplay.append(tooBig.get(tooBig.size() - 1) + "]");
+		} else {
+			for (int i = 0; i < valid.size() - 1; i++) {
+				stringToDisplay.append(valid.get(i) + " ");
+			}
+			secondCut = stringToDisplay.length();
+			stringToDisplay.append(valid.get(valid.size() - 1) + "]");
+		}
+
+		AttributedString as1 = new AttributedString(stringToDisplay.toString());
+		if (!tooSmall.isEmpty()) {
+			as1.addAttribute(TextAttribute.FOREGROUND, Color.red, 1, firstCut);
+		}
+		if (!tooBig.isEmpty()) {
+			as1.addAttribute(TextAttribute.FOREGROUND, Color.red, secondCut, stringToDisplay.length()-1);
+		}
+
+		g.drawString(as1.getIterator(), node.getCentre().x, node.getCentre().y
+				+ node.DIAMETER);
 	}
-	
+
 	private void drawMessageQueues(Node node) {
 		g.setColor(Node.MESSAGE_QUEUE_COLOUR);
 		Vector v = ((RingNodeFranklinStages) node)
