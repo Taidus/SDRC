@@ -19,9 +19,11 @@ public class MedianMessage implements HalvingMessage {
 	public String printString() {
 		if (Integer.MAX_VALUE == median) {
 			return "Median: Inf";
-		} else {
-			return String.format("Median: %d", median);
 		}
+		if (Integer.MIN_VALUE == median) {
+			return "Median: -Inf";
+		}
+		return String.format("Median: %d", median);
 	}
 
 	@Override

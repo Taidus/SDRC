@@ -29,6 +29,7 @@ import java.util.Enumeration;
 import java.util.List;
 import java.util.Vector;
 
+import javax.management.RuntimeErrorException;
 import javax.swing.JPanel;
 
 class DrawingPanel extends JPanel implements ComponentListener {
@@ -348,25 +349,25 @@ class DrawingPanel extends JPanel implements ComponentListener {
 
 	// TODO: spostare in luoghi più adatti (TwoSitesPanel, per esempio)
 	private void drawDataItems(TwoSitesNodeHalving node) {
-		// TODO: rimuovere
-		List<Integer> test = new ArrayList<Integer>();
-		test.add(1);
-		test.add(2);
-		// TODO: ripristinare
-		// g.drawString(node.getData().toString(), node.getCentre().x,
-		// node.getCentre().y + node.DIAMETER);
 		List<Integer> tooSmall = node.getLeftDiscarded();
 		List<Integer> tooBig = node.getRightDiscarded();
 		List<Integer> valid = node.getData();
+		List<Integer> originalData = node.getOriginalData();
+
 		Collections.sort(tooSmall);
 		Collections.sort(valid);
 		Collections.sort(tooBig);
+
 		StringBuilder stringToDisplay = new StringBuilder();
 		stringToDisplay.append("[");
 		int firstCut;
 		int secondCut;
 		for (int i = 0; i < tooSmall.size(); i++) {
-			stringToDisplay.append(tooSmall.get(i) + " ");
+			if (Integer.MIN_VALUE == tooSmall.get(i)) {
+				stringToDisplay.append("-Inf ");
+			} else {
+				stringToDisplay.append(tooSmall.get(i) + " ");
+			}
 		}
 		firstCut = stringToDisplay.length();
 		if (!tooBig.isEmpty()) {
@@ -375,9 +376,17 @@ class DrawingPanel extends JPanel implements ComponentListener {
 			}
 			secondCut = stringToDisplay.length();
 			for (int i = 0; i < tooBig.size() - 1; i++) {
-				stringToDisplay.append(tooBig.get(i) + " ");
+				if (Integer.MAX_VALUE == tooBig.get(i)) {
+					stringToDisplay.append("Inf ");
+				} else {
+					stringToDisplay.append(tooBig.get(i) + " ");
+				}
 			}
-			stringToDisplay.append(tooBig.get(tooBig.size() - 1) + "]");
+			if (Integer.MAX_VALUE == tooBig.get(tooBig.size() - 1)) {
+				stringToDisplay.append("Inf]");
+			} else {
+				stringToDisplay.append(tooBig.get(tooBig.size() - 1) + "]");
+			}
 		} else {
 			for (int i = 0; i < valid.size() - 1; i++) {
 				stringToDisplay.append(valid.get(i) + " ");
@@ -391,7 +400,8 @@ class DrawingPanel extends JPanel implements ComponentListener {
 			as1.addAttribute(TextAttribute.FOREGROUND, Color.red, 1, firstCut);
 		}
 		if (!tooBig.isEmpty()) {
-			as1.addAttribute(TextAttribute.FOREGROUND, Color.red, secondCut, stringToDisplay.length()-1);
+			as1.addAttribute(TextAttribute.FOREGROUND, Color.red, secondCut,
+					stringToDisplay.length() - 1);
 		}
 
 		g.drawString(as1.getIterator(), node.getCentre().x, node.getCentre().y
