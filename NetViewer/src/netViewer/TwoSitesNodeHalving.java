@@ -121,10 +121,18 @@ public class TwoSitesNodeHalving extends Node {
 
 			}else{
 				
-				//TODO same median
-			}
+				if(getNodeId() < getOtherNodeId()){
+					
+					discardRight(getMedianIndex() + 1);
+					
+				}else{
+					discardLeft(getMedianIndex() + 1);
+				}
+				
+				
+				}
 		} else {
-			if (m < getMedian()) {
+			if (m < getMedian() || (m==getMedian() && getNodeId() < getOtherNodeId())) {
 				rightDiscarded.addAll(data);
 				data.clear();
 			}
@@ -179,6 +187,12 @@ public class TwoSitesNodeHalving extends Node {
 	public MedianMessage nextEnqueuedMessage(){
 		MedianMessage m = queue.remove(currentStep);
 		return m;
+	}
+	
+	private int getOtherNodeId(){
+		//XXX change ASAP
+		int id = neighbor.getOtherNode(this).getNodeId();
+		return id;
 	}
 
 }
