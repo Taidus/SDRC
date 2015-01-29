@@ -49,9 +49,8 @@ public class TwoSitesNodeHalving extends Node {
 		return i;
 	}
 
-	// TODO: defensive copies
 	public List<Integer> getData() {
-		return data;
+		return new ArrayList<Integer>(data);
 	}
 
 	public List<Integer> getOriginalData() {
@@ -110,6 +109,9 @@ public class TwoSitesNodeHalving extends Node {
 
 				discardLeft(getMedianIndex() + 1);
 
+			}else{
+				
+				//TODO same median
 			}
 		} else {
 			if (m < getMedian()) {
