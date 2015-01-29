@@ -820,13 +820,23 @@ class NetworkManager implements ActionListener {
 		Link link;
 		Vector links;
 		Vector nodes = (Vector) nodesVector.clone();
+		List<TwoSitesNodeHalving> halvingNodes = new ArrayList<>();
 		nodesVector.clear();
+		Link toSave;
 		for (int i = 0; i < nodes.size(); i++) {
 			originalNode = (Node) nodes.get(i);
 			if (originalNode instanceof TwoSitesNodeHalving) {
 				TwoSitesNodeHalving original = ((TwoSitesNodeHalving) originalNode);
+				toSave = original.getLink();
 				newNode = new TwoSitesNodeHalving(originalNode.nodeId,
-						original.getK(), original.getData());
+						original.getK(), original.getOriginalData());
+				if (toSave.getNode(0) == original) {
+					toSave.setNode(1, newNode);
+				} else {
+					toSave.setNode(0, newNode);
+				}
+				((TwoSitesNodeHalving) newNode).setLink(toSave);
+				halvingNodes.add((TwoSitesNodeHalving) newNode);
 			} else {
 				newNode = newNode(new Integer(originalNode.nodeId));
 			}
@@ -877,8 +887,19 @@ class NetworkManager implements ActionListener {
 					link.setNode(Node.RIGHT, newNode);
 				newNode.addLink(link);
 			} // for
-		} // for
+//		} // for
+//		if (halvingNodes.size() > 1) {
+//			TwoSitesNodeHalving first = halvingNodes.get(0);
+//			TwoSitesNodeHalving second = halvingNodes.get(1);
+//			Link halvingLink = new Link(first, second);
+//			first.setLink(halvingLink);
+//			second.setLink(halvingLink);
+//			TwoSitesPanel drawingPanel = (TwoSitesPanel) NetViewer
+//					.getNetworkPanel().getDrawingArea();
+//			drawingPanel.repaint();
+		}
 		NetViewer.out.println("Reset");
+
 	}
 
 	private void resetLinks() {

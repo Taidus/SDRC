@@ -17,7 +17,7 @@ public class TwoSitesNodeHalving extends Node {
 	final private int k;
 	private HalvingState nodeState;
 	private Link neighbor;
-
+	private List<Integer> originalData;
 	// TODO FIFO queue
 
 	public TwoSitesNodeHalving(Integer ID, int k, List<Integer> data) {
@@ -25,6 +25,7 @@ public class TwoSitesNodeHalving extends Node {
 		this.k = k;
 		this.data = new ArrayList<Integer>();
 		this.data.addAll(data);
+		this.originalData = data;
 		nodeState = new Asleep(this);
 		Collections.sort(this.data);
 	}
@@ -47,6 +48,10 @@ public class TwoSitesNodeHalving extends Node {
 	// TODO: defensive copies
 	public List<Integer> getData() {
 		return data;
+	}
+	
+	public List<Integer> getOriginalData() {
+		return originalData;
 	}
 
 	public void become(HalvingState nextState) {
@@ -112,6 +117,10 @@ public class TwoSitesNodeHalving extends Node {
 
 	public int getK() {
 		return k;
+	}
+	
+	public Link getLink() {
+		return neighbor;
 	}
 
 }
