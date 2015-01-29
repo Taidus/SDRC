@@ -1,11 +1,9 @@
 package halving;
 
-
 public class MedianMessage implements HalvingMessage {
 
 	private int median;
 	private int step;
-
 
 	public MedianMessage(int median, int step) {
 		super();
@@ -16,12 +14,14 @@ public class MedianMessage implements HalvingMessage {
 	public int getMedian() {
 		return median;
 	}
-	
-	
 
 	@Override
 	public String printString() {
-		return String.format("Median: %d", median);
+		if (Integer.MAX_VALUE == median) {
+			return "Median: Inf";
+		} else {
+			return String.format("Median: %d", median);
+		}
 	}
 
 	@Override
