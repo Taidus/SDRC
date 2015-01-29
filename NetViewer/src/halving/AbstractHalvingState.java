@@ -18,7 +18,6 @@ public abstract class AbstractHalvingState implements HalvingState {
 
 	@Override
 	public void spontaneously() {
-		node.initialize();
 	}
 
 	public void handle(MedianMessage m) {
@@ -30,11 +29,16 @@ public abstract class AbstractHalvingState implements HalvingState {
 	}
 
 	protected void processMedianMessage(MedianMessage m) {
-		node.halve(m.getMedian());
-		if (node.getN() <= 1) {
+		boolean lastIter=false;
+		if(node.getN()==1){
+			lastIter=true;
+		}
+		node.halve(m.getMedian(), lastIter);
+				
+		if (node.getN() <= 1 && lastIter) {
 			node.become(new Done(node));
 		} else {
-			node.become(new Active(node));
+//			node.become(new Active(node));
 			MedianMessage msg = new MedianMessage(node.getMedian());
 			node.send(msg);
 		}

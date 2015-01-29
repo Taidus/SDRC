@@ -13,9 +13,20 @@ public class Asleep extends AbstractHalvingState {
 	public int intValue() {
 		return State.ASLEEP;
 	}
+	
+	@Override
+	public void spontaneously() {
+		node.initialize();
+	}
 
 	public void handle(MedianMessage m) {
 		node.initialize();
+		try {
+			Thread.sleep(500);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		processMedianMessage(m);
 
 	}

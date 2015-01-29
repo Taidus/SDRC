@@ -26,5 +26,10 @@ public class Asleep extends AbstractUniAlternateState {
 	public int intValue() {
 		return State.ASLEEP;
 	}
+	
+	@Override
+	public void spontaneously() {
+		node.initialize();
+	}
 
 }

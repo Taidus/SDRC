@@ -32,7 +32,6 @@ public abstract class AbstractUniAlternateState implements UniAlternateState{
 
 	@Override
 	public void spontaneously() {
-		node.initialize();
 	}
 
 	private final void defaultHandle() {
