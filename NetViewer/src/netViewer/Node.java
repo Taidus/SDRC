@@ -9,6 +9,7 @@ package netViewer;
  */
 
 import general.Message;
+import halving.SettingUp;
 
 import java.awt.Color;
 import java.awt.Point;
@@ -81,6 +82,7 @@ public abstract class Node extends Thread {
 	static final Color COLOUR_IDLE = Color.yellow;
 	static final Color COLOUR_ACTIVE = Color.green;
 	static final Color COLOUR_DONE = Color.gray;
+	static final Color COLOUR_SETTING_UP = Color.magenta;
 
 	// Mapping of states to colours
 	static final HashMap<Integer, Color> coloursMap = new HashMap<>();
@@ -118,6 +120,8 @@ public abstract class Node extends Thread {
 		coloursMap.put(new Integer(general.State.IDLE), COLOUR_IDLE);
 		coloursMap.put(new Integer(general.State.ACTIVE), COLOUR_ACTIVE);
 		coloursMap.put(new Integer(general.State.DONE), COLOUR_DONE);
+		coloursMap.put(new Integer(general.State.SETTING_UP), COLOUR_SETTING_UP);
+
 
 	}
 

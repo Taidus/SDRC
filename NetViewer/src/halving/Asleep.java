@@ -19,7 +19,7 @@ public class Asleep extends AbstractHalvingState {
 		node.initialize();
 	}
 
-	public void handle(MedianMessage m) {
+	public void handle(SetupMessage m) {
 		node.initialize();
 		try {
 			Thread.sleep(500);
@@ -27,7 +27,9 @@ public class Asleep extends AbstractHalvingState {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		processMedianMessage(m);
+		 processSetupMessage(m);
+		
+		
 
 	}
 

@@ -6,6 +6,8 @@ import halving.Asleep;
 import halving.HalvingMessage;
 import halving.HalvingState;
 import halving.MedianMessage;
+import halving.SettingUp;
+import halving.SetupMessage;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -24,6 +26,7 @@ public class TwoSitesNodeHalving extends Node {
 	private List<Integer> rightDiscarded;
 	private int currentStep;
 	private Map<Integer, MedianMessage> queue;
+	private int otherNodeId;
 
 	// TODO FIFO queue
 
@@ -35,14 +38,14 @@ public class TwoSitesNodeHalving extends Node {
 		this.originalData = data;
 		this.leftDiscarded = new ArrayList<Integer>();
 		this.rightDiscarded = new ArrayList<Integer>();
-		this.currentStep=0;
-		this.queue= new HashMap<Integer, MedianMessage>();
+		this.currentStep = 0;
+		this.queue = new HashMap<Integer, MedianMessage>();
 
 		nodeState = new Asleep(this);
 		Collections.sort(this.data);
 	}
-	
-	private void nextStep(){
+
+	private void nextStep() {
 		currentStep++;
 	}
 
@@ -94,7 +97,7 @@ public class TwoSitesNodeHalving extends Node {
 		// TODO CHECK n/2
 		double t = Math.ceil(((double) n * 2) / 2);
 		if (k > t) {
-			
+
 			discardLeft(n - k + 1);
 
 		} else if (k < t) {
@@ -103,8 +106,8 @@ public class TwoSitesNodeHalving extends Node {
 
 		}
 
-		become(new Active(this));
-		MedianMessage m = new MedianMessage(getMedian(),currentStep);
+		become(new SettingUp(this));
+		SetupMessage m = new SetupMessage(getNodeId(),getN());
 		send(m);
 	}
 
@@ -119,20 +122,20 @@ public class TwoSitesNodeHalving extends Node {
 
 				discardLeft(getMedianIndex() + 1);
 
-			}else{
-				
-				if(getNodeId() < getOtherNodeId()){
-					
+			} else {
+
+				if (getNodeId() < getOtherNodeId()) {
+
 					discardRight(getMedianIndex() + 1);
-					
-				}else{
+
+				} else {
 					discardLeft(getMedianIndex() + 1);
 				}
-				
-				
-				}
+
+			}
 		} else {
-			if (m < getMedian() || (m==getMedian() && getNodeId() < getOtherNodeId())) {
+			if (m < getMedian()
+					|| (m == getMedian() && getNodeId() < getOtherNodeId())) {
 				rightDiscarded.addAll(data);
 				data.clear();
 			}
@@ -160,7 +163,6 @@ public class TwoSitesNodeHalving extends Node {
 
 		leftDiscarded.addAll(data.subList(0, index));
 		data = data.subList(index, getN());
-		
 
 	}
 
@@ -170,26 +172,38 @@ public class TwoSitesNodeHalving extends Node {
 		data = data.subList(0, index);
 	}
 
-
-
 	public int getCurrentStep() {
 		return currentStep;
 	}
-	
-	public void enqueueMessage(MedianMessage m){
+
+	public void enqueueMessage(MedianMessage m) {
 		queue.put(m.getStep(), m);
-//		System.out.println("QEUEUEUE");
+		// System.out.println("QEUEUEUE");
 	}
-	
-	public MedianMessage nextEnqueuedMessage(){
+
+	public MedianMessage nextEnqueuedMessage() {
 		MedianMessage m = queue.remove(currentStep);
 		return m;
 	}
+
+	private int getOtherNodeId() {
+		return otherNodeId;
+	}
+
+	public void setOtherNodeId(int otherNodeId) {
+		this.otherNodeId = otherNodeId;
+	}
 	
-	private int getOtherNodeId(){
-		//XXX change ASAP
-		int id = neighbor.getOtherNode(this).getNodeId();
-		return id;
+	public void pad(int n_left, int n_right){
+		//TODO somethinf more elegant^?
+		
+		for (int i=0;i<n_left;i++){
+			data.add(Integer.MIN_VALUE);
+		}
+		
+		for (int i=0;i<n_right;i++){
+			data.add(Integer.MAX_VALUE);
+		}
 	}
 
 }

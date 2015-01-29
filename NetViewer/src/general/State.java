@@ -23,6 +23,7 @@ public interface State {
 	public static final int IDLE = 14;
 	public static final int ACTIVE = 15;
 	public static final int DONE = 16;
+	public static final int SETTING_UP = 17;
 	
 	public static final int WAITING_FOR_TOKEN_NEEDING= 20;
 	public static final int WAITING_FOR_TOKEN_NON_NEEDING =21;
