@@ -204,6 +204,8 @@ public class TwoSitesNodeHalving extends Node {
 		for (int i=0;i<n_right;i++){
 			data.add(Integer.MAX_VALUE);
 		}
+		
+		Collections.sort(data);
 	}
 
 }
