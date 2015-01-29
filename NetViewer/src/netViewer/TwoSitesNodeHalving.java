@@ -9,7 +9,9 @@ import halving.MedianMessage;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class TwoSitesNodeHalving extends Node {
 
@@ -20,6 +22,8 @@ public class TwoSitesNodeHalving extends Node {
 	private List<Integer> originalData;
 	private List<Integer> leftDiscarded;
 	private List<Integer> rightDiscarded;
+	private int currentStep;
+	private Map<Integer, MedianMessage> queue;
 
 	// TODO FIFO queue
 
@@ -31,9 +35,15 @@ public class TwoSitesNodeHalving extends Node {
 		this.originalData = data;
 		this.leftDiscarded = new ArrayList<Integer>();
 		this.rightDiscarded = new ArrayList<Integer>();
+		this.currentStep=0;
+		this.queue= new HashMap<Integer, MedianMessage>();
 
 		nodeState = new Asleep(this);
 		Collections.sort(this.data);
+	}
+	
+	private void nextStep(){
+		currentStep++;
 	}
 
 	public int getN() {
@@ -94,7 +104,7 @@ public class TwoSitesNodeHalving extends Node {
 		}
 
 		become(new Active(this));
-		MedianMessage m = new MedianMessage(getMedian());
+		MedianMessage m = new MedianMessage(getMedian(),currentStep);
 		send(m);
 	}
 
@@ -119,6 +129,7 @@ public class TwoSitesNodeHalving extends Node {
 				data.clear();
 			}
 		}
+		nextStep();
 	}
 
 	public int getK() {
@@ -152,6 +163,22 @@ public class TwoSitesNodeHalving extends Node {
 		data = data.subList(0, index);
 		tmp.removeAll(data);
 		rightDiscarded.addAll(tmp);
+	}
+
+
+
+	public int getCurrentStep() {
+		return currentStep;
+	}
+	
+	public void enqueueMessage(MedianMessage m){
+		queue.put(m.getStep(), m);
+//		System.out.println("QEUEUEUE");
+	}
+	
+	public MedianMessage nextEnqueuedMessage(){
+		MedianMessage m = queue.remove(currentStep);
+		return m;
 	}
 
 }
