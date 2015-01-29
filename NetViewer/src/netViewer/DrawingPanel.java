@@ -347,6 +347,16 @@ class DrawingPanel extends JPanel implements ComponentListener {
 	 * Draw message queues at each of the node's links.
 	 */
 
+	private String formatNumber(Integer toFormat) {
+		if (Integer.MAX_VALUE == toFormat) {
+			return "Inf";
+		}
+		if (Integer.MIN_VALUE == toFormat) {
+			return "-Inf";
+		}
+		return toFormat.toString();
+	}
+
 	// TODO: spostare in luoghi più adatti (TwoSitesPanel, per esempio)
 	private void drawDataItems(TwoSitesNodeHalving node) {
 		List<Integer> tooSmall = node.getLeftDiscarded();
@@ -363,36 +373,27 @@ class DrawingPanel extends JPanel implements ComponentListener {
 		int firstCut;
 		int secondCut;
 		for (int i = 0; i < tooSmall.size(); i++) {
-			if (Integer.MIN_VALUE == tooSmall.get(i)) {
-				stringToDisplay.append("-Inf ");
-			} else {
-				stringToDisplay.append(tooSmall.get(i) + " ");
-			}
+			stringToDisplay.append(formatNumber(tooSmall.get(i)) + " ");
 		}
 		firstCut = stringToDisplay.length();
 		if (!tooBig.isEmpty()) {
 			for (int i = 0; i < valid.size(); i++) {
-				stringToDisplay.append(valid.get(i) + " ");
+				stringToDisplay.append(formatNumber(valid.get(i)) + " ");
 			}
 			secondCut = stringToDisplay.length();
 			for (int i = 0; i < tooBig.size() - 1; i++) {
-				if (Integer.MAX_VALUE == tooBig.get(i)) {
-					stringToDisplay.append("Inf ");
-				} else {
-					stringToDisplay.append(tooBig.get(i) + " ");
-				}
+				stringToDisplay.append(formatNumber(tooBig.get(i)) + " ");
 			}
-			if (Integer.MAX_VALUE == tooBig.get(tooBig.size() - 1)) {
-				stringToDisplay.append("Inf]");
-			} else {
-				stringToDisplay.append(tooBig.get(tooBig.size() - 1) + "]");
-			}
+
+			stringToDisplay.append(formatNumber(tooBig.get(tooBig.size() - 1))
+					+ "]");
 		} else {
 			for (int i = 0; i < valid.size() - 1; i++) {
-				stringToDisplay.append(valid.get(i) + " ");
+				stringToDisplay.append(formatNumber(valid.get(i)) + " ");
 			}
 			secondCut = stringToDisplay.length();
-			stringToDisplay.append(valid.get(valid.size() - 1) + "]");
+			stringToDisplay.append(formatNumber(valid.get(valid.size() - 1))
+					+ "]");
 		}
 
 		AttributedString as1 = new AttributedString(stringToDisplay.toString());
