@@ -116,9 +116,12 @@ public class NetViewer extends JApplet implements ActionListener {
 									// class and cannot be final
 	protected static ImageIcon netViewerIcon; // goes in the upper left corner
 												// of the window
-	private static JTextField numNodesField, numDataItemsField, kToFind; // so we can
-																// request focus
-																// from
+	private static JTextField numNodesField, numDataItemsFirstField,
+			numDataItemsSecondField, kToFind; // so
+	// we
+	// can
+	// request focus
+	// from
 	// main()
 	private static int javaVersion;
 	private JSplitPane innerSplitPane;
@@ -451,16 +454,21 @@ public class NetViewer extends JApplet implements ActionListener {
 		arbitraryOptions.setMinimumSize(new Dimension(135, 60));
 
 		algorithmMenuTwoSites = new JComboBox(twoSitesAlgorithms);
-		JLabel numDataItemsLabel = new JLabel("N: ");
-		numDataItemsField = new JTextField(3); // text field for inputting #
-												// nodes
-		numDataItemsField.setPreferredSize(new Dimension(30, 26));
+		JLabel numDataItemsFirstLabel = new JLabel("N1: ");
+		JLabel numDataItemsSecondLabel = new JLabel("N2: ");
+		numDataItemsFirstField = new JTextField(3); // text field for inputting
+													// #
+		numDataItemsSecondField = new JTextField(3); // nodes
+		numDataItemsFirstField.setPreferredSize(new Dimension(30, 26));
+		numDataItemsSecondField.setPreferredSize(new Dimension(30, 26));
 		JLabel kToFindLabel = new JLabel("K: ");
 		kToFind = new JTextField(3);
 		kToFind.setPreferredSize(new Dimension(30, 26));
 		Box numDataItemsBox = Box.createHorizontalBox();
-		numDataItemsBox.add(numDataItemsLabel);
-		numDataItemsBox.add(numDataItemsField);
+		numDataItemsBox.add(numDataItemsFirstLabel);
+		numDataItemsBox.add(numDataItemsFirstField);
+		numDataItemsBox.add(numDataItemsSecondLabel);
+		numDataItemsBox.add(numDataItemsSecondField);
 		numDataItemsBox.add(kToFindLabel);
 		numDataItemsBox.add(kToFind);
 		final JPanel twoSitesOptions = new JPanel(new GridLayout(2, 1, 5, 5));
@@ -769,9 +777,10 @@ public class NetViewer extends JApplet implements ActionListener {
 		colsField.addKeyListener(validateKey);
 		rowsFieldTorus.addKeyListener(validateKey);
 		colsFieldTorus.addKeyListener(validateKey);
-		numDataItemsField.addKeyListener(validateKey);
+		numDataItemsFirstField.addKeyListener(validateKey);
+		numDataItemsSecondField.addKeyListener(validateKey);
 		kToFind.addKeyListener(validateKey);
-		
+
 		// validation - only accept numbers
 		chordsField.addKeyListener(new KeyListener() {
 			public void keyPressed(KeyEvent e) {
@@ -1456,24 +1465,45 @@ public class NetViewer extends JApplet implements ActionListener {
 				else if (topologyMenu.getSelectedIndex() == 7) {
 					// FIXME: mettere un valore sensato
 
-					// if (numDataItemsField.getText().equals("")) { // popup
-					// // window
-					// // with error
-					// // message
-					// JOptionPane
-					// .showMessageDialog(
-					// playPauseButton,
-					// "Please enter a value for the number of data items (N).",
-					// "Input Error",
-					// JOptionPane.WARNING_MESSAGE);
-					// numNodesField.requestFocus();
-					// } else {
-					String algorithm = (String) algorithmMenuTwoSites
-							.getSelectedItem();
-					int N = Integer.parseInt(numDataItemsField.getText());
-					int K = Integer.parseInt(kToFind.getText());
-					networkManager.createTwoSitesNetwork(algorithm, N, K);
-					// }
+					if (numDataItemsFirstField.getText().isEmpty()) { // popup
+						// window
+						// with error
+						// message
+						JOptionPane
+								.showMessageDialog(
+										playPauseButton,
+										"Please enter a value for the number of data items of the first site (N1).",
+										"Input Error",
+										JOptionPane.WARNING_MESSAGE);
+						numDataItemsFirstField.requestFocus();
+					} else if (numDataItemsSecondField.getText().isEmpty()) {
+						JOptionPane
+								.showMessageDialog(
+										playPauseButton,
+										"Please enter a value for the number of data items of the first site (N2).",
+										"Input Error",
+										JOptionPane.WARNING_MESSAGE);
+						numDataItemsSecondField.requestFocus();
+					} else if (kToFind.getText().isEmpty()) {
+						JOptionPane.showMessageDialog(playPauseButton,
+								"Please enter a value for K.", "Input Error",
+								JOptionPane.WARNING_MESSAGE);
+						kToFind.requestFocus();
+					} else if (Integer.parseInt(kToFind.getText()) > (Integer
+							.parseInt(numDataItemsFirstField.getText()) + Integer.parseInt(numDataItemsSecondField.getText()))) {
+						JOptionPane.showMessageDialog(playPauseButton,
+								"K must be less than or equal to N (N1 + N2)",
+								"Input Error", JOptionPane.WARNING_MESSAGE);
+						kToFind.requestFocus();
+					} else {
+						String algorithm = (String) algorithmMenuTwoSites
+								.getSelectedItem();
+						int N1 = Integer.parseInt(numDataItemsFirstField.getText());
+						int N2 = Integer.parseInt(numDataItemsSecondField.getText());
+						int K = Integer.parseInt(kToFind.getText());
+						networkManager.createTwoSitesNetwork(algorithm, N1, N2, K);
+						// }
+					}
 				}
 			} // actionPerformed
 		}); // new network
@@ -1544,9 +1574,9 @@ public class NetViewer extends JApplet implements ActionListener {
 						aborted = false;
 					timeStampBegin = System.currentTimeMillis();
 					networkManager.startAlgorithm();
-					//FIXME: questa è una bruttura d'altri tempi
-					//if(networkManager.)
-					
+					// FIXME: questa è una bruttura d'altri tempi
+					// if(networkManager.)
+
 					playPauseButton.setIcon(pauseImage);
 					playPauseButton.removeActionListener(this);
 					playPauseButton.addActionListener(pauseResumeAction);

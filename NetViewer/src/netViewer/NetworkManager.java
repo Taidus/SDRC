@@ -476,8 +476,7 @@ class NetworkManager implements ActionListener {
 		drawingPanel.repaint();
 	}
 
-	public void createTwoSitesNetwork(String algorithm_, int numOfDataItems,
-			int k) {
+	public void createTwoSitesNetwork(String algorithm_, int n1, int n2, int k) {
 		// TODO: implementare
 		networkType = "Two Sites";
 		algorithm = algorithm_;
@@ -489,44 +488,27 @@ class NetworkManager implements ActionListener {
 		TwoSitesPanel drawingPanel = (TwoSitesPanel) NetViewer
 				.getNetworkPanel().getDrawingArea();
 		// TODO: aggiustare la posizione
-		int x = (int) Math
-				.round((drawingPanel.getPreferredSize().width - Node.DIAMETER)
-						* Math.random()); // generate a random index between 0
-											// and the width of the drawing
-											// panel
-		int y = (int) Math
-				.round((drawingPanel.getPreferredSize().height - Node.DIAMETER)
-						* Math.random()); // generate a random index between 0
-											// and the height of the drawing
-											// panel
-		first.setCoords(x, y);
+		first.setCoords(50, 50);
+
+		// TODO: forse da parametrizzare
+		int dataLimit = 100;
 
 		List<Integer> firstNodeData = new ArrayList<Integer>();
 
-		for (int i = 0; i < numOfDataItems / 2; i++) {
-			firstNodeData.add((int) (Math.random() * numOfDataItems));
+		for (int i = 0; i < n1; i++) {
+			firstNodeData.add((int) (Math.random() * dataLimit));
 		}
 
 		((TwoSitesNodeHalving) first).setData(firstNodeData);
 
 		Node second = newNode();
 		// TODO: aggiustare la posizione
-		x = (int) Math
-				.round((drawingPanel.getPreferredSize().width - Node.DIAMETER)
-						* Math.random()); // generate a random index between 0
-											// and the width of the drawing
-											// panel
-		y = (int) Math
-				.round((drawingPanel.getPreferredSize().height - Node.DIAMETER)
-						* Math.random()); // generate a random index between 0
-											// and the height of the drawing
-											// panel
-		second.setCoords(x, y);
+		second.setCoords(60, 20);
 
 		List<Integer> secondNodeData = new ArrayList<Integer>();
 
-		for (int i = 0; i < (numOfDataItems / 2) + 1; i++) {
-			secondNodeData.add((int) (Math.random() * numOfDataItems));
+		for (int i = 0; i < n2; i++) {
+			secondNodeData.add((int) (Math.random() * dataLimit));
 		}
 
 		((TwoSitesNodeHalving) second).setData(secondNodeData);
