@@ -9,7 +9,6 @@ import halving.MedianMessage;
 import java.util.Collections;
 import java.util.List;
 
-
 public class TwoSitesNodeHalving extends Node {
 
 	private List<Integer> data;
@@ -19,19 +18,16 @@ public class TwoSitesNodeHalving extends Node {
 
 	// TODO FIFO queue
 
-	public TwoSitesNodeHalving(Integer ID, int k) {
+	public TwoSitesNodeHalving(Integer ID, int k, List<Integer> data) {
 		super(ID);
 		this.k = k;
+		this.data = data;
 		nodeState= new Asleep(this);
 		Collections.sort(data);
 	}
 
 	public int getN() {
 		return data.size();
-	}
-
-	public void setData(List<Integer> data) {
-		this.data = data;
 	}
 
 	public int getMedian() {
