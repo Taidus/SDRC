@@ -158,19 +158,16 @@ public class TwoSitesNodeHalving extends Node {
 
 	private void discardLeft(int index) {
 
-		List<Integer> tmp = new ArrayList<Integer>(data);
+		leftDiscarded.addAll(data.subList(0, index));
 		data = data.subList(index, getN());
-		tmp.removeAll(data);
-		leftDiscarded.addAll(tmp);
+		
 
 	}
 
 	private void discardRight(int index) {
 
-		List<Integer> tmp = new ArrayList<Integer>(data);
+		rightDiscarded.addAll(data.subList(index, getN()));
 		data = data.subList(0, index);
-		tmp.removeAll(data);
-		rightDiscarded.addAll(tmp);
 	}
 
 
