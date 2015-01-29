@@ -484,7 +484,7 @@ class NetworkManager implements ActionListener {
 		NetViewer.getNetworkPanel().getLastDirtyCanvas().setIsBlank(true);
 		NetViewerMessage.resetTotalMessages(); // back to 0
 
-		Node first = newNode();
+		TwoSitesNodeHalving first = newHalvingNode(k);
 		TwoSitesPanel drawingPanel = (TwoSitesPanel) NetViewer
 				.getNetworkPanel().getDrawingArea();
 		// TODO: aggiustare la posizione
@@ -499,9 +499,9 @@ class NetworkManager implements ActionListener {
 			firstNodeData.add((int) (Math.random() * dataLimit));
 		}
 
-		((TwoSitesNodeHalving) first).setData(firstNodeData);
+		first.setData(firstNodeData);
 
-		Node second = newNode();
+		TwoSitesNodeHalving second = newHalvingNode(k);
 		// TODO: aggiustare la posizione
 		second.setCoords(60, 20);
 
@@ -511,14 +511,20 @@ class NetworkManager implements ActionListener {
 			secondNodeData.add((int) (Math.random() * dataLimit));
 		}
 
-		((TwoSitesNodeHalving) second).setData(secondNodeData);
+		second.setData(secondNodeData);
 
-		((TwoSitesNodeHalving) first).setK(k);
-		((TwoSitesNodeHalving) second).setK(k);
-
-		newLink(first, second);
+		Link between = newLink(first, second);
+		first.setLink(between);
+		second.setLink(between);
 		isNewNetwork = true;
 		drawingPanel.repaint();
+	}
+	
+	private TwoSitesNodeHalving newHalvingNode(int k) {
+		TwoSitesNodeHalving newNode = new TwoSitesNodeHalving(getNewID(), k);
+		nodesVector.add(newNode);
+		numNodes++;
+		return newNode;
 	}
 
 	public void initializeNetwork() {

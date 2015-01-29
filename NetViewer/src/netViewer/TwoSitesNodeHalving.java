@@ -10,16 +10,14 @@ import java.util.List;
 public class TwoSitesNodeHalving extends Node {
 
 	private List<Integer> data;
-	private int k;
+	final private int k;
 	private HalvingState nodeState;
+	private Link neighbor;
 
 	// TODO FIFO queue
 
-	public TwoSitesNodeHalving(Integer ID) {
+	public TwoSitesNodeHalving(Integer ID, int k) {
 		super(ID);
-	}
-
-	public void setK(int k) {
 		this.k = k;
 	}
 
@@ -49,6 +47,10 @@ public class TwoSitesNodeHalving extends Node {
 		become(nextState.intValue());
 	}
 
+	public void setLink(Link neighbor) {
+		this.neighbor = neighbor;
+	}
+	
 	@Override
 	protected synchronized void receive(Message msg, Link link) {
 		// XXX bruttura: cast. Ma se non si ristruttura la classe Node è
@@ -57,7 +59,7 @@ public class TwoSitesNodeHalving extends Node {
 	}
 	
 	public void send(Message m){
-		//TODO
+		send(m, neighbor);
 	}
 	
 
