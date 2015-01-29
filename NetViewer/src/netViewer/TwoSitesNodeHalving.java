@@ -1,11 +1,14 @@
 package netViewer;
 
 import general.Message;
+import halving.Asleep;
 import halving.HalvingMessage;
 import halving.HalvingState;
 import halving.MedianMessage;
 
+import java.util.Collections;
 import java.util.List;
+
 
 public class TwoSitesNodeHalving extends Node {
 
@@ -19,6 +22,8 @@ public class TwoSitesNodeHalving extends Node {
 	public TwoSitesNodeHalving(Integer ID, int k) {
 		super(ID);
 		this.k = k;
+		nodeState= new Asleep(this);
+		Collections.sort(data);
 	}
 
 	public int getN() {
@@ -34,7 +39,9 @@ public class TwoSitesNodeHalving extends Node {
 	}
 
 	private int getMedianIndex() {
-		return (int) (Math.floor(getN() / 2) - 1);
+		int i = (int) (Math.floor((double)(getN()) / 2) - 1);
+		System.out.println(getN()+","+i);
+		return i;
 	}
 
 	// TODO: defensive copies
@@ -55,7 +62,7 @@ public class TwoSitesNodeHalving extends Node {
 	protected synchronized void receive(Message msg, Link link) {
 		// XXX bruttura: cast. Ma se non si ristruttura la classe Node è
 		// difficile far di meglio
-		((HalvingMessage) msg).accept(nodeState, link);
+		((HalvingMessage) msg).accept(nodeState);
 	}
 	
 	public void send(Message m){

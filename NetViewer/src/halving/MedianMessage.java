@@ -21,8 +21,8 @@ public class MedianMessage implements HalvingMessage {
 	}
 
 	@Override
-	public void accept(HalvingState state, Link sender) {
-		state.handle(this, sender);
+	public void accept(HalvingState state) {
+		state.handle(this);
 
 	}
 

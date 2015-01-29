@@ -15,6 +15,7 @@ public class Active extends AbstractHalvingState {
 		return State.ACTIVE;
 	}
 	
+	@Override
 	public void handle(MedianMessage m) {
 		processMedianMessage(m);
 

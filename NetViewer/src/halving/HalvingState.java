@@ -1,11 +1,10 @@
 package halving;
 
-import netViewer.Link;
 import general.State;
 
 public interface HalvingState extends State{
 	
-	public void handle(MedianMessage m, Link sender);
+	public void handle(MedianMessage m);
 
 	void changeState(HalvingState nextState);
 
