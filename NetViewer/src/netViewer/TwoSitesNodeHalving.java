@@ -28,6 +28,8 @@ public class TwoSitesNodeHalving extends Node {
 		nodeState = new Asleep(this);
 		Collections.sort(this.data);
 	}
+	
+	
 
 	public int getN() {
 		return data.size();
@@ -72,14 +74,14 @@ public class TwoSitesNodeHalving extends Node {
 		int n = getN();
 
 		// TODO CHECK n/2
-		double t = Math.ceil(((double) n) / 2);
+		double t = Math.ceil(((double) n*2) / 2);
 		if (k > t) {
 
-			data = data.subList(n - k + 1, n - 1);
+			data = data.subList(n - k + 1, n);
 
 		} else if (k < t) {
 
-			data = data.subList(0, k - 1);
+			data = data.subList(0, k);
 
 		}
 
@@ -104,6 +106,12 @@ public class TwoSitesNodeHalving extends Node {
 				data.clear();
 			}
 		}
+	}
+
+
+
+	public int getK() {
+		return k;
 	}
 
 }
