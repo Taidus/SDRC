@@ -10,6 +10,7 @@ package netViewer;
  */
 
 import general.State;
+import halving.DataItemsDrawingController;
 
 import java.awt.Color;
 import java.awt.Dimension;
@@ -347,66 +348,13 @@ class DrawingPanel extends JPanel implements ComponentListener {
 	 * Draw message queues at each of the node's links.
 	 */
 
-	private String formatNumber(Integer toFormat) {
-		if (Integer.MAX_VALUE == toFormat) {
-			return "Inf";
-		}
-		if (Integer.MIN_VALUE == toFormat) {
-			return "-Inf";
-		}
-		return toFormat.toString();
-	}
-
 	// TODO: spostare in luoghi più adatti (TwoSitesPanel, per esempio)
 	private void drawDataItems(TwoSitesNodeHalving node) {
-		List<Integer> tooSmall = node.getLeftDiscarded();
-		List<Integer> tooBig = node.getRightDiscarded();
-		List<Integer> valid = node.getData();
-		List<Integer> originalData = node.getOriginalData();
+		AttributedString toDisplay = DataItemsDrawingController
+				.getStringToDisplay(node);
 
-		Collections.sort(tooSmall);
-		Collections.sort(valid);
-		Collections.sort(tooBig);
-
-		StringBuilder stringToDisplay = new StringBuilder();
-		stringToDisplay.append("[");
-		int firstCut;
-		int secondCut;
-		for (int i = 0; i < tooSmall.size(); i++) {
-			stringToDisplay.append(formatNumber(tooSmall.get(i)) + " ");
-		}
-		firstCut = stringToDisplay.length();
-		if (!tooBig.isEmpty()) {
-			for (int i = 0; i < valid.size(); i++) {
-				stringToDisplay.append(formatNumber(valid.get(i)) + " ");
-			}
-			secondCut = stringToDisplay.length();
-			for (int i = 0; i < tooBig.size() - 1; i++) {
-				stringToDisplay.append(formatNumber(tooBig.get(i)) + " ");
-			}
-
-			stringToDisplay.append(formatNumber(tooBig.get(tooBig.size() - 1))
-					+ "]");
-		} else {
-			for (int i = 0; i < valid.size() - 1; i++) {
-				stringToDisplay.append(formatNumber(valid.get(i)) + " ");
-			}
-			secondCut = stringToDisplay.length();
-			stringToDisplay.append(formatNumber(valid.get(valid.size() - 1))
-					+ "]");
-		}
-
-		AttributedString as1 = new AttributedString(stringToDisplay.toString());
-		if (!tooSmall.isEmpty()) {
-			as1.addAttribute(TextAttribute.FOREGROUND, Color.red, 1, firstCut);
-		}
-		if (!tooBig.isEmpty()) {
-			as1.addAttribute(TextAttribute.FOREGROUND, Color.red, secondCut,
-					stringToDisplay.length() - 1);
-		}
-
-		g.drawString(as1.getIterator(), node.getCentre().x, node.getCentre().y
-				+ node.DIAMETER);
+		g.drawString(toDisplay.getIterator(), node.getCentre().x,
+				node.getCentre().y + node.DIAMETER);
 	}
 
 	private void drawMessageQueues(Node node) {

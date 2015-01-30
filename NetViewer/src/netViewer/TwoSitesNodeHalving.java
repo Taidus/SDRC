@@ -1,8 +1,8 @@
 package netViewer;
 
 import general.Message;
-import halving.Active;
 import halving.Asleep;
+import halving.DataItemsDrawingController;
 import halving.HalvingMessage;
 import halving.HalvingState;
 import halving.MedianMessage;
@@ -44,6 +44,7 @@ public class TwoSitesNodeHalving extends Node {
 
 		nodeState = new Asleep(this);
 		Collections.sort(this.data);
+		DataItemsDrawingController.update(this);
 	}
 
 	private void nextStep() {
@@ -193,6 +194,7 @@ public class TwoSitesNodeHalving extends Node {
 			}
 		}
 		nextStep();
+		DataItemsDrawingController.update(this);
 	}
 
 	public int getK() {
@@ -216,7 +218,7 @@ public class TwoSitesNodeHalving extends Node {
 		index = Math.max(index, 0);
 		leftDiscarded.addAll(data.subList(0, index));
 		data = data.subList(index, getN());
-
+		DataItemsDrawingController.update(this);
 	}
 
 	private void discardRight(int index) {
@@ -224,6 +226,7 @@ public class TwoSitesNodeHalving extends Node {
 		index = Math.min(index, getN());
 		rightDiscarded.addAll(data.subList(index, getN()));
 		data = data.subList(0, index);
+		DataItemsDrawingController.update(this);
 	}
 
 	public int getCurrentStep() {
@@ -260,6 +263,7 @@ public class TwoSitesNodeHalving extends Node {
 		}
 
 		Collections.sort(data);
+		DataItemsDrawingController.update(this);
 	}
 
 	public int getOtherNodeN() {
