@@ -95,7 +95,6 @@ public class TwoSitesNodeHalving extends Node {
 		
 		//TODO remove this block
 		
-		
 		List<Integer> tmp = new ArrayList<Integer>(data);
 		TwoSitesNodeHalving n = (TwoSitesNodeHalving) neighbor.getOtherNode(this);
 		tmp.addAll(n.getData());
@@ -123,7 +122,7 @@ public class TwoSitesNodeHalving extends Node {
 		if(k -1 > median){
 			System.out.println("k >");
 			int max_right = getN()+otherNodeN-k;
-			discardLeft(getN()-max_right);
+			discardLeft(getN()-max_right-1);
 			
 			otherNodeN=Math.min(max_right+1,otherNodeN);
 
