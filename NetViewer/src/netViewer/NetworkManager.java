@@ -15,6 +15,7 @@ import general.State;
 import general.StringMessage;
 
 import java.awt.Dimension;
+import java.awt.DisplayMode;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -477,7 +478,6 @@ class NetworkManager implements ActionListener {
 	}
 
 	public void createTwoSitesNetwork(String algorithm_, int n1, int n2, int k) {
-		// TODO: implementare
 		networkType = "Two Sites";
 		algorithm = algorithm_;
 		clear(); // data structures that store links, nodes, ids
@@ -486,9 +486,9 @@ class NetworkManager implements ActionListener {
 
 		TwoSitesPanel drawingPanel = (TwoSitesPanel) NetViewer
 				.getNetworkPanel().getDrawingArea();
-		// TODO: aggiustare la posizione
+		int width = drawingPanel.getSize().width;
+		int height = drawingPanel.getSize().height;
 
-		// TODO: forse da parametrizzare
 		int dataLimit = 100;
 
 		List<Integer> firstNodeData = new ArrayList<Integer>();
@@ -497,7 +497,7 @@ class NetworkManager implements ActionListener {
 			firstNodeData.add((int) (Math.random() * dataLimit));
 		}
 		TwoSitesNodeHalving first = newHalvingNode(k, firstNodeData);
-		first.setCoords(200, 400);
+		first.setCoords(width/4, height/1.9);
 
 		List<Integer> secondNodeData = new ArrayList<Integer>();
 
@@ -505,8 +505,7 @@ class NetworkManager implements ActionListener {
 			secondNodeData.add((int) (Math.random() * dataLimit));
 		}
 		TwoSitesNodeHalving second = newHalvingNode(k, secondNodeData);
-		// TODO: aggiustare la posizione
-		second.setCoords(700, 400);
+		second.setCoords(3*width/4, height/2.1);
 
 		Link between = newLink(first, second);
 		first.setLink(between);

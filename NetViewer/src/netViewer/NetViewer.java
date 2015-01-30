@@ -152,7 +152,7 @@ public class NetViewer extends JApplet implements ActionListener {
 		String[] torusAlgorithms = { "Wake Up" };
 		String[] arbitraryAlgorithms = { "Yoyo", "MegaMerger", "Wake Up",
 				"Shout", "ShortestPathTree" };
-		String[] twoSitesAlgorithms = { "Halving", "Da Togliere" };
+		String[] twoSitesAlgorithms = { "Halving" };
 
 		// -------------------------------------------------------
 
@@ -925,6 +925,7 @@ public class NetViewer extends JApplet implements ActionListener {
 		algorithmMenuCR.addItemListener(changeAlgorithm);
 		algorithmMenuCG.addItemListener(changeAlgorithm);
 		algorithmMenuArb.addItemListener(changeAlgorithm);
+		algorithmMenuTwoSites.addItemListener(changeAlgorithm);
 		algorithmMenuArb.addItemListener(new ItemListener() {
 			public void itemStateChanged(ItemEvent e) {
 				JComboBox cb = (JComboBox) e.getSource();
@@ -1463,8 +1464,6 @@ public class NetViewer extends JApplet implements ActionListener {
 					networkPanel.repaint();
 				} // arb
 				else if (topologyMenu.getSelectedIndex() == 7) {
-					// FIXME: mettere un valore sensato
-
 					if (numDataItemsFirstField.getText().isEmpty()) { // popup
 						// window
 						// with error
@@ -1574,9 +1573,6 @@ public class NetViewer extends JApplet implements ActionListener {
 						aborted = false;
 					timeStampBegin = System.currentTimeMillis();
 					networkManager.startAlgorithm();
-					// FIXME: questa è una bruttura d'altri tempi
-					// if(networkManager.)
-
 					playPauseButton.setIcon(pauseImage);
 					playPauseButton.removeActionListener(this);
 					playPauseButton.addActionListener(pauseResumeAction);

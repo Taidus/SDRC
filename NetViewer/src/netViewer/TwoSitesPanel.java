@@ -2,7 +2,6 @@ package netViewer;
 
 import java.awt.event.MouseEvent;
 
-//TODO: ripulire
 public class TwoSitesPanel extends ArbitraryPanel {	
 	private static final long serialVersionUID = 1L;
 
