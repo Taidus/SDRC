@@ -1586,11 +1586,13 @@ public class NetViewer extends JApplet implements ActionListener {
 					}
 					// TODO: bruttura
 					if (networkManager.getNodes().get(0) instanceof TwoSitesNodeHalving) {
-						if (kToFind.isShowing()) {
+						if (kToFind.isShowing() && isValidKValue()) {
 							int k = Integer.parseInt(kToFind.getText());
-							//TODO: eliminare
+							// TODO: eliminare
 							System.out.println(k);
 							networkManager.updateHalving(k);
+						} else {
+							return;
 						}
 					}
 					thisTimeFIFO = isFIFO();
@@ -1709,6 +1711,23 @@ public class NetViewer extends JApplet implements ActionListener {
 		contentPane.add(innerSplitPane, BorderLayout.CENTER);
 		setContentPane(contentPane);
 		repaint();
+	}
+
+	private boolean isValidKValue() {
+		try {
+			int k = Integer.parseInt(kToFind.getText());
+			boolean valid = networkManager.isValidKValue(k);
+			if (!valid) {
+				JOptionPane.showMessageDialog(playPauseButton,
+						"K is not a valid value.", "Input Error",
+						JOptionPane.WARNING_MESSAGE);
+				kToFind.requestFocus();
+				return false;
+			}
+			return valid;
+		} catch (NumberFormatException e) {
+			return false;
+		}
 	}
 
 	private String getAlgPseudoCode(String algFileName) {

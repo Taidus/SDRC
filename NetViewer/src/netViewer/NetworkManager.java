@@ -1259,6 +1259,17 @@ class NetworkManager implements ActionListener {
 		drawingPanel.repaint();
 	}
 
+	public boolean isValidKValue(int k) {
+		List<TwoSitesNodeHalving> halvingNodes = new ArrayList<>();
+		for (Node toUpdate : nodesVector) {
+			if (toUpdate instanceof TwoSitesNodeHalving) {
+				halvingNodes.add((TwoSitesNodeHalving) toUpdate);
+			}
+		}
+		int n = halvingNodes.get(0).getOriginalData().size() + halvingNodes.get(1).getOriginalData().size();
+		return (k>0 && k <= n);
+	}
+	
 } // class
 
 // ////////// Reference ////////////
