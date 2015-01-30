@@ -1473,7 +1473,9 @@ public class NetViewer extends JApplet implements ActionListener {
 					networkPanel.repaint();
 				} // arb
 				else if (topologyMenu.getSelectedIndex() == 7) {
-					if (numDataItemsFirstField.getText().isEmpty() || Integer.parseInt(numDataItemsFirstField.getText()) == 0) { // popup
+					if (numDataItemsFirstField.getText().isEmpty()
+							|| Integer.parseInt(numDataItemsFirstField
+									.getText()) == 0) { // popup
 						// window
 						// with error
 						// message
@@ -1484,7 +1486,9 @@ public class NetViewer extends JApplet implements ActionListener {
 										"Input Error",
 										JOptionPane.WARNING_MESSAGE);
 						numDataItemsFirstField.requestFocus();
-					} else if (numDataItemsSecondField.getText().isEmpty()  || Integer.parseInt(numDataItemsSecondField.getText()) == 0) {
+					} else if (numDataItemsSecondField.getText().isEmpty()
+							|| Integer.parseInt(numDataItemsSecondField
+									.getText()) == 0) {
 						JOptionPane
 								.showMessageDialog(
 										playPauseButton,
@@ -1498,8 +1502,9 @@ public class NetViewer extends JApplet implements ActionListener {
 								JOptionPane.WARNING_MESSAGE);
 						kToFind.requestFocus();
 					} else if (Integer.parseInt(kToFind.getText()) > (Integer
-							.parseInt(numDataItemsFirstField.getText()) + Integer.parseInt(numDataItemsSecondField.getText())) || 
-							Integer.parseInt(kToFind.getText()) == 0) {
+							.parseInt(numDataItemsFirstField.getText()) + Integer
+							.parseInt(numDataItemsSecondField.getText()))
+							|| Integer.parseInt(kToFind.getText()) == 0) {
 						JOptionPane.showMessageDialog(playPauseButton,
 								"K must be between 1 and N1 + N2",
 								"Input Error", JOptionPane.WARNING_MESSAGE);
@@ -1507,10 +1512,13 @@ public class NetViewer extends JApplet implements ActionListener {
 					} else {
 						String algorithm = (String) algorithmMenuTwoSites
 								.getSelectedItem();
-						int N1 = Integer.parseInt(numDataItemsFirstField.getText());
-						int N2 = Integer.parseInt(numDataItemsSecondField.getText());
+						int N1 = Integer.parseInt(numDataItemsFirstField
+								.getText());
+						int N2 = Integer.parseInt(numDataItemsSecondField
+								.getText());
 						int K = Integer.parseInt(kToFind.getText());
-						networkManager.createTwoSitesNetwork(algorithm, N1, N2, K);
+						networkManager.createTwoSitesNetwork(algorithm, N1, N2,
+								K);
 						// }
 					}
 				}
@@ -1575,6 +1583,15 @@ public class NetViewer extends JApplet implements ActionListener {
 						networkManager.resetNodesAndLinks();
 						clearResults();
 						networkPanel.getDrawingArea().setIsDirty(false);
+					}
+					// TODO: bruttura
+					if (networkManager.getNodes().get(0) instanceof TwoSitesNodeHalving) {
+						if (kToFind.isShowing()) {
+							int k = Integer.parseInt(kToFind.getText());
+							//TODO: eliminare
+							System.out.println(k);
+							networkManager.updateHalving(k);
+						}
 					}
 					thisTimeFIFO = isFIFO();
 					executionTime = 0; // initialize

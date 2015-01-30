@@ -497,7 +497,7 @@ class NetworkManager implements ActionListener {
 			firstNodeData.add((int) (Math.random() * dataLimit));
 		}
 		TwoSitesNodeHalving first = newHalvingNode(k, firstNodeData);
-		first.setCoords(width/4, height/1.9);
+		first.setCoords(width / 4, height / 1.9);
 
 		List<Integer> secondNodeData = new ArrayList<Integer>();
 
@@ -505,7 +505,7 @@ class NetworkManager implements ActionListener {
 			secondNodeData.add((int) (Math.random() * dataLimit));
 		}
 		TwoSitesNodeHalving second = newHalvingNode(k, secondNodeData);
-		second.setCoords(3*width/4, height/2.1);
+		second.setCoords(3 * width / 4, height / 2.1);
 
 		Link between = newLink(first, second);
 		first.setLink(between);
@@ -514,12 +514,22 @@ class NetworkManager implements ActionListener {
 		drawingPanel.repaint();
 	}
 
+	private TwoSitesNodeHalving newHalvingNode(int k, List<Integer> data, int ID) {
+		TwoSitesNodeHalving newNode = new TwoSitesNodeHalving(ID, k, data);
+		addNewNodeToNodes(newNode);
+		return newNode;
+	}
+
 	private TwoSitesNodeHalving newHalvingNode(int k, List<Integer> data) {
 		TwoSitesNodeHalving newNode = new TwoSitesNodeHalving(getNewID(), k,
 				data);
-		nodesVector.add(newNode);
-		numNodes++;
+		addNewNodeToNodes(newNode);
 		return newNode;
+	}
+
+	private void addNewNodeToNodes(TwoSitesNodeHalving toAdd) {
+		nodesVector.add(toAdd);
+		numNodes++;
 	}
 
 	public void initializeNetwork() {
@@ -886,16 +896,16 @@ class NetworkManager implements ActionListener {
 					link.setNode(Node.RIGHT, newNode);
 				newNode.addLink(link);
 			} // for
-//		} // for
-//		if (halvingNodes.size() > 1) {
-//			TwoSitesNodeHalving first = halvingNodes.get(0);
-//			TwoSitesNodeHalving second = halvingNodes.get(1);
-//			Link halvingLink = new Link(first, second);
-//			first.setLink(halvingLink);
-//			second.setLink(halvingLink);
-//			TwoSitesPanel drawingPanel = (TwoSitesPanel) NetViewer
-//					.getNetworkPanel().getDrawingArea();
-//			drawingPanel.repaint();
+			// } // for
+			// if (halvingNodes.size() > 1) {
+			// TwoSitesNodeHalving first = halvingNodes.get(0);
+			// TwoSitesNodeHalving second = halvingNodes.get(1);
+			// Link halvingLink = new Link(first, second);
+			// first.setLink(halvingLink);
+			// second.setLink(halvingLink);
+			// TwoSitesPanel drawingPanel = (TwoSitesPanel) NetViewer
+			// .getNetworkPanel().getDrawingArea();
+			// drawingPanel.repaint();
 		}
 		NetViewer.out.println("Reset");
 
@@ -1204,6 +1214,49 @@ class NetworkManager implements ActionListener {
 		while (st.hasMoreTokens())
 			stringNoSpaces.append(st.nextToken());
 		return stringNoSpaces.toString();
+	}
+
+	// TODO: testare
+	public void updateHalving(int k) {
+		List<TwoSitesNodeHalving> halvingNodes = new ArrayList<>();
+		for (Node toUpdate : nodesVector) {
+			if (toUpdate instanceof TwoSitesNodeHalving) {
+				halvingNodes.add((TwoSitesNodeHalving) toUpdate);
+			}
+		}
+		newHalvingNetwork(k, halvingNodes);
+	}
+
+	private void newHalvingNetwork(int k, List<TwoSitesNodeHalving> halvingNodes) {
+		if (halvingNodes.size() != 2) {
+			return;
+		}
+		clear(); // data structures that store links, nodes, ids
+		NetViewer.getNetworkPanel().getLastDirtyCanvas().setIsBlank(true);
+		NetViewerMessage.resetTotalMessages(); // back to 0
+
+		TwoSitesPanel drawingPanel = (TwoSitesPanel) NetViewer
+				.getNetworkPanel().getDrawingArea();
+		int width = drawingPanel.getSize().width;
+		int height = drawingPanel.getSize().height;
+
+		int dataLimit = 100;
+
+		List<Integer> firstNodeData = halvingNodes.get(0).getOriginalData();
+		TwoSitesNodeHalving first = newHalvingNode(k, firstNodeData,
+				halvingNodes.get(0).getNodeId());
+		first.setCoords(width / 4, height / 1.9);
+
+		List<Integer> secondNodeData = halvingNodes.get(1).getOriginalData();
+		TwoSitesNodeHalving second = newHalvingNode(k, secondNodeData,
+				halvingNodes.get(1).getNodeId());
+		second.setCoords(3 * width / 4, height / 2.1);
+
+		Link between = newLink(first, second);
+		first.setLink(between);
+		second.setLink(between);
+		isNewNetwork = true;
+		drawingPanel.repaint();
 	}
 
 } // class
