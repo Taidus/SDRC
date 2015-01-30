@@ -89,6 +89,9 @@ public class TwoSitesNodeHalving extends Node {
 	protected synchronized void receive(Message msg, Link link) {
 		// XXX bruttura: cast. Ma se non si ristruttura la classe Node è
 		// difficile far di meglio
+		NetViewer.out.println("Node " + this.getNodeId()
+				+ " received message: '" + ((HalvingMessage) msg).printString()
+				+ "'");
 		((HalvingMessage) msg).accept(nodeState);
 	}
 
@@ -106,6 +109,9 @@ public class TwoSitesNodeHalving extends Node {
 		tmp.addAll(n.getData());
 		Collections.sort(tmp);
 		System.out.println(tmp);
+		if (n.getNodeId() > this.getNodeId()) {
+			NetViewer.out.println("Expected value is: " + tmp.get(k - 1));
+		}
 		System.out.println("True k is: " + tmp.get(k - 1));
 
 		//
@@ -129,17 +135,14 @@ public class TwoSitesNodeHalving extends Node {
 			int totN = getN() + otherNodeN;
 			int index = getN() - max_right - 1;
 			discardLeft(index);
-			int a = otherNodeN - max_right - 1;
 			otherNodeN = Math.min(max_right + 1, otherNodeN);
 
-			
 			int discarded = totN - getN() - otherNodeN;
 			int new_median = getMedianIndex(getN() + otherNodeN);
 			System.out.println("discarded: " + discarded + "new_median "
 					+ new_median);
 			int padding = k - discarded - new_median - 1;
 			if (getNodeId() < otherNodeId) {
-
 
 				System.out.println("padding " + (padding));
 				if (padding > 0) {
@@ -149,7 +152,7 @@ public class TwoSitesNodeHalving extends Node {
 
 				}
 			} else {
-				otherNodeN+=Math.abs(padding);
+				otherNodeN += Math.abs(padding);
 			}
 
 		} else if (k - 1 < median) {

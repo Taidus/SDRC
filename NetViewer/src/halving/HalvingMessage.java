@@ -1,7 +1,6 @@
 package halving;
 
 import general.Message;
-import netViewer.Link;
 
 public interface HalvingMessage extends Message {
 	
