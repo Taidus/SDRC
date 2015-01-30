@@ -497,7 +497,7 @@ class NetworkManager implements ActionListener {
 			firstNodeData.add((int) (Math.random() * dataLimit));
 		}
 		TwoSitesNodeHalving first = newHalvingNode(k, firstNodeData);
-		first.setCoords(50, 50);
+		first.setCoords(200, 400);
 
 		List<Integer> secondNodeData = new ArrayList<Integer>();
 
@@ -506,7 +506,7 @@ class NetworkManager implements ActionListener {
 		}
 		TwoSitesNodeHalving second = newHalvingNode(k, secondNodeData);
 		// TODO: aggiustare la posizione
-		second.setCoords(60, 20);
+		second.setCoords(700, 400);
 
 		Link between = newLink(first, second);
 		first.setLink(between);
