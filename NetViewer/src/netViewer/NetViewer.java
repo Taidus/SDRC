@@ -1588,8 +1588,6 @@ public class NetViewer extends JApplet implements ActionListener {
 					if (networkManager.getNodes().get(0) instanceof TwoSitesNodeHalving) {
 						if (kToFind.isShowing() && isValidKValue()) {
 							int k = Integer.parseInt(kToFind.getText());
-							// TODO: eliminare
-							System.out.println(k);
 							networkManager.updateHalving(k);
 						} else {
 							return;
