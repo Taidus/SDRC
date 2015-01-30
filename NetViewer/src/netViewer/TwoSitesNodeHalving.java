@@ -120,7 +120,8 @@ public class TwoSitesNodeHalving extends Node {
 		int median = (int) (Math.ceil((double) (getN()+otherNodeN) / 2) - 1);
 //		System.out.println("median: "+median+" k: "+k);
 		
-		if(k> median){
+		if(k -1 > median){
+			System.out.println("k >");
 			int max_right = getN()+otherNodeN-k;
 			discardLeft(getN()-max_right);
 			
@@ -133,7 +134,9 @@ public class TwoSitesNodeHalving extends Node {
 				otherNodeN++;
 			}
 			
-		}else if(k < median){
+		}else if(k-1 < median){
+			System.out.println("k <");
+
 			
 			if(getN() < k){
 				pad(0, k-getN());
