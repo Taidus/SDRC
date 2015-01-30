@@ -7,12 +7,10 @@ public class SettingUp extends AbstractHalvingState {
 
 	public SettingUp(TwoSitesNodeHalving node) {
 		super(node);
-		// TODO Auto-generated constructor stub
 	}
 
 	@Override
 	public int intValue() {
-		// TODO Auto-generated method stub
 		return State.SETTING_UP;
 	}
 	

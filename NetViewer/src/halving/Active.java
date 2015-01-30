@@ -1,7 +1,6 @@
 package halving;
 
 import general.State;
-import netViewer.Link;
 import netViewer.TwoSitesNodeHalving;
 
 public class Active extends AbstractHalvingState {

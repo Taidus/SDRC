@@ -29,8 +29,6 @@ public class TwoSitesNodeHalving extends Node {
 	private int otherNodeId;
 	private int otherNodeN;
 
-	// TODO FIFO queue
-
 	public TwoSitesNodeHalving(Integer ID, int k, List<Integer> data) {
 		super(ID);
 		this.k = k;
@@ -100,21 +98,16 @@ public class TwoSitesNodeHalving extends Node {
 	}
 
 	public void initialize() {
-
-		// TODO remove this block
-
+		
 		List<Integer> tmp = new ArrayList<Integer>(data);
 		TwoSitesNodeHalving n = (TwoSitesNodeHalving) neighbor
 				.getOtherNode(this);
 		tmp.addAll(n.getData());
 		Collections.sort(tmp);
-		System.out.println(tmp);
 		if (n.getNodeId() > this.getNodeId()) {
 			NetViewer.out.println("Expected value is: " + tmp.get(k - 1));
 		}
-		System.out.println("True k is: " + tmp.get(k - 1));
-
-		//
+		
 
 		become(new SettingUp(this));
 		SetupMessage m = new SetupMessage(getNodeId(), getN());
@@ -130,7 +123,7 @@ public class TwoSitesNodeHalving extends Node {
 
 			int max_right = getN() + otherNodeN - k;
 
-			System.out.println("k >");
+			// System.out.println("k >");
 
 			int totN = getN() + otherNodeN;
 			int index = getN() - max_right - 1;
@@ -138,13 +131,10 @@ public class TwoSitesNodeHalving extends Node {
 			otherNodeN = Math.min(max_right + 1, otherNodeN);
 
 			int discarded = totN - getN() - otherNodeN;
-			int new_median = getMedianIndex(getN() + otherNodeN);
-			System.out.println("discarded: " + discarded + "new_median "
-					+ new_median);
-			int padding = computePadding(getN(),otherNodeN, k,discarded);
+			int padding = computePadding(getN(), otherNodeN, k, discarded);
 			if (getNodeId() < otherNodeId) {
 
-				System.out.println("padding " + (padding));
+				// System.out.println("padding " + (padding));
 				if (padding > 0) {
 					pad(0, padding);
 				} else {
@@ -156,7 +146,7 @@ public class TwoSitesNodeHalving extends Node {
 			}
 
 		} else if (k - 1 < median) {
-			System.out.println("k <");
+			// System.out.println("k <");
 
 			if (getN() < k) {
 				pad(0, k - getN());
@@ -168,14 +158,16 @@ public class TwoSitesNodeHalving extends Node {
 	}
 
 	private int computePadding(int n1, int n2, int k, int discarded) {
-		System.out.println("n1: "+n1+" n2: "+n2+"k: "+k+"disc "+discarded);
+		// System.out.println("n1: "+n1+" n2: "+n2+"k: "+k+"disc "+discarded);
 
 		int padding = 0;
-		int indexAdd=0;
-		while (getMedianIndex(n1 + n2 + Math.abs(padding)) != k - discarded +indexAdd - 1) {
-//			System.out.println("padding: "+padding);
+		int indexAdd = 0;
+		while (getMedianIndex(n1 + n2 + Math.abs(padding)) != k - discarded
+				+ indexAdd - 1) {
+			// System.out.println("padding: "+padding);
 
-			if (getMedianIndex(n1 + n2 + Math.abs(padding)) < k - discarded +indexAdd - 1) {
+			if (getMedianIndex(n1 + n2 + Math.abs(padding)) < k - discarded
+					+ indexAdd - 1) {
 				padding++;
 			} else {
 				padding--;
