@@ -28,9 +28,10 @@ public class Asleep extends AbstractHalvingState {
 			e.printStackTrace();
 		}
 		 processSetupMessage(m);
-		
-		
-
+	}
+	
+	public void handle(MedianMessage m) {
+		node.enqueueMessage(m);
 	}
 
 }

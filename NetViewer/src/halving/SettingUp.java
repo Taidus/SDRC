@@ -22,5 +22,8 @@ public class SettingUp extends AbstractHalvingState {
 		processSetupMessage(m);
 
 	}
-
+	
+	public void handle(MedianMessage m) {
+		node.enqueueMessage(m);
+	}
 }

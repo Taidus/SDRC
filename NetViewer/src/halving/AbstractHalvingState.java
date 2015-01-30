@@ -68,6 +68,11 @@ public abstract class AbstractHalvingState implements HalvingState {
 		MedianMessage msg = new MedianMessage(node.getMedian(),
 				node.getCurrentStep());
 		node.send(msg);
+		
+		MedianMessage toProcess = node.nextEnqueuedMessage();
+		if (toProcess != null) {
+			processMedianMessage(toProcess);
+		}
 	}
 
 	protected void processMedianMessage(MedianMessage m) {
