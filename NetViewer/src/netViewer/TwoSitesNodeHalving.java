@@ -92,6 +92,19 @@ public class TwoSitesNodeHalving extends Node {
 	}
 
 	public void initialize() {
+		
+		//TODO remove this block
+		
+		
+		List<Integer> tmp = new ArrayList<Integer>(data);
+		TwoSitesNodeHalving n = (TwoSitesNodeHalving) neighbor.getOtherNode(this);
+		tmp.addAll(n.getData());
+		Collections.sort(tmp);
+		System.out.println(tmp);
+		System.out.println("True k is: "+tmp.get(k-1));
+		
+		
+		//
 
 
 		become(new SettingUp(this));
@@ -101,26 +114,43 @@ public class TwoSitesNodeHalving extends Node {
 	
 	public void setupForKQuery(){
 		
-	//FIXME non funziona
-		int n = getN();
 
-		double t = Math.ceil(((double) n  + getOtherNodeN() ) / 2);
-		if (k > t) {
+		
+		
+		int median = (int) (Math.ceil((double) (getN()+otherNodeN) / 2) - 1);
+//		System.out.println("median: "+median+" k: "+k);
+		
+		if(k> median){
+			int max_right = getN()+otherNodeN-k;
+			discardLeft(getN()-max_right);
+			
+			otherNodeN=Math.min(max_right+1,otherNodeN);
 
-			discardLeft(n - k + 1);
-
-		} else if (k < t) {
-
+			
+			if(getNodeId() < otherNodeId){
+				pad(0, 1);
+			}else{
+				otherNodeN++;
+			}
+			
+		}else if(k < median){
+			
+			if(getN() < k){
+				pad(0, k-getN());
+			}
 			discardRight(k);
-
+			otherNodeN=k;
 		}
+		
+		
 	}
 
 	public void halve(int m, boolean lastIter) {
 
 		if (!lastIter) {
 			if (m < getMedian()) {
-
+				
+				
 				discardRight(getMedianIndex() + 1);
 
 			} else if (m > getMedian()) {
@@ -166,6 +196,7 @@ public class TwoSitesNodeHalving extends Node {
 
 	private void discardLeft(int index) {
 
+		index =Math.max(index, 0);
 		leftDiscarded.addAll(data.subList(0, index));
 		data = data.subList(index, getN());
 
@@ -173,6 +204,7 @@ public class TwoSitesNodeHalving extends Node {
 
 	private void discardRight(int index) {
 
+		index = Math.min(index, getN());
 		rightDiscarded.addAll(data.subList(index, getN()));
 		data = data.subList(0, index);
 	}
