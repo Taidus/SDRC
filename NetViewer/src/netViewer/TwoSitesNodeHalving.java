@@ -57,9 +57,13 @@ public class TwoSitesNodeHalving extends Node {
 	public int getMedian() {
 		return data.get(getMedianIndex());
 	}
+	
+	public int getMedianIndex(){
+		return getMedianIndex(getN());
+	}
 
-	private int getMedianIndex() {
-		int i = (int) (Math.ceil((double) (getN()) / 2) - 1);
+	private int getMedianIndex(int n) {
+		int i = (int) (Math.ceil((double) (n) / 2) - 1);
 		return i;
 	}
 
@@ -119,16 +123,26 @@ public class TwoSitesNodeHalving extends Node {
 		int median = (int) (Math.ceil((double) (getN()+otherNodeN) / 2) - 1);
 //		System.out.println("median: "+median+" k: "+k);
 		
+		int max_right = getN()+otherNodeN-k;
+		
 		if(k -1 > median){
 			System.out.println("k >");
-			int max_right = getN()+otherNodeN-k;
-			discardLeft(getN()-max_right-1);
 			
+			int totN = getN()+otherNodeN;
+			int index = getN()-max_right-1;
+			discardLeft(index);
+			int a = otherNodeN-max_right-1;
 			otherNodeN=Math.min(max_right+1,otherNodeN);
-
+			
 			
 			if(getNodeId() < otherNodeId){
-				pad(0, 1);
+				
+				int discarded = totN-getN()-otherNodeN;
+				int new_median = getMedianIndex(getN()+otherNodeN);
+				System.out.println("discarded: "+discarded+"new_median "+new_median);
+				System.out.println("padddd "+(k-discarded-new_median));
+				pad(0,k-discarded-new_median-1);
+				
 			}else{
 				otherNodeN++;
 			}
@@ -234,7 +248,7 @@ public class TwoSitesNodeHalving extends Node {
 	}
 	
 	public void pad(int n_left, int n_right){
-		//TODO somethinf more elegant^?
+		//TODO something more elegant?
 		
 		for (int i=0;i<n_left;i++){
 			data.add(Integer.MIN_VALUE);
