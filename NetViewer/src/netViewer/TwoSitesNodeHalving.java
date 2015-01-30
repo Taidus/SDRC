@@ -141,7 +141,7 @@ public class TwoSitesNodeHalving extends Node {
 			int new_median = getMedianIndex(getN() + otherNodeN);
 			System.out.println("discarded: " + discarded + "new_median "
 					+ new_median);
-			int padding = k - discarded - new_median - 1;
+			int padding = computePadding(getN(),otherNodeN, k,discarded);
 			if (getNodeId() < otherNodeId) {
 
 				System.out.println("padding " + (padding));
@@ -165,6 +165,25 @@ public class TwoSitesNodeHalving extends Node {
 			otherNodeN = k;
 		}
 
+	}
+
+	private int computePadding(int n1, int n2, int k, int discarded) {
+		System.out.println("n1: "+n1+" n2: "+n2+"k: "+k+"disc "+discarded);
+
+		int padding = 0;
+		int indexAdd=0;
+		while (getMedianIndex(n1 + n2 + Math.abs(padding)) != k - discarded +indexAdd - 1) {
+//			System.out.println("padding: "+padding);
+
+			if (getMedianIndex(n1 + n2 + Math.abs(padding)) < k - discarded +indexAdd - 1) {
+				padding++;
+			} else {
+				padding--;
+				indexAdd++;
+			}
+
+		}
+		return padding;
 	}
 
 	public void halve(int m, boolean lastIter) {
