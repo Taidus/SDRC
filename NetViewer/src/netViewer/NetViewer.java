@@ -30,14 +30,23 @@ import java.awt.Color;
 import java.awt.event.ItemListener;
 import java.awt.Insets;
 import java.awt.event.ItemEvent;
+
 import javax.swing.JApplet;
+
 import java.awt.event.ActionListener;
+
 import javax.swing.JToolBar;
+
 import java.awt.event.ActionEvent;
+
 import javax.swing.JPanel;
+
 import java.awt.event.ComponentListener;
+
 import javax.swing.JButton;
+
 import java.awt.event.ComponentEvent;
+
 import javax.swing.JLabel;
 import javax.swing.event.ChangeListener;
 import javax.swing.Box;
@@ -1464,22 +1473,22 @@ public class NetViewer extends JApplet implements ActionListener {
 					networkPanel.repaint();
 				} // arb
 				else if (topologyMenu.getSelectedIndex() == 7) {
-					if (numDataItemsFirstField.getText().isEmpty()) { // popup
+					if (numDataItemsFirstField.getText().isEmpty() || Integer.parseInt(numDataItemsFirstField.getText()) == 0) { // popup
 						// window
 						// with error
 						// message
 						JOptionPane
 								.showMessageDialog(
 										playPauseButton,
-										"Please enter a value for the number of data items of the first site (N1).",
+										"Please enter a positive value for the number of data items of the first site (N1).",
 										"Input Error",
 										JOptionPane.WARNING_MESSAGE);
 						numDataItemsFirstField.requestFocus();
-					} else if (numDataItemsSecondField.getText().isEmpty()) {
+					} else if (numDataItemsSecondField.getText().isEmpty()  || Integer.parseInt(numDataItemsSecondField.getText()) == 0) {
 						JOptionPane
 								.showMessageDialog(
 										playPauseButton,
-										"Please enter a value for the number of data items of the first site (N2).",
+										"Please enter a positive value for the number of data items of the second site (N2).",
 										"Input Error",
 										JOptionPane.WARNING_MESSAGE);
 						numDataItemsSecondField.requestFocus();
@@ -1489,9 +1498,10 @@ public class NetViewer extends JApplet implements ActionListener {
 								JOptionPane.WARNING_MESSAGE);
 						kToFind.requestFocus();
 					} else if (Integer.parseInt(kToFind.getText()) > (Integer
-							.parseInt(numDataItemsFirstField.getText()) + Integer.parseInt(numDataItemsSecondField.getText()))) {
+							.parseInt(numDataItemsFirstField.getText()) + Integer.parseInt(numDataItemsSecondField.getText())) || 
+							Integer.parseInt(kToFind.getText()) == 0) {
 						JOptionPane.showMessageDialog(playPauseButton,
-								"K must be less than or equal to N (N1 + N2)",
+								"K must be between 1 and N1 + N2",
 								"Input Error", JOptionPane.WARNING_MESSAGE);
 						kToFind.requestFocus();
 					} else {
